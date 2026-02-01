@@ -1,5 +1,0 @@
-
-Microsoft (R) Program Maintenance Utility Version 14.40.33812.0
-Copyright (C) Microsoft Corporation.  All rights reserved.
-
-[100%] Built target FinexaCommon

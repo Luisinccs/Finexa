@@ -1,2 +1,6 @@
 Si, vamos con la prueba de fuego, la aplicación web, la que consume la api common.
 
+Para ver la estrcutura de la aplicacion, debes ir un nivel arriba de la carpeta raiz de este repo y ve la carpeta DualComponents/DcViews/web/Tests/ allí se encuentra el index.html de la aplicación final, los js corerspondientes a los componentes de vistas (Que en este caso para esta aplicación serían OperacionesForm, TasasForm, etc...) Recuerda que la aplicación consume la api DualComponents/DcViews/web/Production/dc-views.js (la librería de componentes de la ui) y por supuesto la api common, que ya debe estar compilada. Tu trabajo es generar el index.html, los js corerspondientes a las vistas y el script  de construcción de la aplicación final. Para luego probarla con live-server.
+
+Bien, el error continúa, te paso el capture.
+Un detalle tienes que saber, el archivo WebBindingsCore.hpp que ves en el directorio C:\Users\dandr\Desarrollo\Deploys\DcViewModels\Web\include no lo debes modificar directamente, ya que es una réplica para distribución, el original se encuentra en C:\Users\dandr\Desarrollo\DualComponents\DcViewModels\Web\src\WebBindingsCore.hpp y es el que debes modificar, y luego actualizas el archivo de la carpeta Deploys con una copia del original.

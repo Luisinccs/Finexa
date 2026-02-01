@@ -90,6 +90,7 @@
     /* Register ViewModels */ \
     emscripten::class_<Finexa::ViewModels::OperacionesViewModel>("OperacionesViewModel") \
         .smart_ptr<std::shared_ptr<Finexa::ViewModels::OperacionesViewModel>>("OperacionesViewModelPtr") \
+        .class_function("create", emscripten::select_overload<std::shared_ptr<Finexa::ViewModels::OperacionesViewModel>()>(&Finexa::ViewModels::OperacionesViewModel::create)) \
         .function("gridOperaciones", &Finexa::ViewModels::OperacionesViewModel::gridOperacionesBinding, emscripten::allow_raw_pointers()) \
         .function("inputConcepto", &Finexa::ViewModels::OperacionesViewModel::inputConceptoBinding, emscripten::allow_raw_pointers()) \
         .function("inputMonto", &Finexa::ViewModels::OperacionesViewModel::inputMontoBinding, emscripten::allow_raw_pointers()) \
@@ -101,6 +102,7 @@
     \
     emscripten::class_<Finexa::ViewModels::TasasViewModel>("TasasViewModel") \
         .smart_ptr<std::shared_ptr<Finexa::ViewModels::TasasViewModel>>("TasasViewModelPtr") \
+        .class_function("create", emscripten::select_overload<std::shared_ptr<Finexa::ViewModels::TasasViewModel>()>(&Finexa::ViewModels::TasasViewModel::create)) \
         .function("gridTasas", &Finexa::ViewModels::TasasViewModel::gridTasasBinding, emscripten::allow_raw_pointers()) \
         .function("selectorBase", &Finexa::ViewModels::TasasViewModel::selectorBaseBinding, emscripten::allow_raw_pointers()) \
         .function("selectorDestino", &Finexa::ViewModels::TasasViewModel::selectorDestinoBinding, emscripten::allow_raw_pointers()) \
@@ -112,7 +114,7 @@
     \
     emscripten::class_<Finexa::ViewModels::FinexaMainViewModel>("FinexaMainViewModel") \
         .smart_ptr<std::shared_ptr<Finexa::ViewModels::FinexaMainViewModel>>("FinexaMainViewModelPtr") \
-        .constructor(emscripten::select_overload<std::shared_ptr<Finexa::ViewModels::FinexaMainViewModel>()>(&Finexa::ViewModels::FinexaMainViewModel::create)) \
+        .class_function("create", emscripten::select_overload<std::shared_ptr<Finexa::ViewModels::FinexaMainViewModel>()>(&Finexa::ViewModels::FinexaMainViewModel::create)) \
         .function("getOperacionesVm", &Finexa::ViewModels::FinexaMainViewModel::getOperacionesVm) \
         .function("getTasasVm", &Finexa::ViewModels::FinexaMainViewModel::getTasasVm) \
         .function("inicializar", &Finexa::ViewModels::FinexaMainViewModel::inicializar); \

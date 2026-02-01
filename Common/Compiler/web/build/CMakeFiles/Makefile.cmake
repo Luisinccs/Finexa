@@ -7,15 +7,24 @@ set(CMAKE_DEPENDS_GENERATOR "NMake Makefiles")
 # The top level Makefile was generated from the following files:
 set(CMAKE_MAKEFILE_DEPENDS
   "CMakeCache.txt"
+  "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeCXXCompiler.cmake.in"
   "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeCXXInformation.cmake"
   "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeCommonLanguageInclude.cmake"
+  "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCXXCompiler.cmake"
+  "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineCompiler.cmake"
+  "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeDetermineSystem.cmake"
+  "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeFindBinUtils.cmake"
   "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeGenericSystem.cmake"
   "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeInitializeConfigs.cmake"
   "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeLanguageInformation.cmake"
+  "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeNMakeFindMake.cmake"
+  "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeSystem.cmake.in"
   "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeSystemSpecificInformation.cmake"
   "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeSystemSpecificInitialize.cmake"
+  "C:/Program Files/CMake/share/cmake-3.30/Modules/CMakeTestCXXCompiler.cmake"
   "C:/Program Files/CMake/share/cmake-3.30/Modules/Compiler/CMakeCommonCompilerMacros.cmake"
   "C:/Program Files/CMake/share/cmake-3.30/Modules/Compiler/Clang-CXX.cmake"
+  "C:/Program Files/CMake/share/cmake-3.30/Modules/Compiler/Clang-FindBinUtils.cmake"
   "C:/Program Files/CMake/share/cmake-3.30/Modules/Compiler/Clang.cmake"
   "C:/Program Files/CMake/share/cmake-3.30/Modules/Compiler/GNU.cmake"
   "C:/Users/dandr/Desarrollo/Finexa/Common/CMakeLists.txt"
@@ -32,6 +41,8 @@ set(CMAKE_MAKEFILE_OUTPUTS
 
 # Byproducts of CMake generate step:
 set(CMAKE_MAKEFILE_PRODUCTS
+  "CMakeFiles/3.30.5/CMakeSystem.cmake"
+  "CMakeFiles/3.30.5/CMakeCXXCompiler.cmake"
   "CMakeFiles/CMakeDirectoryInformation.cmake"
   )
 
