@@ -1,0 +1,6 @@
+#include "FinexaWebBindings.hpp"
+
+EMSCRIPTEN_BINDINGS(FinexaCommon) {
+    DC_VIEWMODELS_REGISTER_INTERFACES();
+    FINEXA_REGISTER_APP_BINDINGS();
+}

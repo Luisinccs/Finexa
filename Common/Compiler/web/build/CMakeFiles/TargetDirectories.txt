@@ -1,0 +1,3 @@
+C:/Users/dandr/Desarrollo/Finexa/Common/Compiler/web/build/CMakeFiles/FinexaCommon.dir
+C:/Users/dandr/Desarrollo/Finexa/Common/Compiler/web/build/CMakeFiles/edit_cache.dir
+C:/Users/dandr/Desarrollo/Finexa/Common/Compiler/web/build/CMakeFiles/rebuild_cache.dir

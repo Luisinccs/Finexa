@@ -1,0 +1,52 @@
+Estoy trabando en una calculadora financiera para determinar de manera rápida un total en una moneda base.
+
+La interface debe tener una lista para mostar/establecer las tasas entre las monedas, Ej
+
+VES/EUR: 380
+VES/USD: 330
+VES/XDS: 550
+.....
+
+
+En la vista principal, se muestra una tabla con distintos conceptos:
+
+	Concepto	Monto 	 	Moneda		Monto XDS
+	Mercado		100		USD		60
+	Servicio	20		EUR		13,82
+	Combustible	20		USD		12
+	Pescadero	10.000		VES		18,18
+						Total XDS  104,00
+
+El monto XDS es el monto de la operación expresado en XDS; el desafío es calcular las tasas y buscar evitar ambiguedades, es decir
+si ya hay una tasa VES/USD y una tasa VES/XSD no podemos establecer una tasa XDS/USD o al menos hay que preguntar cual tasa 
+usar en esa operación
+
+La aplicación debe tener una interface sencilla y amigable
+
+---
+
+Para la lista de tasas, voy a utilizar componentes reutilizables de mi librería Dual Components.
+Te voy a pasar el código fuente de los componentes reutilizables, y un ejemplo de como lo hemos implementado.
+
+
+Tu misión es generar el ListaTasasViewModel.cs y el ListaTasasGrid.cs (para win forms) Luego le agregamos la lógica al viewmodel para determinar si la tasa
+presenta alguna ambiguedad.
+
+Toma en cuenta que en la fila de nuevo campo, debe tener una opción de agregar y otra de cancelar; y en la fila de 
+edición de campo existente, un botón de aceptar el cambio y otro de cancelar; en ese caso solo se puede modificar la tasa,
+ pero no las monedas
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,6 @@
+In file included from src/Bindings.cpp:1:
+include\FinexaWebBindings.hpp:22:10: fatal error: 'WebBindingsCore.hpp' file not found
+   22 | #include "WebBindingsCore.hpp"
+      |          ^~~~~~~~~~~~~~~~~~~~~
+1 error generated.
+emcc: error: ''C:/Users/dandr/Desarrollo/LibreriasExternas/.emsdk/upstream/bin\clang.exe' -target wasm32-unknown-emscripten -fignore-exceptions -mllvm -combiner-global-alias-analysis=false -mllvm -enable-emscripten-sjlj -mllvm -disable-lsr '--sysroot=C:\Users\dandr\Desarrollo\LibreriasExternas\.emsdk\upstream\emscripten\cache\sysroot' -DEMSCRIPTEN -Xclang '-iwithsysroot/include\fakesdl' -Xclang '-iwithsysroot/include\compat' -Iinclude -Ic: -I../../Core/include -I../../ViewModels/include -std=c++17 -O0 -c src/Bindings.cpp -o 'C:\Users\dandr\AppData\Local\Temp\emscripten_temp_pwezes5w\Bindings.o'' failed (returned 1)

@@ -1,0 +1,2 @@
+Si, vamos con la prueba de fuego, la aplicación web, la que consume la api common.
+
