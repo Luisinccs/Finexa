@@ -2,6 +2,9 @@
 <Workspace
    version = "1.0">
    <FileRef
+      location = "group:../Common/Compiler/Apple/FinexaCommonApple.xcodeproj">
+   </FileRef>
+   <FileRef
       location = "group:FinexaMac.xcodeproj">
    </FileRef>
 </Workspace>
