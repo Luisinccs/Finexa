@@ -4,3 +4,54 @@ Para ver la estrcutura de la aplicacion, debes ir un nivel arriba de la carpeta 
 
 Bien, el error continúa, te paso el capture.
 Un detalle tienes que saber, el archivo WebBindingsCore.hpp que ves en el directorio C:\Users\dandr\Desarrollo\Deploys\DcViewModels\Web\include no lo debes modificar directamente, ya que es una réplica para distribución, el original se encuentra en C:\Users\dandr\Desarrollo\DualComponents\DcViewModels\Web\src\WebBindingsCore.hpp y es el que debes modificar, y luego actualizas el archivo de la carpeta Deploys con una copia del original.
+
+Convienrte la librería Common/Compiler/Apple/FinexaCommonApple.xcodeproj en multiplataforma apple (macOS, iOS) y documenta los pasos que hiciste para lograrlo.
+
+Distribution
+
+Bien, vamos por partes entonces, para preparar la interfaz de DcViewModels. Lo primero entonces es modificar la esrtuctura de carpetas del directorio de salida.
+
+├── Distribution/ (Carpeta de distribución de varias librerías)
+│   ├── DcViewModels/
+│   │   ├── Apple/
+│   │   │   ├── include/ (carpeta para los headers, puede ser comun para ambas configuraciones)
+│   │   │   │   ├── DcViewModels.h (umbrella header)
+│   │   │   │   ├── common/
+│   │   │   │   └── public_api/    
+│   │   │   ├── Debug/
+│   │   │   └── Release/
+│   │   └── web/ (salida de emscripten)
+│   └── DcViews/
+│       ├── Mac/ (Binarios de la libreria para macOS)
+│       └── ios/ (Binarios de la libreria para iOS)
+│
+├── DualComponents/ (Carpeta del proyecto con el código fuente y proyectos de xcode, vs, cmake...)
+│   ├── DcViewModels/   (Libreria de c++ comun a todas las plataformas)
+│   │   ├── include/
+│   │   ├── src/
+│   │   └── Compiler/   (Carpeta con los proyectos de compilación para cada plataforma)
+│   │       ├── Apple/
+│   │       │   └── DcViewModels.xcodeproj
+│   │       ├── Windows/
+│   │       └── Web/
+│   ├── DcViews/        (Librerias de componentes de interfaz de usuario especificos para cada plataforma)
+│   │   ├── ios/
+│   │   ├── mac/
+│   │   │   ├── Production
+│   │   │   │   └── DcViewsMac.xcodeproj (Librería a vincular con DcViewModels)
+│   │   │   └── Tests
+│   │   ├── windows/
+│   │   └── web/
+
+Explicame las modificaciones que debo hacer para incluir el umbrella header y el module map. Para concretar la primera etapa Preparar la "Interfaz" en DcViewModels
+
+La librería swift que estamos buscando desplegar ahora es DcViewsMac.xcodeproj
+
+-----
+
+Generame el archivo TasasController.swift en la carpeta Mac para el proyecto Mac/FinexaMac.x    xcodeproj. El controller debe consumir el viewModel de TasasViewModel.
+Toma como referencai el archivo ../DualComponents/DcViews/Mac/Tests/DcGridTestController.swift.
+Actualiza tambien el appDelegate.swift para que se cargue el controlador de tasas temporalmente par probarlo.
+
+
+using GridTestViewModelPtr = std::shared_ptr<GridTestViewModel>;

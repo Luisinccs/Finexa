@@ -1,0 +1,62 @@
+# === DualComponents Unified GitIgnore ===
+
+# --- C++ / CMake (Core) ---
+# Compilación y archivos temporales de CMake
+build/
+bin/
+out/
+CMakeFiles/
+CMakeCache.txt
+*.cmake
+install/
+*.o
+*.a
+*.so
+*.dylib
+*.lib
+*.dll
+*.pdb
+
+# --- Apple (macOS / iOS) ---
+# Archivos de Xcode y dependencias de Apple
+.DS_Store
+DerivedData/
+*.xcworkspace
+!default.xcworkspace
+xcuserdata/
+*.moved-aside
+*.xcuserstate
+*.xccheckout
+# Si usas Swift Package Manager
+.build/
+.swiftpm/
+
+# --- Windows / .NET (Win) ---
+# Archivos de Visual Studio y carpetas de salida de C#
+.vs/
+[Bb]in/
+[Obj]/
+*.suo
+*.user
+*.sln.docstates
+*.userprefs
+*.vshost.exe
+*.vshost.exe.manifest
+*.appx
+# NuGet Packages
+*.nupkg
+packages/
+
+# --- VS Code ---
+# Configuración local del editor (opcional, podrías querer compartirla)
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+*.code-workspace
+
+# --- Logs & Temp ---
+*.log
+tmp/
+temp/
+.emsdk/

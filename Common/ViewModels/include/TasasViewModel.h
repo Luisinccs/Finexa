@@ -50,6 +50,8 @@ private:
     void configurarMonedasDinamicas();
 };
 
+using TasasViewModelPtr = std::shared_ptr<TasasViewModel>;
+
 } // namespace Finexa::ViewModels
 
 // Declaraciones para el C-Bridge

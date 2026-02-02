@@ -10,14 +10,35 @@
 		112A4ECF2F300A7000A6CF06 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112A4ECC2F300A6F00A6CF06 /* AppDelegate.swift */; };
 		112A4ED02F300A7000A6CF06 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 112A4ECE2F300A7000A6CF06 /* Assets.xcassets */; };
 		112A4ED22F300A9600A6CF06 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 112A4ED12F300A9600A6CF06 /* main.swift */; };
+		11B537CA2F303FD60064F65C /* libFinexaCommonApple.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11B537C92F303FD60064F65C /* libFinexaCommonApple.a */; };
+		11B537CF2F30403B0064F65C /* TasasController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B537CE2F30403B0064F65C /* TasasController.swift */; };
+		11B537D02F30460C0064F65C /* DcViewsMac.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11B537CB2F303FEA0064F65C /* DcViewsMac.framework */; };
+		11B537D12F30460C0064F65C /* DcViewsMac.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 11B537CB2F303FEA0064F65C /* DcViewsMac.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		11B537D22F30460C0064F65C /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				11B537D12F30460C0064F65C /* DcViewsMac.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
-		112A4ECB2F300A6F00A6CF06 /* FinexaMac-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = file; path = "FinexaMac-Bridging-Header.h"; sourceTree = "<group>"; };
+		112A4ECB2F300A6F00A6CF06 /* FinexaMac-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "FinexaMac-Bridging-Header.h"; sourceTree = "<group>"; };
 		112A4ECC2F300A6F00A6CF06 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		112A4ECD2F300A6F00A6CF06 /* FinexaMac.entitlements */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.entitlements; path = FinexaMac.entitlements; sourceTree = "<group>"; };
 		112A4ECE2F300A7000A6CF06 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		112A4ED12F300A9600A6CF06 /* main.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		11B537C92F303FD60064F65C /* libFinexaCommonApple.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFinexaCommonApple.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		11B537CB2F303FEA0064F65C /* DcViewsMac.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DcViewsMac.framework; path = ../../Distribution/DcViews/Mac/Release/DcViewsMac.framework; sourceTree = "<group>"; };
+		11B537CE2F30403B0064F65C /* TasasController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TasasController.swift; sourceTree = "<group>"; };
 		11D728CF2F3009FB00ECF286 /* FinexaMac.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FinexaMac.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -26,21 +47,42 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11B537D02F30460C0064F65C /* DcViewsMac.framework in Frameworks */,
+				11B537CA2F303FD60064F65C /* libFinexaCommonApple.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		11B537C82F303FD60064F65C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				11B537CB2F303FEA0064F65C /* DcViewsMac.framework */,
+				11B537C92F303FD60064F65C /* libFinexaCommonApple.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		11B537CD2F30401D0064F65C /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				11B537CE2F30403B0064F65C /* TasasController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
 		11D728C62F3009FB00ECF286 = {
 			isa = PBXGroup;
 			children = (
+				11B537CD2F30401D0064F65C /* Controllers */,
 				112A4ED12F300A9600A6CF06 /* main.swift */,
 				112A4ECC2F300A6F00A6CF06 /* AppDelegate.swift */,
 				112A4ECE2F300A7000A6CF06 /* Assets.xcassets */,
 				112A4ECD2F300A6F00A6CF06 /* FinexaMac.entitlements */,
 				11D728D02F3009FB00ECF286 /* Products */,
 				112A4ECB2F300A6F00A6CF06 /* FinexaMac-Bridging-Header.h */,
+				11B537C82F303FD60064F65C /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -62,6 +104,7 @@
 				11D728CB2F3009FB00ECF286 /* Sources */,
 				11D728CC2F3009FB00ECF286 /* Frameworks */,
 				11D728CD2F3009FB00ECF286 /* Resources */,
+				11B537D22F30460C0064F65C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -123,6 +166,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				112A4ED22F300A9600A6CF06 /* main.swift in Sources */,
+				11B537CF2F30403B0064F65C /* TasasController.swift in Sources */,
 				112A4ECF2F300A7000A6CF06 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -261,7 +305,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3Q8F29C4F5;
 				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../../Distribution/DcViews/Mac/Release\"";
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Common/ViewModels/include",
+					"$(PROJECT_DIR)/../Common/Core/include",
+					"\"$(SRCROOT)/../../Distribution/DcViewModels/Apple/include/DcViewModels\"",
+				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -272,6 +322,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "FinexaMac-Bridging-Header.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -290,7 +341,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3Q8F29C4F5;
 				ENABLE_HARDENED_RUNTIME = YES;
+				FRAMEWORK_SEARCH_PATHS = "\"$(SRCROOT)/../../Distribution/DcViews/Mac/Release\"";
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(PROJECT_DIR)/../Common/ViewModels/include",
+					"$(PROJECT_DIR)/../Common/Core/include",
+					"\"$(SRCROOT)/../../Distribution/DcViewModels/Apple/include/DcViewModels\"",
+				);
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -301,6 +358,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "FinexaMac-Bridging-Header.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;

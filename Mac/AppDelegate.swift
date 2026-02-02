@@ -6,7 +6,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
-        let rootVC = NSViewController()
+        _ = NSViewController()
         
         window = NSWindow(
             contentRect: NSRect(x: 0, y: 0, width: 1100, height: 600),
@@ -22,7 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         window.styleMask.insert(.fullSizeContentView)
         
         // Asignar el SplitView como controlador raíz
-        window.contentViewController = rootVC
+        window.contentViewController = TasasController()
         
         // Asegurar que el tamaño se mantenga tras asignar el controlador
         window.setContentSize(NSSize(width: 1100, height: 600))
