@@ -59,9 +59,10 @@ class TasasController: NSViewController {
             
             // Grid
             if let gridPtr = TasasViewModel_gridTasas(rawPtr) {
+                print("DEBUG: Bind Grid Success")
                 grid.setViewModel(gridPtr)
                 // Optional: Configure column widths if needed
-            }
+            } else { print("DEBUG: Bind Grid FAILED") }
             
             // Selectors
             if let basePtr = TasasViewModel_selectorBase(rawPtr) {
@@ -81,7 +82,12 @@ class TasasController: NSViewController {
             if let savePtr = TasasViewModel_cmdGuardarTasa(rawPtr) {
                 btnGuardar.setViewModel(savePtr)
             }
+            
+            // 3. Initialize Data
+//            vm.inicializar()
+//            vmPtr.pointee.inicializar()
         }
+        vm.pointee.inicializar()
     }
 
     // MARK: - UI Setup
