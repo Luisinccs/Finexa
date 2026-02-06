@@ -1,0 +1,26 @@
+Genera el componente reutilizable form-monedas.js.
+Contiene una grilla de monedas con los siguientes campos:
+- Nombre
+- Siglas
+- Simbolo
+
+* En los dispositivos móviles:
+    - las filas no son editables; para modificar o eliminar una fila, se puede hacer swap y se mostrarán dos opcoines para modificar o eliminar la fila.
+    - El botón para iniciar la creación de una nueva moneda se mostrará en la barra de navegación (En principio no es parte visible de este componente en versión móvil). 
+    - La edición de las filas (crear o modificar) se realizará en un modal con los campos:
+        - Nombre
+        - Siglas
+        - Simbolo
+
+* En los dispositivos desktop:
+    - Se muestra una grilla con los campos Nombre, Siglas y Simbolo.
+    - Se muestra una fila fantasma al final de la grilla para agregar una nueva moneda.
+    - Cuando una fila pasa a modo edicion, se muestran los campos editables
+        - Nombre
+        - Siglas
+        - Simbolo
+        - Botón de guardar
+        - Botón de cancelar
+        - Botón de eliminar (si la fila está creada)
+
+El componente debe enlazarse con el monedasViewModel
