@@ -1,0 +1,18 @@
+Generame los archivos MonedasViewModel.hpp y MonedasViewModel.cpp en las respectivas carpetas include y src del directorio Common/ViewModels . 
+Tomando como plantilla los archivos FormTemplate.hpp y FormTemplate.cpp para el formato y la arquitectura, y el TestGridViewModel.hpp y TestGridViewModel.cpp para el concepto de manipulación del grid y los campos respectivos para la edición de sus registros.
+
+Los campos que debes incluir en el view model
+
+- DcGridViewModel Monedas
+- DcInputViewModel Nombre
+- DcInputViewModel Siglas
+- DcInputViewModel Simbolo
+
+Para la coleccion de monedas debes usar: 
+std::vector<std::shared_ptr<Moneda>> _monedas;
+
+ y el mismo approach que se muestra en el TestGridViewModel:
+  std::shared_ptr<Moneda> currentEditingItem;
+  bool isNewItem = false;
+
+  Los archivos FormTemplate.hpp y FormTemplate.cpp; y TestGridViewModel.hpp y TestGridViewModel.cpp; las puedes encontrar en el directorio referencias.
