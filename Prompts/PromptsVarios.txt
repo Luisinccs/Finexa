@@ -1,0 +1,32 @@
+Ayudame a identificar este error en la aplicación Finexa/iOS/UITests/FinexaViewsIosUITests.xcodeproj:
+Multiple commands produce '/Users/luis_sonoma/Library/Developer/Xcode/DerivedData/FinexaIos-gczdxffqbevabfgiylsabhxjywsb/Build/Products/Debug-iphonesimulator/FinexaViewsIosUITests.app/Info.plist'
+
+
+Que supongo tiene que ver on esta advertencia:
+duplicate output file '/Users/luis_sonoma/Library/Developer/Xcode/DerivedData/FinexaIos-gczdxffqbevabfgiylsabhxjywsb/Build/Products/Debug-iphonesimulator/FinexaViewsIosUITests.app/Info.plist' on task: ProcessInfoPlistFile /Users/luis_sonoma/Library/Developer/Xcode/DerivedData/FinexaIos-gczdxffqbevabfgiylsabhxjywsb/Build/Products/Debug-iphonesimulator/FinexaViewsIosUITests.app/Info.plist /Users/luis_sonoma/Desarrollo/Finexa/iOS/UITests/FinexaViewsIosUITests/Info.plist
+
+
+
+Bien, tengo este otro error del link, sipongo que es porque quité el bridge, es porque realmente no lo vamos a utilizar en esta app de ui tests ya que solo vamos a usar solo código swift; el bridge si lo vamos a necesitar pero en la app de produccion que incluye los binders implementados
+
+Bien, ya estamos casi listos, tengo este error de compilación:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/UITests/AppDelegate.swift:16:34 Cannot find 'EditorMonedaController' in scope
+
+ya establecí el vinculo con la libreria; que me está faltando?
+
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/App/AppDelegate.swift:15:34 Cannot find 'EditorMonedaController' in scope
+
+---
+
+Procede a hacer el mismo refactor que hiciste para el EditorMonedaController ahora para el MonedasController.
+En Finexa/iOS/Views/BindingsInterfaces, crea el protocolo MonedasBinder,
+y la implementación en Finexa/iOS/App/Source.
+Corrige el Finexa/iOS/Views/Controllers/MonedasController.swift para desacoplarlo completamente del view model
+
+---
+
+Bien, vamos a probar ese controller con mocks. 
+En el pryecto Finexa/iOS/UITests/FinexaViewsIosUITests.xcodeproj, crea el mock para el MonedasController, 
+que tenga como nombre MonedasControllerMockBinder y que implemente el protocolo MonedasBinder.
+Has que cargue unas cuatro filas de monedas.
+Y modifica el app delegate para que se configure es controller con ese binder
