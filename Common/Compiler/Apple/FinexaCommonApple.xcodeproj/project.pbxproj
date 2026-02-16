@@ -16,8 +16,13 @@
 		112A4EF42F3015C600A6CF06 /* Operacion.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112A4EEA2F3015C600A6CF06 /* Operacion.cpp */; };
 		112A4EF52F3015C600A6CF06 /* TasaDeCambio.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 112A4EEB2F3015C600A6CF06 /* TasaDeCambio.cpp */; };
 		112A4F072F3015FE00A6CF06 /* DcViewModels.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 112A4F062F3015FE00A6CF06 /* DcViewModels.framework */; };
-		11B537C52F303E270064F65C /* TasasViewModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 11B537C42F303E270064F65C /* TasasViewModel.h */; };
-		11B537C72F303E390064F65C /* TasasViewModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B537C62F303E390064F65C /* TasasViewModel.cpp */; };
+		11B72BB62F426AA600FDA36A /* MonedasViewModel.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 11B72BB52F426AA600FDA36A /* MonedasViewModel.hpp */; };
+		11B72BB82F426AAE00FDA36A /* MonedasViewModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BB72F426AAE00FDA36A /* MonedasViewModel.cpp */; };
+		11B72BBA2F427BBA00FDA36A /* FinexaViewModels.h in Headers */ = {isa = PBXBuildFile; fileRef = 11B72BB92F427BBA00FDA36A /* FinexaViewModels.h */; };
+		11B72BCB2F42960700FDA36A /* TasasViewModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 11B72BCA2F42960700FDA36A /* TasasViewModel.h */; };
+		11B72BCD2F42961800FDA36A /* TasasViewModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BCC2F42961700FDA36A /* TasasViewModel.cpp */; };
+		11B72BDD2F42B5DC00FDA36A /* OperacionesViewModel.h in Headers */ = {isa = PBXBuildFile; fileRef = 11B72BDC2F42B5DC00FDA36A /* OperacionesViewModel.h */; };
+		11B72BDF2F42B5E900FDA36A /* OperacionesViewModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BDE2F42B5E800FDA36A /* OperacionesViewModel.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,8 +36,13 @@
 		112A4EEA2F3015C600A6CF06 /* Operacion.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Operacion.cpp; sourceTree = "<group>"; };
 		112A4EEB2F3015C600A6CF06 /* TasaDeCambio.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TasaDeCambio.cpp; sourceTree = "<group>"; };
 		112A4F062F3015FE00A6CF06 /* DcViewModels.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DcViewModels.framework; path = ../../../../Distribution/DcViewModels/Apple/Release/DcViewModels.framework; sourceTree = "<group>"; };
-		11B537C42F303E270064F65C /* TasasViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TasasViewModel.h; sourceTree = "<group>"; };
-		11B537C62F303E390064F65C /* TasasViewModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TasasViewModel.cpp; sourceTree = "<group>"; };
+		11B72BB52F426AA600FDA36A /* MonedasViewModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MonedasViewModel.hpp; sourceTree = "<group>"; };
+		11B72BB72F426AAE00FDA36A /* MonedasViewModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonedasViewModel.cpp; sourceTree = "<group>"; };
+		11B72BB92F427BBA00FDA36A /* FinexaViewModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinexaViewModels.h; sourceTree = "<group>"; };
+		11B72BCA2F42960700FDA36A /* TasasViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TasasViewModel.h; sourceTree = "<group>"; };
+		11B72BCC2F42961700FDA36A /* TasasViewModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TasasViewModel.cpp; sourceTree = "<group>"; };
+		11B72BDC2F42B5DC00FDA36A /* OperacionesViewModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperacionesViewModel.h; sourceTree = "<group>"; };
+		11B72BDE2F42B5E800FDA36A /* OperacionesViewModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OperacionesViewModel.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -100,7 +110,10 @@
 		112A4EF92F3015D000A6CF06 /* include */ = {
 			isa = PBXGroup;
 			children = (
-				11B537C42F303E270064F65C /* TasasViewModel.h */,
+				11B72BDC2F42B5DC00FDA36A /* OperacionesViewModel.h */,
+				11B72BCA2F42960700FDA36A /* TasasViewModel.h */,
+				11B72BB92F427BBA00FDA36A /* FinexaViewModels.h */,
+				11B72BB52F426AA600FDA36A /* MonedasViewModel.hpp */,
 			);
 			path = include;
 			sourceTree = "<group>";
@@ -108,7 +121,9 @@
 		112A4EFD2F3015D000A6CF06 /* src */ = {
 			isa = PBXGroup;
 			children = (
-				11B537C62F303E390064F65C /* TasasViewModel.cpp */,
+				11B72BDE2F42B5E800FDA36A /* OperacionesViewModel.cpp */,
+				11B72BCC2F42961700FDA36A /* TasasViewModel.cpp */,
+				11B72BB72F426AAE00FDA36A /* MonedasViewModel.cpp */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -138,11 +153,14 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11B72BDD2F42B5DC00FDA36A /* OperacionesViewModel.h in Headers */,
 				112A4EF02F3015C600A6CF06 /* Operacion.h in Headers */,
 				112A4EF12F3015C600A6CF06 /* TasaDeCambio.h in Headers */,
+				11B72BBA2F427BBA00FDA36A /* FinexaViewModels.h in Headers */,
 				112A4EEF2F3015C600A6CF06 /* Moneda.h in Headers */,
-				11B537C52F303E270064F65C /* TasasViewModel.h in Headers */,
 				112A4EEE2F3015C600A6CF06 /* CalculadoraCore.h in Headers */,
+				11B72BB62F426AA600FDA36A /* MonedasViewModel.hpp in Headers */,
+				11B72BCB2F42960700FDA36A /* TasasViewModel.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -203,10 +221,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				11B537C72F303E390064F65C /* TasasViewModel.cpp in Sources */,
 				112A4EF42F3015C600A6CF06 /* Operacion.cpp in Sources */,
+				11B72BCD2F42961800FDA36A /* TasasViewModel.cpp in Sources */,
 				112A4EF22F3015C600A6CF06 /* CalculadoraCore.cpp in Sources */,
 				112A4EF52F3015C600A6CF06 /* TasaDeCambio.cpp in Sources */,
+				11B72BDF2F42B5E900FDA36A /* OperacionesViewModel.cpp in Sources */,
+				11B72BB82F426AAE00FDA36A /* MonedasViewModel.cpp in Sources */,
 				112A4EF32F3015C600A6CF06 /* Moneda.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -266,7 +286,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
@@ -324,7 +344,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.5;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MACOSX_DEPLOYMENT_TARGET = 14.5;
 				MTL_ENABLE_DEBUG_INFO = NO;
@@ -341,7 +361,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3Q8F29C4F5;
 				EXECUTABLE_PREFIX = lib;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../../../Distribution/DcViewModels/Apple/include/DcViewModels\"";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/common\"",
+					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/public_api/Core\"",
+					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/public_api/UI\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};
@@ -353,7 +377,11 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 3Q8F29C4F5;
 				EXECUTABLE_PREFIX = lib;
-				HEADER_SEARCH_PATHS = "\"$(SRCROOT)/../../../../Distribution/DcViewModels/Apple/include/DcViewModels\"";
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/common\"",
+					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/public_api/Core\"",
+					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/public_api/UI\"",
+				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 			};

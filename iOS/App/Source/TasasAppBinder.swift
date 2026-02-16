@@ -2,15 +2,16 @@ import UIKit
 import DcViewModels
 import DcViewsIos
 import FinexaViewsIos
+import DcBindingsIos
 
-class MonedasAppBinder: MonedasBinder {
+public class TasasAppBinder: TasasBinder {
     
-    private var viewModelPtr: Finexa.ViewModels.MonedasViewModelPtr
-
-    var onDataChanged: (() -> Void)?
+    private var viewModelPtr: Finexa.ViewModels.TasasViewModelPtr
     
-    init() {
-        self.viewModelPtr = Finexa.ViewModels.MonedasViewModel.create()
+    public var onDataChanged: (() -> Void)?
+    
+    public init() {
+        self.viewModelPtr = Finexa.ViewModels.TasasViewModel.create()
         setupBinding()
     }
     
@@ -18,11 +19,11 @@ class MonedasAppBinder: MonedasBinder {
         let vm = viewModelPtr
         withUnsafePointer(to: vm) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
-            if let gridPtr = MonedasViewModel_monedasGridViewModel(rawPtr) {
+            if let gridPtr = TasasViewModel_gridTasas(rawPtr) {
                 // Bind Data Changed
                 DcGrid_BindDataChanged(gridPtr, Unmanaged.passUnretained(self).toOpaque()) { ctx in
                     guard let ctx = ctx else { return }
-                    let binder = Unmanaged<MonedasAppBinder>.fromOpaque(ctx).takeUnretainedValue()
+                    let binder = Unmanaged<TasasAppBinder>.fromOpaque(ctx).takeUnretainedValue()
                     
                     DispatchQueue.main.async {
                         binder.onDataChanged?()
@@ -32,12 +33,12 @@ class MonedasAppBinder: MonedasBinder {
         }
     }
     
-    func numberOfRows() -> Int {
+    public func numberOfRows() -> Int {
         var count: Int32 = 0
         let vm = viewModelPtr
         withUnsafePointer(to: vm) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
-            if let gridPtr = MonedasViewModel_monedasGridViewModel(rawPtr) {
+            if let gridPtr = TasasViewModel_gridTasas(rawPtr) {
                  count = DcGrid_GetRowCount(gridPtr)
                  // Hide ghost row on iOS
                  if count > 0 && DcGrid_IsRowGhost(gridPtr, count - 1) {
@@ -48,19 +49,18 @@ class MonedasAppBinder: MonedasBinder {
         return Int(count)
     }
     
-    func cellData(for row: Int) -> (nombre: String, simbolo: String, siglas: String) {
+    public func cellData(for row: Int) -> (paridad: String, valor: String) {
         let vm = viewModelPtr
-        var nombre = "", simbolo = "", siglas = ""
+        var paridad = "", valor = ""
         
         withUnsafePointer(to: vm) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
-            if let gridPtr = MonedasViewModel_monedasGridViewModel(rawPtr) {
-                nombre = getCellText(gridPtr, row, 0)
-                siglas = getCellText(gridPtr, row, 1)
-                simbolo = getCellText(gridPtr, row, 2)
+            if let gridPtr = TasasViewModel_gridTasas(rawPtr) {
+                paridad = getCellText(gridPtr, row, 0)
+                valor = getCellText(gridPtr, row, 1)
             }
         }
-        return (nombre, simbolo, siglas)
+        return (paridad, valor)
     }
     
     private func getCellText(_ gridPtr: UnsafeMutableRawPointer, _ row: Int, _ col: Int) -> String {
@@ -70,40 +70,37 @@ class MonedasAppBinder: MonedasBinder {
         return String(cString: buffer)
     }
     
-    func selectRow(at row: Int) {
+    public func selectRow(at row: Int) {
         let vm = viewModelPtr
         withUnsafePointer(to: vm) { vmPtr in
              let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
-             if let gridPtr = MonedasViewModel_monedasGridViewModel(rawPtr) {
+             if let gridPtr = TasasViewModel_gridTasas(rawPtr) {
                  DcGrid_SelectRow(gridPtr, Int32(row))
-                 // Trigger activation logic (populates editor fields in VM)
-                 DcGrid_ActivateRow(gridPtr)
+                 DcGrid_ActivateRow(gridPtr) // Importante para cargar los datos en el editor
              }
          }
     }
     
-    func requestAdd() {
+    public func requestAdd() {
         let vm = viewModelPtr
         withUnsafePointer(to: vm) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
-            if let gridPtr = MonedasViewModel_monedasGridViewModel(rawPtr) {
+            if let gridPtr = TasasViewModel_gridTasas(rawPtr) {
                 DcGrid_RequestAdd(gridPtr)
             }
         }
     }
     
-    func deleteRow(at row: Int) {
-        selectRow(at: row)
-        let vm = viewModelPtr
-        withUnsafePointer(to: vm) { vmPtr in
-            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
-            if let cmdPtr = MonedasViewModel_eliminarViewModel(rawPtr) {
-                DcCommand_Execute(cmdPtr)
-            }
-        }
+    public func deleteRow(at row: Int) {
+        // No delete command exposed in TasasViewModel yet?
+        // Revisando TasasViewModel.h... No hay un 'eliminarViewModel'.
+        // Solo 'guardarTasa'.
+        // TODO: Implement delete in C++ ViewModel if needed based on requirements.
+        // For now, no-op or log error.
+        print("Delete not implemented in TasasViewModel C++")
     }
     
-    func getEditorBinder() -> EditorMonedaBinder? {
-        return EditorMonedaAppBinder(viewModel: viewModelPtr)
+    public func getEditorBinder() -> EditorTasaBinder? {
+        return EditorTasasAppBinder(viewModel: viewModelPtr)
     }
 }

@@ -13,8 +13,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             window = UIWindow(frame: UIScreen.main.bounds)
                             
             // 6. Configurar UI con Navigation Controller
-            let rootController = MonedasController()
-            let binder = MonedasAppBinder()
+            let rootController = OperacionesController()
+            let binder = OperacionesAppBinder()
             rootController.configure(with: binder)
                         
             let navController = UINavigationController(rootViewController: rootController)

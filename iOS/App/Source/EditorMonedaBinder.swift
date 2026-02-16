@@ -2,15 +2,16 @@ import UIKit
 import DcViewModels
 import DcViewsIos
 import FinexaViewsIos
+import DcBindingsIos
 
 // MARK: - Concrete Implementation
 
 /// Concrete implementation of the binder using DcViewModels.
 class EditorMonedaAppBinder: EditorMonedaBinder {
     
-    private var viewModel: DualComponents.TestHelpers.MonedasViewModelPtr
+    private var viewModel: Finexa.ViewModels.MonedasViewModelPtr
     
-    init(viewModel: DualComponents.TestHelpers.MonedasViewModelPtr) {
+    init(viewModel: Finexa.ViewModels.MonedasViewModelPtr) {
         self.viewModel = viewModel
     }
     
@@ -23,24 +24,17 @@ class EditorMonedaAppBinder: EditorMonedaBinder {
             
             // Bind Nombre
             if let ptr = MonedasViewModel_nombreViewModel(rawPtr) {
-                if let halo = nombre as? HaloTextField {
-                    halo.setViewModel(ptr)
-                } else {
-                    // Fallback if safe or if extension exists on UITextField
-                    // Assuming setViewModel is available on UITextField via DcViewsIos extension
-                    // If not, we might need to cast or ensure HaloTextField is used
-                    (nombre as? HaloTextField)?.setViewModel(ptr)
-                }
+                (nombre as? HaloTextField)?.setHaloTextFieldViewModel(ptr)
             }
             
             // Bind Simbolo
             if let ptr = MonedasViewModel_simboloViewModel(rawPtr) {
-                (simbolo as? HaloTextField)?.setViewModel(ptr)
+                (simbolo as? HaloTextField)?.setHaloTextFieldViewModel(ptr)
             }
             
             // Bind Siglas
             if let ptr = MonedasViewModel_siglasViewModel(rawPtr) {
-                (siglas as? HaloTextField)?.setViewModel(ptr)
+                (siglas as? HaloTextField)?.setHaloTextFieldViewModel(ptr)
             }
         }
     }
@@ -63,5 +57,14 @@ class EditorMonedaAppBinder: EditorMonedaBinder {
                 DcCommand_Execute(cmdPtr)
             }
         }
+    }
+}
+
+// MARK: - Extensions for Custom Controls
+extension HaloTextField {
+    /// Wrapper to use the standard setViewModel with a specific name for HaloTextField, 
+    /// as suggested by the USER to avoid shadowing issues.
+    func setHaloTextFieldViewModel(_ ptr: UnsafeMutableRawPointer) {
+        self.setViewModel(ptr)
     }
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CommonMacros.hpp"
 #include "DcCommandViewModel.hpp"
 #include "DcControlViewModel.hpp"
 #include "DcGridViewModel.hpp"
@@ -9,6 +8,8 @@
 #include <memory>
 #include <string>
 #include <vector>
+
+#include "Moneda.h"
 
 // Definition of class and namespace
 #define MONEDAS_VIEW_MODEL MonedasViewModel
@@ -22,15 +23,9 @@
 #define CMD_CANCELAR cancelarViewModel
 #define CMD_ELIMINAR eliminarViewModel
 
-namespace DualComponents::TestHelpers {
+namespace Finexa::ViewModels {
 
 using namespace DualComponents::ViewModels;
-
-struct Moneda {
-  std::string nombre;
-  std::string simbolo;
-  std::string siglas;
-};
 
 class MonedasViewModel {
 public:
@@ -67,7 +62,7 @@ private:
 
 using MonedasViewModelPtr = std::shared_ptr<MonedasViewModel>;
 
-} // namespace DualComponents::TestHelpers
+} // namespace Finexa::ViewModels
 
 // =========================================================
 // C-Bridge Functions

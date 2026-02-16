@@ -6,16 +6,16 @@
 #define VM_INPUT_VALOR inputValor
 #define VM_CMD_GUARDAR_TASA cmdGuardarTasa
 
-#include "DcViewModelToolkit.hpp"
-#include "DcGridViewModel.hpp"
-#include "DcCommandViewModel.hpp"
-#include "DcNumberFieldViewModel.hpp"
 #include "DcComboBoxViewModel.hpp"
+#include "DcCommandViewModel.hpp"
+#include "DcGridViewModel.hpp"
+#include "DcNumberFieldViewModel.hpp"
+#include "DcViewModelToolkit.hpp"
 
-#include "IGridBinding.hpp"
-#include "ICommandBinding.hpp"
-#include "INumberFieldBinding.hpp"
 #include "IComboBoxBinding.hpp"
+#include "ICommandBinding.hpp"
+#include "IGridBinding.hpp"
+#include "INumberFieldBinding.hpp"
 
 #include "../../Core/include/CalculadoraCore.h"
 
@@ -24,30 +24,31 @@
 namespace Finexa::ViewModels {
 
 class TasasViewModel {
-    // Declaración de bindings
-    DECLARE_CONTROL_BINDING(VM_GRID_TASAS, Grid)
-    DECLARE_CONTROL_BINDING(VM_SELECTOR_BASE, ComboBox)
-    DECLARE_CONTROL_BINDING(VM_SELECTOR_DESTINO, ComboBox)
-    DECLARE_CONTROL_BINDING(VM_INPUT_VALOR, NumberField)
-    DECLARE_CONTROL_BINDING(VM_CMD_GUARDAR_TASA, Command)
+  // Declaración de bindings
+  DECLARE_CONTROL_BINDING(VM_GRID_TASAS, Grid)
+  DECLARE_CONTROL_BINDING(VM_SELECTOR_BASE, ComboBox)
+  DECLARE_CONTROL_BINDING(VM_SELECTOR_DESTINO, ComboBox)
+  DECLARE_CONTROL_BINDING(VM_INPUT_VALOR, NumberField)
+  DECLARE_CONTROL_BINDING(VM_CMD_GUARDAR_TASA, Command)
 
 private:
-    std::shared_ptr<Finexa::CalculadoraCore> _core;
+  std::shared_ptr<Finexa::CalculadoraCore> _core;
 
 public:
-    TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core);
-    virtual ~TasasViewModel() = default;
+  TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core);
+  virtual ~TasasViewModel() = default;
 
-    static std::shared_ptr<TasasViewModel> create(std::shared_ptr<Finexa::CalculadoraCore> core);
-    static std::shared_ptr<TasasViewModel> create();
+  static std::shared_ptr<TasasViewModel>
+  create(std::shared_ptr<Finexa::CalculadoraCore> core);
+  static std::shared_ptr<TasasViewModel> create();
 
-    void inicializar();
-    void guardarTasa();
-    void refrescarGrilla();
+  void inicializar();
+  void guardarTasa();
+  void refrescarGrilla();
 
 private:
-    void configurarColumnas();
-    void configurarMonedasDinamicas();
+  void configurarColumnas();
+  void configurarMonedasDinamicas();
 };
 
 using TasasViewModelPtr = std::shared_ptr<TasasViewModel>;
@@ -55,9 +56,12 @@ using TasasViewModelPtr = std::shared_ptr<TasasViewModel>;
 } // namespace Finexa::ViewModels
 
 // Declaraciones para el C-Bridge
+// Declaraciones para el C-Bridge
+extern "C" {
 DECLARE_VIEWMODEL_LIFECYCLE(TasasViewModel)
 DECLARE_CONTROL_BRIDGE(VM_GRID_TASAS, TasasViewModel)
 DECLARE_CONTROL_BRIDGE(VM_SELECTOR_BASE, TasasViewModel)
 DECLARE_CONTROL_BRIDGE(VM_SELECTOR_DESTINO, TasasViewModel)
 DECLARE_CONTROL_BRIDGE(VM_INPUT_VALOR, TasasViewModel)
 DECLARE_CONTROL_BRIDGE(VM_CMD_GUARDAR_TASA, TasasViewModel)
+}

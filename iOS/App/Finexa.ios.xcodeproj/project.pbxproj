@@ -11,7 +11,36 @@
 		114E601D2F421B1900A7770F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 114E601C2F421B1900A7770F /* Assets.xcassets */; };
 		114E60202F421B1900A7770F /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 114E601F2F421B1900A7770F /* Base */; };
 		114E60952F423FDD00A7770F /* EditorMonedaBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114E60942F423FDD00A7770F /* EditorMonedaBinder.swift */; };
+		11B72BA92F4268ED00FDA36A /* libFinexaCommonApple.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11B72BA82F4268ED00FDA36A /* libFinexaCommonApple.a */; };
+		11B72BAB2F4268ED00FDA36A /* libFinexaViewsIos.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 11B72BAA2F4268ED00FDA36A /* libFinexaViewsIos.a */; };
+		11B72BAC2F4268F800FDA36A /* DcBindingsIos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11B72BA22F4268ED00FDA36A /* DcBindingsIos.framework */; };
+		11B72BAD2F4268F800FDA36A /* DcBindingsIos.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 11B72BA22F4268ED00FDA36A /* DcBindingsIos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		11B72BAF2F4268FA00FDA36A /* DcViewModels.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11B72BA42F4268ED00FDA36A /* DcViewModels.framework */; };
+		11B72BB02F4268FA00FDA36A /* DcViewModels.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 11B72BA42F4268ED00FDA36A /* DcViewModels.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		11B72BB12F4268FC00FDA36A /* DcViewsIos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11B72BA62F4268ED00FDA36A /* DcViewsIos.framework */; };
+		11B72BB22F4268FC00FDA36A /* DcViewsIos.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 11B72BA62F4268ED00FDA36A /* DcViewsIos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		11B72BB42F426A3200FDA36A /* MonedasAppBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BB32F426A3200FDA36A /* MonedasAppBinder.swift */; };
+		11B72BC82F42959200FDA36A /* TasasAppBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BC62F42959100FDA36A /* TasasAppBinder.swift */; };
+		11B72BC92F42959200FDA36A /* EditorTasasAppBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BC72F42959100FDA36A /* EditorTasasAppBinder.swift */; };
+		11B72BDA2F42B20A00FDA36A /* OperacionesAppBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BD82F42B20A00FDA36A /* OperacionesAppBinder.swift */; };
+		11B72BDB2F42B20A00FDA36A /* EditorOperacionesAppBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BD92F42B20A00FDA36A /* EditorOperacionesAppBinder.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		11B72BAE2F4268F800FDA36A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				11B72BB22F4268FC00FDA36A /* DcViewsIos.framework in Embed Frameworks */,
+				11B72BB02F4268FA00FDA36A /* DcViewModels.framework in Embed Frameworks */,
+				11B72BAD2F4268F800FDA36A /* DcBindingsIos.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		114E60102F421B1700A7770F /* Finexa.ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Finexa.ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -20,6 +49,17 @@
 		114E601F2F421B1900A7770F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		114E60212F421B1900A7770F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		114E60942F423FDD00A7770F /* EditorMonedaBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorMonedaBinder.swift; sourceTree = "<group>"; };
+		11B72BA22F4268ED00FDA36A /* DcBindingsIos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DcBindingsIos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		11B72BA42F4268ED00FDA36A /* DcViewModels.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DcViewModels.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		11B72BA62F4268ED00FDA36A /* DcViewsIos.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DcViewsIos.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		11B72BA82F4268ED00FDA36A /* libFinexaCommonApple.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFinexaCommonApple.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		11B72BAA2F4268ED00FDA36A /* libFinexaViewsIos.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; path = libFinexaViewsIos.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		11B72BB32F426A3200FDA36A /* MonedasAppBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonedasAppBinder.swift; sourceTree = "<group>"; };
+		11B72BB52F426A3200FDA36A /* Finexa-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Finexa-Bridging-Header.h"; sourceTree = "<group>"; };
+		11B72BC62F42959100FDA36A /* TasasAppBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TasasAppBinder.swift; sourceTree = "<group>"; };
+		11B72BC72F42959100FDA36A /* EditorTasasAppBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorTasasAppBinder.swift; sourceTree = "<group>"; };
+		11B72BD82F42B20A00FDA36A /* OperacionesAppBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperacionesAppBinder.swift; sourceTree = "<group>"; };
+		11B72BD92F42B20A00FDA36A /* EditorOperacionesAppBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorOperacionesAppBinder.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,6 +67,11 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11B72BA92F4268ED00FDA36A /* libFinexaCommonApple.a in Frameworks */,
+				11B72BB12F4268FC00FDA36A /* DcViewsIos.framework in Frameworks */,
+				11B72BAB2F4268ED00FDA36A /* libFinexaViewsIos.a in Frameworks */,
+				11B72BAC2F4268F800FDA36A /* DcBindingsIos.framework in Frameworks */,
+				11B72BAF2F4268FA00FDA36A /* DcViewModels.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -42,6 +87,8 @@
 				114E601E2F421B1900A7770F /* LaunchScreen.storyboard */,
 				114E60212F421B1900A7770F /* Info.plist */,
 				114E60112F421B1700A7770F /* Products */,
+				11B72BA12F4268ED00FDA36A /* Frameworks */,
+				11B72BB52F426A3200FDA36A /* Finexa-Bridging-Header.h */,
 			);
 			sourceTree = "<group>";
 		};
@@ -56,9 +103,26 @@
 		114E602D2F421F3800A7770F /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				11B72BD92F42B20A00FDA36A /* EditorOperacionesAppBinder.swift */,
+				11B72BD82F42B20A00FDA36A /* OperacionesAppBinder.swift */,
+				11B72BC72F42959100FDA36A /* EditorTasasAppBinder.swift */,
+				11B72BC62F42959100FDA36A /* TasasAppBinder.swift */,
+				11B72BB32F426A3200FDA36A /* MonedasAppBinder.swift */,
 				114E60942F423FDD00A7770F /* EditorMonedaBinder.swift */,
 			);
 			path = Source;
+			sourceTree = "<group>";
+		};
+		11B72BA12F4268ED00FDA36A /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				11B72BA22F4268ED00FDA36A /* DcBindingsIos.framework */,
+				11B72BA42F4268ED00FDA36A /* DcViewModels.framework */,
+				11B72BA62F4268ED00FDA36A /* DcViewsIos.framework */,
+				11B72BA82F4268ED00FDA36A /* libFinexaCommonApple.a */,
+				11B72BAA2F4268ED00FDA36A /* libFinexaViewsIos.a */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -71,6 +135,7 @@
 				114E600C2F421B1700A7770F /* Sources */,
 				114E600D2F421B1700A7770F /* Frameworks */,
 				114E600E2F421B1700A7770F /* Resources */,
+				11B72BAE2F4268F800FDA36A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -131,8 +196,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11B72BDB2F42B20A00FDA36A /* EditorOperacionesAppBinder.swift in Sources */,
+				11B72BC92F42959200FDA36A /* EditorTasasAppBinder.swift in Sources */,
+				11B72BC82F42959200FDA36A /* TasasAppBinder.swift in Sources */,
+				11B72BDA2F42B20A00FDA36A /* OperacionesAppBinder.swift in Sources */,
 				114E60952F423FDD00A7770F /* EditorMonedaBinder.swift in Sources */,
 				114E60142F421B1700A7770F /* AppDelegate.swift in Sources */,
+				11B72BB42F426A3200FDA36A /* MonedasAppBinder.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -278,6 +348,14 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3Q8F29C4F5;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../Common/ViewModels/include\"",
+					"\"$(SRCROOT)/../../Common/Core/include\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/common\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/public_api/Core\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/public_api/UI\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/Compiler/apple\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -293,6 +371,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dandrealuisdeveloper.Finexa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Finexa-Bridging-Header.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -307,6 +387,14 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 3Q8F29C4F5;
 				GENERATE_INFOPLIST_FILE = YES;
+				HEADER_SEARCH_PATHS = (
+					"\"$(SRCROOT)/../../Common/ViewModels/include\"",
+					"\"$(SRCROOT)/../../Common/Core/include\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/common\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/public_api/Core\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/public_api/UI\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/Compiler/apple\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -322,6 +410,8 @@
 				PRODUCT_BUNDLE_IDENTIFIER = dandrealuisdeveloper.Finexa;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_OBJC_BRIDGING_HEADER = "Finexa-Bridging-Header.h";
+				SWIFT_OBJC_INTEROP_MODE = objcxx;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

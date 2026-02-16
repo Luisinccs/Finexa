@@ -30,3 +30,81 @@ En el pryecto Finexa/iOS/UITests/FinexaViewsIosUITests.xcodeproj, crea el mock p
 que tenga como nombre MonedasControllerMockBinder y que implemente el protocolo MonedasBinder.
 Has que cargue unas cuatro filas de monedas.
 Y modifica el app delegate para que se configure es controller con ese binder
+
+---
+
+Corrige el archivo Finexa/ViewModels/src/MonedasViewModel.cpp, en la función: void MonedasViewModel::setup(); para que cree las monedas con el constructor, ya que las propiedades son de solo lectira
+
+---
+
+Necesitamos crear el bridge header para el proyecto Finexa/ViewModels, para que lo pueda ver la app. Para quitar los errores de compilacion en la app
+
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/App/Source/MonedasAppBinder.swift:8:31 Cannot find type 'Finexa' in scope
+
+
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/App/Source/MonedasAppBinder.swift:21:30 Cannot find 'MonedasViewModel_monedasGridViewModel' in scope
+
+---
+
+Por que tengo estos errores de compilación en los headers de DcViewModels cuando intento compilar Finexa/iOS/App/Finexa.ios.xcodeproj
+
+---
+
+ahora tengo estos errores:
+
+/Users/luis_sonoma/Desarrollo/Finexa/Common/ViewModels/include/MonedasViewModel.hpp:3:10 'DcCommandViewModel.hpp' file not found
+
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/App/Finexa-Bridging-Header.h:5:9 failed to emit precompiled header '/Users/luis_sonoma/Library/Developer/Xcode/DerivedData/FinexaIos-gczdxffqbevabfgiylsabhxjywsb/Build/Intermediates.noindex/PrecompiledHeaders/Finexa-Bridging-Header-swift_7W837Q25KONZ-clang_3GA2UB82K8JAV.pch' for bridging header '/Users/luis_sonoma/Desarrollo/Finexa/iOS/App/Finexa-Bridging-Header.h'
+
+---
+
+Bien, empeoró la cosa, ahora tengo este error cuando compilo la librería comun Finexa/Common/ViewModels/FinexaViewModels.xcodeproj:
+
+/Users/luis_sonoma/Desarrollo/Finexa/Common/ViewModels/include/MonedasViewModel.hpp:3:10 'DcViewModels/DcCommandViewModel.hpp' file not found
+
+Por que no ves la aplicación Dual Components/DcViews/iOS/Tests/DcViewsIosTests.xcodeproj? allí aplicamos bien las relaciones de ensamblados y corria todo bien (esa es una app de prueba del framewrok dual components)
+
+---
+Hay un problema aquí:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/App/Source/EditorMonedaBinder.swift:27:26 Value of type 'HaloTextField' has no member 'setViewModel'
+
+A esa clase personalizada le falta el método setViewModel, pero tal ves con un nombre personalizado para no hacer shadow, algo como setHaloTextFieldViewModel
+
+---
+
+La aplicación compila bien ahora, tiene un par de advertencias:
+
+Object file (/Users/luis_sonoma/Library/Developer/Xcode/DerivedData/FinexaIos-gczdxffqbevabfgiylsabhxjywsb/Build/Products/Debug-iphonesimulator/libFinexaCommonApple.a[5](MonedasViewModel.o)) was built for newer 'iOS-simulator' version (17.5) than being linked (13.2)
+
+Object file (/Users/luis_sonoma/Library/Developer/Xcode/DerivedData/FinexaIos-gczdxffqbevabfgiylsabhxjywsb/Build/Products/Debug-iphonesimulator/libFinexaCommonApple.a[6](Moneda.o)) was built for newer 'iOS-simulator' version (17.5) than being linked (13.2)
+
+--- 
+
+Se limpiaron las advertencias, vamos ahora con los errores de comportamiento.
+Cuando haces click en una fila de una moneda (para editarla), se muestra el formulario en blanco (o si se habia agregado un registro con el formulario, se ven siempre los datos de ese registro). El deber ser es que se presente el editor con los datos de ese registro que se hace click, para actualizar esa moneda
+
+--- 
+Bien estoy tratando de compilar primero FinexaViewsIos.
+No me deja agregar la referencia al framework DcViewsIos por el mismo problema de la incompatibilidad con mac catalist. No estiendo por què, ya dejé DcViews solo para iphone y ipad.
+Otra cosa, recuerda que esa librería (FinexaViewsIos), no debe tener referencia alguna a DcBindings, esa asignación se hace en la propia aplicación.
+Solo necesita importar DcViewsIos para el combobox y el number field, que son controles personalizados
+
+---
+
+Bien, tengo este error de compilación:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/EditorTasaController.swift:2:8 Module 'DcViewsIos' was built with C++ interoperability enabled, but current compilation does not enable C++ interoperability
+La cuestión es que DcViewsIos tampoco necesitaria c++ interoperability, ya que solo tiene controles personalizados que no usan c++
+
+Vale la pena modificar DcViewsIos para que no use c++ interoperability? o incluirla en la librería FinexaViewsIos?
+
+---
+
+Bien, la aplicación ya compila y corre.
+Tengo varias situaciones:
+- Vi que incluiste un DcCombobox+Binder en la app; no entiendo por qué, si ya existe en la librería DcBindingsIos. (De todas maneras no lo incluí en el proyecto, y veo que los combobox no se comportan como tal deberían mostrar los valores de las monedas creadas).
+- El campo para la tasa debe ser un number field, no un text field, para aceptar solo números.
+- Busca iniciar el view model con tres registros de tasas para ver la grilla con datos.
+
+--- Tengo estos errores de compilación en la aplicación, pero te repito la pregunta, por qué estas haciendo un binder para los controles combobox y number field en la aplicacion, si tenemos esos binders en el framework DcBindingsIos? 
+
+--- Bien, ya compila otra vez; Sigo sin ver los datos de las monedas en la grilla, veo que las tasas se crean en el view model, pero no se reflejan en la grilla. 

@@ -34,6 +34,8 @@ TasasViewModel::TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core)
   cmdGuardarTasa()->setLabelText("Establecer Tasa");
   //        _cmdGuardarTasa->setLabelText("Establecer Tasa");
   cmdGuardarTasa()->setOnExecuted([this]() { this->guardarTasa(); });
+
+  inicializar();
 }
 
 // --- Implementación de accesores internos ---
@@ -54,10 +56,17 @@ void TasasViewModel::inicializar() {
   // DEBUG: Inject Test Data
   if (_core->getMonedas().empty()) {
     auto usd =
-        std::make_shared<Finexa::Moneda>(1, "USD", "USD", "Dolar Americano");
+        std::make_shared<Finexa::Moneda>(1, "USD", "$", "Dolar Americano");
     _core->registrarMoneda(usd);
-    auto ves = std::make_shared<Finexa::Moneda>(2, "VES", "VES", "Bolivar");
+    auto ves = std::make_shared<Finexa::Moneda>(2, "VES", "Bs", "Bolivar");
     _core->registrarMoneda(ves);
+    auto eur = std::make_shared<Finexa::Moneda>(3, "EUR", "E", "Euro");
+    _core->registrarMoneda(eur);
+
+    // Tasas iniciales (ejemplo)
+    _core->establecerTasa("USD", "VES", 50.0);
+    _core->establecerTasa("EUR", "USD", 1.10);
+    _core->establecerTasa("EUR", "VES", 55.0);
   }
 
   std::vector<DcComboBoxItem> items;

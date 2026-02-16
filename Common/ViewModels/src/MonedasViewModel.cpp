@@ -1,7 +1,7 @@
 #include "MonedasViewModel.hpp"
 #include <iostream>
 
-namespace DualComponents::TestHelpers {
+namespace Finexa::ViewModels {
 
 MonedasViewModel::MonedasViewModel() {
   // Init properties via macro-generated members
@@ -30,22 +30,13 @@ void MonedasViewModel::setup() {
   setupEditingLogic();
 
   // Initial Data
-  auto m1 = std::make_shared<Moneda>();
-  m1->nombre = "Dolar Estadounidense";
-  m1->simbolo = "$";
-  m1->siglas = "USD";
+  auto m1 = std::make_shared<Moneda>(1, "USD", "Dolar Estadounidense", "$");
   _monedas.push_back(m1);
 
-  auto m2 = std::make_shared<Moneda>();
-  m2->nombre = "Bolivar";
-  m2->simbolo = "Bs";
-  m2->siglas = "VES";
+  auto m2 = std::make_shared<Moneda>(2, "VES", "Bolivar", "Bs");
   _monedas.push_back(m2);
 
-  auto m3 = std::make_shared<Moneda>();
-  m3->nombre = "Euro";
-  m3->simbolo = "\u20AC"; // Euro symbol
-  m3->siglas = "EUR";
+  auto m3 = std::make_shared<Moneda>(3, "EUR", "Euro", "\u20AC");
   _monedas.push_back(m3);
 
   refreshRows();
@@ -90,9 +81,9 @@ void MonedasViewModel::setupEditingLogic() {
 
     if (item) {
       isNewItem = false;
-      _nombreViewModel->setText(item->nombre);
-      _simboloViewModel->setText(item->simbolo);
-      _siglasViewModel->setText(item->siglas);
+      _nombreViewModel->setText(item->getNombre());
+      _simboloViewModel->setText(item->getSimbolo());
+      _siglasViewModel->setText(item->getSiglas());
     } else {
       isNewItem = true;
       _nombreViewModel->setText("");
@@ -118,18 +109,15 @@ void MonedasViewModel::setupEditingLogic() {
     }
 
     if (isNewItem) {
-      auto newItem = std::make_shared<Moneda>();
-      newItem->nombre = nombre;
-      newItem->simbolo = simbolo;
-      newItem->siglas = siglas;
+      int nextId = _monedas.empty() ? 1 : _monedas.back()->getId() + 1;
+      auto newItem = std::make_shared<Moneda>(nextId, siglas, nombre, simbolo);
       _monedas.push_back(newItem);
     } else {
       int idx = _monedasGridViewModel->getSelectedIndex();
       if (idx >= 0 && idx < _monedas.size()) {
-        auto item = _monedas[idx];
-        item->nombre = nombre;
-        item->simbolo = simbolo;
-        item->siglas = siglas;
+        int currentId = _monedas[idx]->getId();
+        _monedas[idx] =
+            std::make_shared<Moneda>(currentId, siglas, nombre, simbolo);
       }
     }
 
@@ -166,9 +154,9 @@ void MonedasViewModel::refreshRows() {
     r.tag = item.get();
 
     // Columns: Nombre, Siglas, Simbolo, Acciones
-    r.cells.push_back(item->nombre);
-    r.cells.push_back(item->siglas);
-    r.cells.push_back(item->simbolo);
+    r.cells.push_back(item->getNombre());
+    r.cells.push_back(item->getSiglas());
+    r.cells.push_back(item->getSimbolo());
     r.cells.push_back(""); // Actions placeholder
 
     rows.push_back(r);
@@ -184,24 +172,24 @@ void MonedasViewModel::refreshRows() {
 // Accessor Implementations (Macro-based)
 // =========================================================
 
-IMPLEMENT_CONTROL_INTERNAL(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                            GRID_MONEDAS, Grid)
 
-IMPLEMENT_CONTROL_INTERNAL(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                            TXT_NOMBRE, Input)
-IMPLEMENT_CONTROL_INTERNAL(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                            TXT_SIMBOLO, Input)
-IMPLEMENT_CONTROL_INTERNAL(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                            TXT_SIGLAS, Input)
 
-IMPLEMENT_CONTROL_INTERNAL(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                            CMD_ACEPTAR, Command)
-IMPLEMENT_CONTROL_INTERNAL(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                            CMD_CANCELAR, Command)
-IMPLEMENT_CONTROL_INTERNAL(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                            CMD_ELIMINAR, Command)
 
-} // namespace DualComponents::TestHelpers
+} // namespace Finexa::ViewModels
 
 // =========================================================
 // C-Bridge Function Implementations
@@ -209,29 +197,29 @@ IMPLEMENT_CONTROL_INTERNAL(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
 
 extern "C" {
 
-IMPLEMENT_VIEWMODEL_LIFECYCLE(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL)
+IMPLEMENT_VIEWMODEL_LIFECYCLE(Finexa::ViewModels, MONEDAS_VIEW_MODEL)
 
 DC_BRIDGE_EXPORT void *MonedasViewModel_monedasGridViewModel(void *vmPtr) {
   if (!vmPtr)
     return nullptr;
   auto vm = *static_cast<
-      std::shared_ptr<DualComponents::TestHelpers::MonedasViewModel> *>(vmPtr);
+      std::shared_ptr<Finexa::ViewModels::MonedasViewModel> *>(vmPtr);
   auto *binding = vm->monedasGridViewModelBinding();
   return static_cast<IGridBinding *>(binding);
 }
 
-IMPLEMENT_CONTROL_BRIDGE(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_BRIDGE(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                          nombreViewModel)
-IMPLEMENT_CONTROL_BRIDGE(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_BRIDGE(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                          simboloViewModel)
-IMPLEMENT_CONTROL_BRIDGE(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_BRIDGE(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                          siglasViewModel)
 
-IMPLEMENT_CONTROL_BRIDGE(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_BRIDGE(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                          aceptarViewModel)
-IMPLEMENT_CONTROL_BRIDGE(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_BRIDGE(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                          cancelarViewModel)
-IMPLEMENT_CONTROL_BRIDGE(DualComponents::TestHelpers, MONEDAS_VIEW_MODEL,
+IMPLEMENT_CONTROL_BRIDGE(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                          eliminarViewModel)
 
 } // extern "C"
