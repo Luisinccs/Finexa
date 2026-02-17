@@ -9,13 +9,11 @@ public class OperacionesAppBinder: OperacionesBinder {
     private var viewModelPtr: Finexa.ViewModels.OperacionesViewModelPtr
     
     public var onDataChanged: (() -> Void)?
-    public var onLabelsChanged: ((String, String) -> Void)?
+    public var onTotalChanged: ((String) -> Void)?
     
-    // Cache for current label values
-    private var _refTitle: String = "Referencia: ..."
+    // Cache for current total value
     private var _totalTitle: String = "Total: ..."
     
-    public var referenceCurrencyTitle: String { return _refTitle }
     public var totalAmountTitle: String { return _totalTitle }
     
     public init() {
@@ -39,20 +37,7 @@ public class OperacionesAppBinder: OperacionesBinder {
                 }
             }
             
-            // 2. Bind Reference Currency Label
-            if let refLabelPtr = OperacionesViewModel_labelMonedaRef(rawPtr) {
-                 DcControl_BindLabelText(refLabelPtr, Unmanaged.passUnretained(self).toOpaque()) { ctx, str in
-                     guard let ctx = ctx, let s = str else { return }
-                     let text = String(cString: s)
-                     let binder = Unmanaged<OperacionesAppBinder>.fromOpaque(ctx).takeUnretainedValue()
-                     DispatchQueue.main.async {
-                         binder._refTitle = text
-                         binder.notifyLabels()
-                     }
-                 }
-            }
-            
-            // 3. Bind Total Label
+            // 2. Bind Total Label
             if let totalLabelPtr = OperacionesViewModel_labelTotal(rawPtr) {
                  DcControl_BindLabelText(totalLabelPtr, Unmanaged.passUnretained(self).toOpaque()) { ctx, str in
                      guard let ctx = ctx, let s = str else { return }
@@ -60,16 +45,26 @@ public class OperacionesAppBinder: OperacionesBinder {
                      let binder = Unmanaged<OperacionesAppBinder>.fromOpaque(ctx).takeUnretainedValue()
                      DispatchQueue.main.async {
                          binder._totalTitle = text
-                         binder.notifyLabels()
+                         binder.onTotalChanged?(text)
                      }
                  }
             }
         }
     }
     
-    private func notifyLabels() {
-        onLabelsChanged?(_refTitle, _totalTitle)
+    // MARK: - Bind Reference Currency ComboBox
+    
+    public func bindRefCurrencySelector(_ combo: DcComboBox) {
+        let vm = viewModelPtr
+        withUnsafePointer(to: vm) { vmPtr in
+            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            if let comboPtr = OperacionesViewModel_selectorMonedaRef(rawPtr) {
+                combo.setComboBoxViewModel(comboPtr)
+            }
+        }
     }
+    
+    // MARK: - Data Access
     
     public func numberOfRows() -> Int {
         var count: Int32 = 0
@@ -114,7 +109,6 @@ public class OperacionesAppBinder: OperacionesBinder {
         let vm = viewModelPtr
         withUnsafePointer(to: vm) { vmPtr in
              let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
-             // Call C++ method to load operation into editor
              OperacionesViewModel_cargarOperacion(rawPtr, Int32(row))
          }
     }
@@ -123,7 +117,6 @@ public class OperacionesAppBinder: OperacionesBinder {
         let vm = viewModelPtr
         withUnsafePointer(to: vm) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
-            // Call C++ method to clear editor
             OperacionesViewModel_limpiarEditor(rawPtr)
         }
     }
@@ -132,7 +125,6 @@ public class OperacionesAppBinder: OperacionesBinder {
         let vm = viewModelPtr
         withUnsafePointer(to: vm) { vmPtr in
              let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
-             // Select logic handles index, then delete
              OperacionesViewModel_cargarOperacion(rawPtr, Int32(row))
              
              if let cmdPtr = OperacionesViewModel_cmdEliminar(rawPtr) {

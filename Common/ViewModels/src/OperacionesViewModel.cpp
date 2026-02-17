@@ -1,4 +1,5 @@
 #include "../include/OperacionesViewModel.h"
+#include <cmath>
 #include <iomanip>
 #include <sstream>
 
@@ -29,7 +30,7 @@ OperacionesViewModel::OperacionesViewModel(
   _selectorMoneda = std::make_shared<DcComboBoxViewModel>();
   _cmdAgregar = std::make_shared<DcCommandViewModel>();
   _cmdEliminar = std::make_shared<DcCommandViewModel>();
-  _labelMonedaRef = std::make_shared<DcInputViewModel>();
+  _selectorMonedaRef = std::make_shared<DcComboBoxViewModel>();
   _labelTotal = std::make_shared<DcInputViewModel>();
   _labelMontoXds = std::make_shared<DcInputViewModel>();
 
@@ -37,7 +38,7 @@ OperacionesViewModel::OperacionesViewModel(
   configurarMonedasDinamicas();
 
   // Wiring re-calculation
-  _inputMonto->setOnValueChanged([this](double) { this->recalcularXds(); });
+  _inputMonto->setOnValueChanged([this](int64_t) { this->recalcularXds(); });
   _selectorMoneda->setOnSelectionChanged(
       [this](std::string) { this->recalcularXds(); });
 
@@ -58,7 +59,8 @@ IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_INPUT_MONTO, NumberField)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_SELECTOR_MONEDA, ComboBox)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_CMD_AGREGAR, Command)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_CMD_ELIMINAR, Command)
-IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_LABEL_MONEDA_REF, Input)
+IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_SELECTOR_MONEDA_REF,
+                           ComboBox)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_LABEL_TOTAL, Input)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_LABEL_MONTO_XDS, Input)
 
@@ -67,15 +69,45 @@ void OperacionesViewModel::configurarColumnas() {
       {"Concepto", 150, DcTextAlign::Left, DcColumnType::Text},
       {"Monto", 100, DcTextAlign::Right, DcColumnType::Number},
       {"Moneda", 80, DcTextAlign::Center, DcColumnType::Text},
-      {"Monto XDS", 120, DcTextAlign::Right, DcColumnType::Number}};
+      {"Monto Ref", 120, DcTextAlign::Right, DcColumnType::Number}};
   _gridOperaciones->setColumns(cols);
 }
 
 void OperacionesViewModel::inicializar() {
+  // Registrar monedas de prueba si el core está vacío
+  if (_core->getMonedas().empty()) {
+    _core->registrarMoneda(std::make_shared<Finexa::Moneda>(
+        1, "USD", "Dolar Estadounidense", "$"));
+    _core->registrarMoneda(
+        std::make_shared<Finexa::Moneda>(2, "VES", "Bolivar", "Bs"));
+    _core->registrarMoneda(
+        std::make_shared<Finexa::Moneda>(3, "EUR", "Euro", "\u20AC"));
+
+    // Tasas de prueba (pivote = VES)
+    _core->establecerTasa("VES", "USD", 36.50);
+    _core->establecerTasa("VES", "EUR", 40.00);
+  }
+
+  // Cargar items de los ComboBoxes de moneda
   std::vector<DcComboBoxItem> items;
   for (const auto &m : _core->getMonedas()) {
     items.push_back({m->getSiglas(), m->getSiglas()});
   }
+  _selectorMoneda->setItems(items);
+  _selectorMonedaRef->setItems(items);
+
+  // Seleccionar moneda referencial por defecto (primera moneda)
+  if (!items.empty()) {
+    _monedaRef = items[0].key;
+    _selectorMonedaRef->selectItemByKey(_monedaRef);
+  }
+
+  // Cuando cambia la moneda referencial, recalcular todo
+  _selectorMonedaRef->setOnSelectionChanged([this](std::string key) {
+    _monedaRef = key;
+    refrescarGrilla();
+    recalcularXds();
+  });
 
   // Configurar hooks de la grilla
   _gridOperaciones->setOnSelectionChanged(
@@ -83,33 +115,69 @@ void OperacionesViewModel::inicializar() {
 
   _gridOperaciones->setOnAddRequested([this]() { this->limpiarEditor(); });
 
-  // Configurar labels iniciales
-  auto monedaRef = _core->getSiglasPivote();
-  _labelMonedaRef->setLabelText("Referencia: " + monedaRef);
-
   refrescarGrilla();
 }
 
+// --- Helpers ---
+
+double OperacionesViewModel::getMontoDouble() {
+  int64_t raw = _inputMonto->getValue();
+  int dp = _inputMonto->getDecimalPlaces();
+  return static_cast<double>(raw) / std::pow(10, dp);
+}
+
+double OperacionesViewModel::convertir(double monto, const std::string &from,
+                                       const std::string &to) {
+  if (from == to)
+    return monto;
+
+  std::string pivote = _core->getSiglasPivote();
+
+  double tasaVesFrom = 1.0;
+  if (from != pivote) {
+    auto t = _core->buscarTasa(pivote, from);
+    if (!t)
+      return 0.0;
+    tasaVesFrom = t->getValor();
+  }
+
+  double tasaVesTo = 1.0;
+  if (to != pivote) {
+    auto t = _core->buscarTasa(pivote, to);
+    if (!t || t->getValor() == 0.0)
+      return 0.0;
+    tasaVesTo = t->getValor();
+  }
+
+  // Triangulación: monto(from) → VES → monto(to)
+  double montoVes = monto * tasaVesFrom;
+  return montoVes / tasaVesTo;
+}
+
+// --- Operaciones CRUD ---
+
 void OperacionesViewModel::agregarOperacion() {
   std::string concepto = _inputConcepto->getText();
-  double monto = _inputMonto->getValue();
+  double monto = getMontoDouble();
   std::string moneda = _selectorMoneda->getSelectedKey();
 
   if (!concepto.empty() && monto > 0 && !moneda.empty()) {
     auto m = _core->buscarMoneda(moneda);
     if (m) {
-      double xds = _core->convertirAXds(monto, moneda);
+      double montoRef = convertir(monto, moneda, _monedaRef);
 
-      if (_selectedIndex >= 0 && _selectedIndex < _operaciones.size()) {
+      if (_selectedIndex >= 0 &&
+          _selectedIndex < static_cast<int>(_operaciones.size())) {
         // Edición
         auto op = _operaciones[_selectedIndex];
         op->setConcepto(concepto);
         op->setMontoOriginal(monto);
         op->setMonedaOriginal(m);
-        op->setMontoXds(xds);
+        op->setMontoXds(montoRef);
       } else {
         // Nuevo
-        auto op = std::make_shared<Finexa::Operacion>(concepto, monto, m, xds);
+        auto op =
+            std::make_shared<Finexa::Operacion>(concepto, monto, m, montoRef);
         _operaciones.push_back(op);
       }
 
@@ -120,7 +188,8 @@ void OperacionesViewModel::agregarOperacion() {
 }
 
 void OperacionesViewModel::eliminarOperacion() {
-  if (_selectedIndex >= 0 && _selectedIndex < _operaciones.size()) {
+  if (_selectedIndex >= 0 &&
+      _selectedIndex < static_cast<int>(_operaciones.size())) {
     _operaciones.erase(_operaciones.begin() + _selectedIndex);
     limpiarEditor();
     refrescarGrilla();
@@ -128,52 +197,65 @@ void OperacionesViewModel::eliminarOperacion() {
 }
 
 void OperacionesViewModel::cargarOperacion(int index) {
-  if (index >= 0 && index < _operaciones.size()) {
+  if (index >= 0 && index < static_cast<int>(_operaciones.size())) {
     _selectedIndex = index;
     auto op = _operaciones[index];
 
     _inputConcepto->setText(op->getConcepto());
-    _inputMonto->setValue(op->getMontoOriginal());
+
+    // Convertir double a raw int64 para el NumberField
+    int dp = _inputMonto->getDecimalPlaces();
+    int64_t rawValue =
+        static_cast<int64_t>(op->getMontoOriginal() * std::pow(10, dp));
+    _inputMonto->setValue(rawValue);
+
     _selectorMoneda->selectItemByKey(op->getMonedaOriginal()->getSiglas());
 
     _cmdAgregar->setLabelText("Actualizar");
-    _cmdEliminar->setVisible(true); // Mostrar botón eliminar en edición
+    _cmdEliminar->setVisible(true);
   }
 }
 
 void OperacionesViewModel::limpiarEditor() {
   _selectedIndex = -1;
   _inputConcepto->setText("");
-  _inputMonto->setValue(0.0);
-  // Reset selector? Opcional
+  _inputMonto->setValue(0);
 
   _cmdAgregar->setLabelText("Registrar");
-  _cmdEliminar->setVisible(false); // Ocultar al limpiar (modo nuevo)
+  _cmdEliminar->setVisible(false);
 
   recalcularXds();
 }
 
 void OperacionesViewModel::refrescarGrilla() {
   std::vector<DcGridRow> rows;
-  double totalXds = 0.0;
+  double totalRef = 0.0;
 
   for (const auto &op : _operaciones) {
     DcGridRow row;
-    std::stringstream ssMonto, ssXds;
+    std::stringstream ssMonto, ssRef;
     ssMonto << std::fixed << std::setprecision(2) << op->getMontoOriginal();
-    ssXds << std::fixed << std::setprecision(2) << op->getMontoXds();
 
-    totalXds += op->getMontoXds();
+    // Convertir monto a moneda referencial
+    double montoRef =
+        convertir(op->getMontoOriginal(), op->getMonedaOriginal()->getSiglas(),
+                  _monedaRef);
+    ssRef << std::fixed << std::setprecision(2) << montoRef;
+    totalRef += montoRef;
+
+    // Actualizar el montoXds almacenado
+    op->setMontoXds(montoRef);
 
     row.cells = {op->getConcepto(), ssMonto.str(),
-                 op->getMonedaOriginal()->getSiglas(), ssXds.str()};
+                 op->getMonedaOriginal()->getSiglas(), ssRef.str()};
     rows.push_back(row);
   }
   _gridOperaciones->setRows(rows);
 
-  // Actualizar Total
+  // Actualizar Total con formato: Total(MONEDA): monto
   std::stringstream ssTotal;
-  ssTotal << "Total: " << std::fixed << std::setprecision(2) << totalXds;
+  ssTotal << "Total(" << _monedaRef << "): " << std::fixed
+          << std::setprecision(2) << totalRef;
   _labelTotal->setLabelText(ssTotal.str());
 }
 
@@ -187,15 +269,15 @@ void OperacionesViewModel::configurarMonedasDinamicas() {
 }
 
 void OperacionesViewModel::recalcularXds() {
-  double monto = _inputMonto->getValue();
+  double monto = getMontoDouble();
   std::string moneda = _selectorMoneda->getSelectedKey();
   std::string label = "REF: 0.00";
 
-  if (monto > 0 && !moneda.empty()) {
-    double xds = _core->convertirAXds(monto, moneda);
+  if (monto > 0 && !moneda.empty() && !_monedaRef.empty()) {
+    double montoRef = convertir(monto, moneda, _monedaRef);
     std::stringstream ss;
-    ss << "REF: " << std::fixed << std::setprecision(2) << xds << " "
-       << _core->getSiglasPivote();
+    ss << "REF: " << std::fixed << std::setprecision(2) << montoRef << " "
+       << _monedaRef;
     label = ss.str();
   }
   _labelMontoXds->setLabelText(label);
@@ -211,7 +293,7 @@ IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_INPUT_MONTO)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_SELECTOR_MONEDA)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_CMD_AGREGAR)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_CMD_ELIMINAR)
-IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_LABEL_MONEDA_REF)
+IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_SELECTOR_MONEDA_REF)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_LABEL_TOTAL)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_LABEL_MONTO_XDS)
 

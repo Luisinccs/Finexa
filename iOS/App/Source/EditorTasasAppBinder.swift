@@ -19,13 +19,13 @@ public class EditorTasasAppBinder: EditorTasaBinder {
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
             
             if let ptr = TasasViewModel_selectorBase(rawPtr) {
-                base.bindViewModel(ptr)
+                base.setComboBoxViewModel(ptr)
             }
             if let ptr = TasasViewModel_selectorDestino(rawPtr) {
-                destino.bindViewModel(ptr)
+                destino.setComboBoxViewModel(ptr)
             }
             if let ptr = TasasViewModel_inputValor(rawPtr) {
-                valor.bindViewModel(ptr)
+                valor.setNumberFieldViewModel(ptr)
             }
         }
     }

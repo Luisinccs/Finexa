@@ -6,7 +6,7 @@
 #define VM_SELECTOR_MONEDA selectorMoneda
 #define VM_CMD_AGREGAR cmdAgregar
 #define VM_CMD_ELIMINAR cmdEliminar
-#define VM_LABEL_MONEDA_REF labelMonedaRef
+#define VM_SELECTOR_MONEDA_REF selectorMonedaRef
 #define VM_LABEL_TOTAL labelTotal
 #define VM_LABEL_MONTO_XDS labelMontoXds
 
@@ -39,7 +39,7 @@ class OperacionesViewModel {
   DECLARE_CONTROL_BINDING(VM_SELECTOR_MONEDA, ComboBox)
   DECLARE_CONTROL_BINDING(VM_CMD_AGREGAR, Command)
   DECLARE_CONTROL_BINDING(VM_CMD_ELIMINAR, Command)
-  DECLARE_CONTROL_BINDING(VM_LABEL_MONEDA_REF, Input)
+  DECLARE_CONTROL_BINDING(VM_SELECTOR_MONEDA_REF, ComboBox)
   DECLARE_CONTROL_BINDING(VM_LABEL_TOTAL, Input)
   DECLARE_CONTROL_BINDING(VM_LABEL_MONTO_XDS, Input)
 
@@ -47,6 +47,7 @@ private:
   std::shared_ptr<Finexa::CalculadoraCore> _core;
   std::vector<std::shared_ptr<Finexa::Operacion>> _operaciones;
   int _selectedIndex = -1; // -1 indicates new operation
+  std::string _monedaRef;  // Moneda referencial seleccionada
 
 public:
   OperacionesViewModel(std::shared_ptr<Finexa::CalculadoraCore> core);
@@ -67,6 +68,9 @@ private:
   void configurarColumnas();
   void configurarMonedasDinamicas();
   void recalcularXds();
+  double getMontoDouble();
+  double convertir(double monto, const std::string &from,
+                   const std::string &to);
 };
 
 using OperacionesViewModelPtr = std::shared_ptr<OperacionesViewModel>;
@@ -82,9 +86,8 @@ DECLARE_CONTROL_BRIDGE(VM_INPUT_MONTO, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_SELECTOR_MONEDA, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_CMD_AGREGAR, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_CMD_ELIMINAR, OperacionesViewModel)
-DECLARE_CONTROL_BRIDGE(VM_LABEL_MONEDA_REF, OperacionesViewModel)
+DECLARE_CONTROL_BRIDGE(VM_SELECTOR_MONEDA_REF, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_LABEL_TOTAL, OperacionesViewModel)
-DECLARE_CONTROL_BRIDGE(VM_LABEL_MONTO_XDS, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_LABEL_MONTO_XDS, OperacionesViewModel)
 
 DC_BRIDGE_EXPORT void OperacionesViewModel_cargarOperacion(void *vmPtr,

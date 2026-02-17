@@ -1,57 +1,28 @@
-Si, vamos con la prueba de fuego, la aplicación web, la que consume la api common.
+Estoy intentando correr la aplicación Finexa/iOS/App/Finexa.ios.xcodeproj.
+Cuando presiono el botón de + en el OperacionesController.swift, tengo este error en tiempo de ejecución:
 
-Para ver la estrcutura de la aplicacion, debes ir un nivel arriba de la carpeta raiz de este repo y ve la carpeta DualComponents/DcViews/web/Tests/ allí se encuentra el index.html de la aplicación final, los js corerspondientes a los componentes de vistas (Que en este caso para esta aplicación serían OperacionesForm, TasasForm, etc...) Recuerda que la aplicación consume la api DualComponents/DcViews/web/Production/dc-views.js (la librería de componentes de la ui) y por supuesto la api common, que ya debe estar compilada. Tu trabajo es generar el index.html, los js corerspondientes a las vistas y el script  de construcción de la aplicación final. Para luego probarla con live-server.
+---
 
-Bien, el error continúa, te paso el capture.
-Un detalle tienes que saber, el archivo WebBindingsCore.hpp que ves en el directorio C:\Users\dandr\Desarrollo\Deploys\DcViewModels\Web\include no lo debes modificar directamente, ya que es una réplica para distribución, el original se encuentra en C:\Users\dandr\Desarrollo\DualComponents\DcViewModels\Web\src\WebBindingsCore.hpp y es el que debes modificar, y luego actualizas el archivo de la carpeta Deploys con una copia del original.
+Bien, ya funciona. Ahora tengo dos problemas inmediatos.
+El combobox de la moneda hay que cargarlos con datos.
+Los datos son contenidos en un vector como en el patrón que observas en 
+Dual Components/DcBindings/Tests/Common/Include/ComboBoxTestViewModel:
+using DcComboBoxItemList = std::vector<DcComboBoxItem>;
+DcComboBoxItemList _listaMonedas;
 
-Convienrte la librería Common/Compiler/Apple/FinexaCommonApple.xcodeproj en multiplataforma apple (macOS, iOS) y documenta los pasos que hiciste para lograrlo.
+Al final, se cargaran las monedas de la base de datos; por ahora, llena ese vector con tres monedas para prueba; puedes usar las mismas monedas que en el Finexa/Common/include/MonedasViewModel
 
-Distribution
+El segundo problema es que al aceptar la creación de una operación, no se actiualiza la grilla, se debe mostrar tambien el total actualizado; reflejado en la moneda referencial.
 
-Bien, vamos por partes entonces, para preparar la interfaz de DcViewModels. Lo primero entonces es modificar la esrtuctura de carpetas del directorio de salida.
+---
 
-├── Distribution/ (Carpeta de distribución de varias librerías)
-│   ├── DcViewModels/
-│   │   ├── Apple/
-│   │   │   ├── include/ (carpeta para los headers, puede ser comun para ambas configuraciones)
-│   │   │   │   ├── DcViewModels.h (umbrella header)
-│   │   │   │   ├── common/
-│   │   │   │   └── public_api/    
-│   │   │   ├── Debug/
-│   │   │   └── Release/
-│   │   └── web/ (salida de emscripten)
-│   └── DcViews/
-│       ├── Mac/ (Binarios de la libreria para macOS)
-│       └── ios/ (Binarios de la libreria para iOS)
-│
-├── DualComponents/ (Carpeta del proyecto con el código fuente y proyectos de xcode, vs, cmake...)
-│   ├── DcViewModels/   (Libreria de c++ comun a todas las plataformas)
-│   │   ├── include/
-│   │   ├── src/
-│   │   └── Compiler/   (Carpeta con los proyectos de compilación para cada plataforma)
-│   │       ├── Apple/
-│   │       │   └── DcViewModels.xcodeproj
-│   │       ├── Windows/
-│   │       └── Web/
-│   ├── DcViews/        (Librerias de componentes de interfaz de usuario especificos para cada plataforma)
-│   │   ├── ios/
-│   │   ├── mac/
-│   │   │   ├── Production
-│   │   │   │   └── DcViewsMac.xcodeproj (Librería a vincular con DcViewModels)
-│   │   │   └── Tests
-│   │   ├── windows/
-│   │   └── web/
+Bien, tengo ahora este problema;
+Agrega el primer registro (con problemas en las cifras, pero lo resolvemos despues); actualiza bien la lista de operaciones, pero cuando intentas crear un segundo registro, veo este error en tiempo de ejecución:
 
-Explicame las modificaciones que debo hacer para incluir el umbrella header y el module map. Para concretar la primera etapa Preparar la "Interfaz" en DcViewModels
+---
 
-La librería swift que estamos buscando desplegar ahora es DcViewsMac.xcodeproj
-
------
-
-Generame el archivo TasasController.swift en la carpeta Mac para el proyecto Mac/FinexaMac.x    xcodeproj. El controller debe consumir el viewModel de TasasViewModel.
-Toma como referencai el archivo ../DualComponents/DcViews/Mac/Tests/DcGridTestController.swift.
-Actualiza tambien el appDelegate.swift para que se cargue el controlador de tasas temporalmente par probarlo.
-
-
-using GridTestViewModelPtr = std::shared_ptr<GridTestViewModel>;
+Bien, ya funciona, hay que hacer algunas correcciones en el formato y la lógica:
+- Hay que colocar un selector para poder cambiar la moneda referencial para los cálculos. El actual lblReference.
+- El monto total debe actualizarce (expresado en la moneda referencial) cada vez que se agrega, edita o elimina una operación. Y debe verse Total(Moneda): Monto; (ej Total(USD): 100.00)
+- Hay un problema con las cifras reflejadas en la grilla; por ejemplo, si agrego 200$ en el formulario, se muestran 20000. 
+- En el formulario para editar las operaciones, tambien hay un label que muestra el monto en moneda refernecial (Ahora no se actualizad) hay que hacer que muestre el monto

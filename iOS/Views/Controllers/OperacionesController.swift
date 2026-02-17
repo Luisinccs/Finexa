@@ -8,7 +8,7 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
     private let tableView = UITableView()
     
     // Header & Footer
-    private let lblReference = UILabel()
+    private let cmbReference = DcComboBox()
     private let lblTotal = UILabel()
     private let headerView = UIView()
     private let footerView = UIView()
@@ -34,15 +34,16 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
             }
         }
         
-        self.binder?.onLabelsChanged = { [weak self] (ref, total) in
+        self.binder?.onTotalChanged = { [weak self] total in
             DispatchQueue.main.async {
-                self?.lblReference.text = ref
                 self?.lblTotal.text = total
             }
         }
         
+        // Bind ComboBox de moneda referencial
+        binder.bindRefCurrencySelector(cmbReference)
+        
         // Initial state
-        lblReference.text = binder.referenceCurrencyTitle
         lblTotal.text = binder.totalAmountTitle
     }
     
@@ -101,17 +102,26 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
     private func setupHeader() {
         headerView.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.1)
         
-        lblReference.font = .systemFont(ofSize: 18, weight: .bold)
-        lblReference.textColor = .label
-        lblReference.textAlignment = .right
+        let lblTitle = UILabel()
+        lblTitle.text = "Moneda Ref:"
+        lblTitle.font = .systemFont(ofSize: 14, weight: .semibold)
+        lblTitle.textColor = .secondaryLabel
+        lblTitle.setContentHuggingPriority(.required, for: .horizontal)
         
-        headerView.addSubview(lblReference)
-        lblReference.translatesAutoresizingMaskIntoConstraints = false
+        cmbReference.font = .systemFont(ofSize: 16, weight: .bold)
+        
+        let hStack = UIStackView(arrangedSubviews: [lblTitle, cmbReference])
+        hStack.axis = .horizontal
+        hStack.spacing = 8
+        hStack.alignment = .center
+        
+        headerView.addSubview(hStack)
+        hStack.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            lblReference.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
-            lblReference.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 20),
-            lblReference.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -20)
+            hStack.centerYAnchor.constraint(equalTo: headerView.centerYAnchor),
+            hStack.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 16),
+            hStack.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16)
         ])
     }
     
@@ -135,11 +145,10 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
     // MARK: - Actions
     
     @objc private func onAdd() {
-        binder?.requestAdd()
-        openEditForm()
+        openEditForm(thenPrepareNew: true)
     }
     
-    private func openEditForm() {
+    private func openEditForm(thenPrepareNew: Bool = false) {
         guard let editorBinder = binder?.getEditorBinder() else { return }
         
         let editVC = EditorOperacionController()
@@ -147,7 +156,16 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
         
         let nav = UINavigationController(rootViewController: editVC)
         nav.modalPresentationStyle = .fullScreen
-        present(nav, animated: true, completion: nil)
+        
+        // Forzar viewDidLoad → setupBindings() para que los callbacks C++
+        // apunten a los nuevos controles ANTES de llamar requestAdd()
+        editVC.loadViewIfNeeded()
+        
+        present(nav, animated: true) { [weak self] in
+            if thenPrepareNew {
+                self?.binder?.requestAdd()
+            }
+        }
     }
     
     // MARK: - UITableViewDataSource
@@ -174,8 +192,20 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
         
-        binder?.selectRow(at: indexPath.row)
-        openEditForm()
+        let row = indexPath.row
+        guard let editorBinder = binder?.getEditorBinder() else { return }
+        
+        let editVC = EditorOperacionController()
+        editVC.configure(with: editorBinder)
+        
+        let nav = UINavigationController(rootViewController: editVC)
+        nav.modalPresentationStyle = .fullScreen
+        
+        editVC.loadViewIfNeeded()
+        
+        present(nav, animated: true) { [weak self] in
+            self?.binder?.selectRow(at: row)
+        }
     }
     
     public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
