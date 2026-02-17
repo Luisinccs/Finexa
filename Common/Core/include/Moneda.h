@@ -18,14 +18,18 @@ namespace Finexa {
     class Moneda {
     private:
         int id;
+        std::string uuid;
         std::string siglas;
         std::string nombre;
         std::string simbolo;
 
     public:
         Moneda(int id, std::string siglas, std::string nombre, std::string simbolo);
+        Moneda(std::string uuid, int id, std::string siglas, std::string nombre, std::string simbolo);
 
         int getId() const;
+        std::string getUuid() const;
+        void setUuid(const std::string& newUuid);
         std::string getSiglas() const;
         std::string getNombre() const;
         std::string getSimbolo() const;

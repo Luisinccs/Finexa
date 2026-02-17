@@ -13,6 +13,10 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
     private let headerView = UIView()
     private let footerView = UIView()
     
+    /// Closure invoked when a menu option is selected.
+    /// Key values: "tasas", "monedas"
+    public var onMenuOptionSelected: ((String) -> Void)?
+    
     // MARK: - Init
     
     public init() {
@@ -68,7 +72,11 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
         title = "Operaciones"
         view.backgroundColor = .systemBackground
         
-        // Add Button
+        // Hamburger Menu Button (left)
+        let menuImage = UIImage(systemName: "line.3.horizontal")
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: menuImage, style: .plain, target: self, action: #selector(onMenuTapped))
+        
+        // Add Button (right)
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onAdd))
         
         // TableView
@@ -146,6 +154,27 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
     
     @objc private func onAdd() {
         openEditForm(thenPrepareNew: true)
+    }
+    
+    @objc private func onMenuTapped() {
+        let alert = UIAlertController(title: "Menú", message: nil, preferredStyle: .actionSheet)
+        
+        alert.addAction(UIAlertAction(title: "💱 Tasas de Cambio", style: .default) { [weak self] _ in
+            self?.onMenuOptionSelected?("tasas")
+        })
+        
+        alert.addAction(UIAlertAction(title: "💰 Monedas", style: .default) { [weak self] _ in
+            self?.onMenuOptionSelected?("monedas")
+        })
+        
+        alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel))
+        
+        // iPad popover anchor
+        if let popover = alert.popoverPresentationController {
+            popover.barButtonItem = navigationItem.leftBarButtonItem
+        }
+        
+        present(alert, animated: true)
     }
     
     private func openEditForm(thenPrepareNew: Bool = false) {

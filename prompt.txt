@@ -26,3 +26,8 @@ Bien, ya funciona, hay que hacer algunas correcciones en el formato y la lógica
 - El monto total debe actualizarce (expresado en la moneda referencial) cada vez que se agrega, edita o elimina una operación. Y debe verse Total(Moneda): Monto; (ej Total(USD): 100.00)
 - Hay un problema con las cifras reflejadas en la grilla; por ejemplo, si agrego 200$ en el formulario, se muestran 20000. 
 - En el formulario para editar las operaciones, tambien hay un label que muestra el monto en moneda refernecial (Ahora no se actualizad) hay que hacer que muestre el monto
+
+---
+
+Colócale en la barra de navagación al lado izquierdo, el ícono de hamburguesa para que se muestre el menú con las opciones. Por ahora solo la de mostrar la sección de tasas y la sección de monedas.
+Luego a acad una de esas secciones (MonedasController y TasasController), hay que agregarle el botón de volver tambien en la esquina superior izquierda para regresar a la sección de operaciones.

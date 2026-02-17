@@ -13,26 +13,33 @@
 #include <string>
 
 namespace Finexa {
-    /**
-     * @class TasaDeCambio
-     * @brief Representa la paridad cambiaria entre una moneda base y una moneda de cotizacion.
-     */
-    class TasaDeCambio {
-    private:
-        std::shared_ptr<Moneda> monedaBase;
-        std::shared_ptr<Moneda> monedaDestino;
-        double valor;
+/**
+ * @class TasaDeCambio
+ * @brief Representa la paridad cambiaria entre una moneda base y una moneda de
+ * cotizacion.
+ */
+class TasaDeCambio {
+private:
+  std::string uuid;
+  std::shared_ptr<Moneda> monedaBase;
+  std::shared_ptr<Moneda> monedaDestino;
+  double valor;
 
-    public:
-        TasaDeCambio(std::shared_ptr<Moneda> base, std::shared_ptr<Moneda> destino, double valor);
+public:
+  TasaDeCambio(std::shared_ptr<Moneda> base, std::shared_ptr<Moneda> destino,
+               double valor);
+  TasaDeCambio(std::string uuid, std::shared_ptr<Moneda> base,
+               std::shared_ptr<Moneda> destino, double valor);
 
-        std::shared_ptr<Moneda> getBase() const;
-        std::shared_ptr<Moneda> getDestino() const;
-        double getValor() const;
-        
-        void setValor(double nuevoValor);
-        std::string getParidad() const;
-    };
-}
+  std::string getUuid() const;
+  void setUuid(const std::string &newUuid);
+  std::shared_ptr<Moneda> getBase() const;
+  std::shared_ptr<Moneda> getDestino() const;
+  double getValor() const;
+
+  void setValor(double nuevoValor);
+  std::string getParidad() const;
+};
+} // namespace Finexa
 
 #endif

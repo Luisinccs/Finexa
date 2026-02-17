@@ -2,39 +2,42 @@
 
 namespace Finexa {
 
-    Operacion::Operacion(std::string concepto, double monto, std::shared_ptr<Moneda> moneda, double xds)
-        : concepto(concepto), montoOriginal(monto), monedaOriginal(moneda), montoXds(xds) {}
+Operacion::Operacion(std::string concepto, double monto,
+                     std::shared_ptr<Moneda> moneda, double xds)
+    : concepto(concepto), montoOriginal(monto), monedaOriginal(moneda),
+      montoXds(xds) {}
 
-    std::string Operacion::getConcepto() const {
-        return concepto;
-    }
+Operacion::Operacion(std::string uuid, std::string concepto, double monto,
+                     std::shared_ptr<Moneda> moneda, double xds)
+    : uuid(uuid), concepto(concepto), montoOriginal(monto),
+      monedaOriginal(moneda), montoXds(xds) {}
 
-    double Operacion::getMontoOriginal() const {
-        return montoOriginal;
-    }
+std::string Operacion::getUuid() const { return uuid; }
 
-    std::shared_ptr<Moneda> Operacion::getMonedaOriginal() const {
-        return monedaOriginal;
-    }
+void Operacion::setUuid(const std::string &newUuid) { uuid = newUuid; }
 
-    double Operacion::getMontoXds() const {
-        return montoXds;
-    }
+std::string Operacion::getConcepto() const { return concepto; }
 
-    void Operacion::setConcepto(const std::string& nuevoConcepto) {
-        concepto = nuevoConcepto;
-    }
+double Operacion::getMontoOriginal() const { return montoOriginal; }
 
-    void Operacion::setMontoOriginal(double nuevoMonto) {
-        montoOriginal = nuevoMonto;
-    }
-
-    void Operacion::setMonedaOriginal(std::shared_ptr<Moneda> nuevaMoneda) {
-        monedaOriginal = nuevaMoneda;
-    }
-
-    void Operacion::setMontoXds(double nuevoXds) {
-        montoXds = nuevoXds;
-    }
-
+std::shared_ptr<Moneda> Operacion::getMonedaOriginal() const {
+  return monedaOriginal;
 }
+
+double Operacion::getMontoXds() const { return montoXds; }
+
+void Operacion::setConcepto(const std::string &nuevoConcepto) {
+  concepto = nuevoConcepto;
+}
+
+void Operacion::setMontoOriginal(double nuevoMonto) {
+  montoOriginal = nuevoMonto;
+}
+
+void Operacion::setMonedaOriginal(std::shared_ptr<Moneda> nuevaMoneda) {
+  monedaOriginal = nuevaMoneda;
+}
+
+void Operacion::setMontoXds(double nuevoXds) { montoXds = nuevoXds; }
+
+} // namespace Finexa
