@@ -31,3 +31,57 @@ Bien, ya funciona, hay que hacer algunas correcciones en el formato y la lógica
 
 Colócale en la barra de navagación al lado izquierdo, el ícono de hamburguesa para que se muestre el menú con las opciones. Por ahora solo la de mostrar la sección de tasas y la sección de monedas.
 Luego a acad una de esas secciones (MonedasController y TasasController), hay que agregarle el botón de volver tambien en la esquina superior izquierda para regresar a la sección de operaciones.
+
+---
+
+Bien, tengo este error de compilación en la aplicación:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/App/AppDelegate.swift:16:13 Cannot find 'Finexa_DatabaseInitializer_setup' in scope
+
+---
+
+Bien, vamos a trabajar con la base de datos ahora.
+- Quita de los view models: MonedasViewModel y TasasViewModel, los datos en memoria en la funcion setup, para cargar los datos desde la base de datos.
+
+- Agrega dos botones (solo modo Dios, para mi cuando hago pruebas), uno para cargar datos mock y otro para borrar la base de datos.
+
+---
+
+Tengo estos errores de compilación,
+/Users/luis_sonoma/Desarrollo/Finexa/Common/ViewModels/src/MonedasViewModel.cpp:124:29 No member named 'setNombre' in 'Finexa::Moneda'
+/Users/luis_sonoma/Desarrollo/Finexa/Common/ViewModels/src/MonedasViewModel.cpp:125:29 No member named 'setSimbolo' in 'Finexa::Moneda'
+/Users/luis_sonoma/Desarrollo/Finexa/Common/ViewModels/src/MonedasViewModel.cpp:126:29 No member named 'setSiglas' in 'Finexa::Moneda'
+
+Supongo que es porque las monedas en la defición las hemos hecho de solo lectura; vamos a modificarlas para que se puedan modificar sus datos, agregandoles esos accesores y confirmando en la lógica que se puedan modificar.
+
+Otra cosa, en el caso de las tasas, solo se debe modificar el valor de la tasa a la hora de modificar el registro, no se pueden modificar las monedas; es decir, los selectores de monedas del formulario pasarian a estas inhabilitados para edición.
+
+Otra cosa mas, en el el mismo formulario de tasas, ya no guarda un texto, sino una referencia a la moneda completa (su id), en ambas monedas
+
+---
+
+Tengo este error de compilación en la librería common:
+/Users/luis_sonoma/Desarrollo/Finexa/Common/Core/src/CalculadoraCore.cpp:203:13 Use of undeclared identifier 'DualComponents'
+
+---
+
+Vamos a trabajar los empty states. 
+
+Comencemos por las monedas.
+Como se requiere al menos una moneda para agregar operaciones y la aplicación arranca en la sección de operaciones; Cuando la aplicación arranca sin monedas creadas, hay que dirigirla al editor de monedas; y al agregar la primera moneda, debe volver a la sección de operaciones.
+
+Antes de mostrar el editor de moneda para crear esa primera moneda, se le debe mostrar un mensaje de bienvenida indicando que se debe crear al menos una moneda para poder agregar operaciones.
+
+---
+
+vamos ahora por la sección de operaciones.
+- No se debe mostrar el total si no hay operaciones.
+- Se debe mostrar un coach mark para indicar que se debe selecionar una moneda base (Reemplacemos el nombre y el concepto de moneda referencial por moneda base).
+- Luego de seleccionada la moneda, se debe mostrar un coach mark para indicar que se debe agregar una operación.
+
+--- Tengo estos errores de compilación en la librería FinexaViewsIos:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/MonedasController.swift:109:24 Invalid redeclaration of 'onAdd()'
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/MonedasController.swift:117:18 Invalid redeclaration of 'openEditForm()'
+
+---
+
+Perfecto, ya corre bien, pero recuerda que debe dirigir directamente al formulario editor de moneda, no a la sección de monedas.

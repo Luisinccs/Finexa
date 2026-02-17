@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		11152E8C2F44FAAA00DF271E /* DcDataAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11152E8B2F44FAAA00DF271E /* DcDataAccess.framework */; };
+		11152E982F44FAFF00DF271E /* DatabaseInitializer.h in Headers */ = {isa = PBXBuildFile; fileRef = 11152E8D2F44FAFF00DF271E /* DatabaseInitializer.h */; };
+		11152E992F44FAFF00DF271E /* MonedaRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = 11152E8E2F44FAFF00DF271E /* MonedaRepository.h */; };
+		11152E9A2F44FAFF00DF271E /* OperacionRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = 11152E8F2F44FAFF00DF271E /* OperacionRepository.h */; };
+		11152E9B2F44FAFF00DF271E /* TasaRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = 11152E902F44FAFF00DF271E /* TasaRepository.h */; };
+		11152E9C2F44FAFF00DF271E /* DatabaseInitializer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11152E922F44FAFF00DF271E /* DatabaseInitializer.cpp */; };
+		11152E9D2F44FAFF00DF271E /* MonedaRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11152E932F44FAFF00DF271E /* MonedaRepository.cpp */; };
+		11152E9E2F44FAFF00DF271E /* OperacionRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11152E942F44FAFF00DF271E /* OperacionRepository.cpp */; };
+		11152E9F2F44FAFF00DF271E /* TasaRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11152E952F44FAFF00DF271E /* TasaRepository.cpp */; };
 		112A4EEE2F3015C600A6CF06 /* CalculadoraCore.h in Headers */ = {isa = PBXBuildFile; fileRef = 112A4EE32F3015C600A6CF06 /* CalculadoraCore.h */; };
 		112A4EEF2F3015C600A6CF06 /* Moneda.h in Headers */ = {isa = PBXBuildFile; fileRef = 112A4EE42F3015C600A6CF06 /* Moneda.h */; };
 		112A4EF02F3015C600A6CF06 /* Operacion.h in Headers */ = {isa = PBXBuildFile; fileRef = 112A4EE52F3015C600A6CF06 /* Operacion.h */; };
@@ -26,6 +35,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		11152E8B2F44FAAA00DF271E /* DcDataAccess.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DcDataAccess.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		11152E8D2F44FAFF00DF271E /* DatabaseInitializer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DatabaseInitializer.h; sourceTree = "<group>"; };
+		11152E8E2F44FAFF00DF271E /* MonedaRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonedaRepository.h; sourceTree = "<group>"; };
+		11152E8F2F44FAFF00DF271E /* OperacionRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OperacionRepository.h; sourceTree = "<group>"; };
+		11152E902F44FAFF00DF271E /* TasaRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TasaRepository.h; sourceTree = "<group>"; };
+		11152E922F44FAFF00DF271E /* DatabaseInitializer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DatabaseInitializer.cpp; sourceTree = "<group>"; };
+		11152E932F44FAFF00DF271E /* MonedaRepository.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonedaRepository.cpp; sourceTree = "<group>"; };
+		11152E942F44FAFF00DF271E /* OperacionRepository.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OperacionRepository.cpp; sourceTree = "<group>"; };
+		11152E952F44FAFF00DF271E /* TasaRepository.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TasaRepository.cpp; sourceTree = "<group>"; };
 		112A4EDC2F300C2800A6CF06 /* libFinexaCommonApple.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libFinexaCommonApple.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		112A4EE32F3015C600A6CF06 /* CalculadoraCore.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CalculadoraCore.h; sourceTree = "<group>"; };
 		112A4EE42F3015C600A6CF06 /* Moneda.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Moneda.h; sourceTree = "<group>"; };
@@ -51,15 +69,49 @@
 			buildActionMask = 2147483647;
 			files = (
 				112A4F072F3015FE00A6CF06 /* DcViewModels.framework in Frameworks */,
+				11152E8C2F44FAAA00DF271E /* DcDataAccess.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		11152E912F44FAFF00DF271E /* include */ = {
+			isa = PBXGroup;
+			children = (
+				11152E8D2F44FAFF00DF271E /* DatabaseInitializer.h */,
+				11152E8E2F44FAFF00DF271E /* MonedaRepository.h */,
+				11152E8F2F44FAFF00DF271E /* OperacionRepository.h */,
+				11152E902F44FAFF00DF271E /* TasaRepository.h */,
+			);
+			path = include;
+			sourceTree = "<group>";
+		};
+		11152E962F44FAFF00DF271E /* src */ = {
+			isa = PBXGroup;
+			children = (
+				11152E922F44FAFF00DF271E /* DatabaseInitializer.cpp */,
+				11152E932F44FAFF00DF271E /* MonedaRepository.cpp */,
+				11152E942F44FAFF00DF271E /* OperacionRepository.cpp */,
+				11152E952F44FAFF00DF271E /* TasaRepository.cpp */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
+		11152E972F44FAFF00DF271E /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				11152E912F44FAFF00DF271E /* include */,
+				11152E962F44FAFF00DF271E /* src */,
+			);
+			name = Data;
+			path = ../../Data;
+			sourceTree = "<group>";
+		};
 		112A4ED32F300C2800A6CF06 = {
 			isa = PBXGroup;
 			children = (
+				11152E972F44FAFF00DF271E /* Data */,
 				112A4EED2F3015C600A6CF06 /* Core */,
 				112A4EFE2F3015D000A6CF06 /* ViewModels */,
 				112A4EDD2F300C2800A6CF06 /* Products */,
@@ -141,6 +193,7 @@
 		112A4F052F3015FE00A6CF06 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				11152E8B2F44FAAA00DF271E /* DcDataAccess.framework */,
 				112A4F062F3015FE00A6CF06 /* DcViewModels.framework */,
 			);
 			name = Frameworks;
@@ -153,14 +206,18 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11152E992F44FAFF00DF271E /* MonedaRepository.h in Headers */,
 				11B72BDD2F42B5DC00FDA36A /* OperacionesViewModel.h in Headers */,
 				112A4EF02F3015C600A6CF06 /* Operacion.h in Headers */,
+				11152E9B2F44FAFF00DF271E /* TasaRepository.h in Headers */,
 				112A4EF12F3015C600A6CF06 /* TasaDeCambio.h in Headers */,
 				11B72BBA2F427BBA00FDA36A /* FinexaViewModels.h in Headers */,
 				112A4EEF2F3015C600A6CF06 /* Moneda.h in Headers */,
+				11152E9A2F44FAFF00DF271E /* OperacionRepository.h in Headers */,
 				112A4EEE2F3015C600A6CF06 /* CalculadoraCore.h in Headers */,
 				11B72BB62F426AA600FDA36A /* MonedasViewModel.hpp in Headers */,
 				11B72BCB2F42960700FDA36A /* TasasViewModel.h in Headers */,
+				11152E982F44FAFF00DF271E /* DatabaseInitializer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -221,12 +278,16 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11152E9F2F44FAFF00DF271E /* TasaRepository.cpp in Sources */,
 				112A4EF42F3015C600A6CF06 /* Operacion.cpp in Sources */,
+				11152E9C2F44FAFF00DF271E /* DatabaseInitializer.cpp in Sources */,
+				11152E9E2F44FAFF00DF271E /* OperacionRepository.cpp in Sources */,
 				11B72BCD2F42961800FDA36A /* TasasViewModel.cpp in Sources */,
 				112A4EF22F3015C600A6CF06 /* CalculadoraCore.cpp in Sources */,
 				112A4EF52F3015C600A6CF06 /* TasaDeCambio.cpp in Sources */,
 				11B72BDF2F42B5E900FDA36A /* OperacionesViewModel.cpp in Sources */,
 				11B72BB82F426AAE00FDA36A /* MonedasViewModel.cpp in Sources */,
+				11152E9D2F44FAFF00DF271E /* MonedaRepository.cpp in Sources */,
 				112A4EF32F3015C600A6CF06 /* Moneda.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -365,6 +426,10 @@
 					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/common\"",
 					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/public_api/Core\"",
 					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/public_api/UI\"",
+					"\"$(SRCROOT)/../../../../DualComponents/DcDataAccess/Core/include\"",
+					"\"$(SRCROOT)/../../../../DualComponents/DcDataAccess/Platform/SQLite/include\"",
+					"\"$(SRCROOT)/../../Core/include\"",
+					"\"$(SRCROOT)/../../ViewModels/include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -381,6 +446,10 @@
 					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/common\"",
 					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/public_api/Core\"",
 					"\"$(SRCROOT)/../../../../DualComponents/DcViewModels/include/public_api/UI\"",
+					"\"$(SRCROOT)/../../../../DualComponents/DcDataAccess/Core/include\"",
+					"\"$(SRCROOT)/../../../../DualComponents/DcDataAccess/Platform/SQLite/include\"",
+					"\"$(SRCROOT)/../../Core/include\"",
+					"\"$(SRCROOT)/../../ViewModels/include\"",
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;

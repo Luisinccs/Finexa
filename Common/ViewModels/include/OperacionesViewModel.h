@@ -43,6 +43,10 @@ class OperacionesViewModel {
   DECLARE_CONTROL_BINDING(VM_LABEL_TOTAL, Input)
   DECLARE_CONTROL_BINDING(VM_LABEL_MONTO_XDS, Input)
 
+  // God Mode Commands
+  DECLARE_CONTROL_BINDING(cmdCargarMock, Command)
+  DECLARE_CONTROL_BINDING(cmdLimpiarDB, Command)
+
 private:
   std::shared_ptr<Finexa::CalculadoraCore> _core;
   std::vector<std::shared_ptr<Finexa::Operacion>> _operaciones;
@@ -63,6 +67,9 @@ public:
   void cargarOperacion(int index);
   void limpiarEditor();
   void refrescarGrilla();
+
+  bool tieneMonedas();          // Helper for Empty State
+  bool isRefCurrencySelected(); // Helper for Coach Marks
 
 private:
   void configurarColumnas();
@@ -90,7 +97,11 @@ DECLARE_CONTROL_BRIDGE(VM_SELECTOR_MONEDA_REF, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_LABEL_TOTAL, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_LABEL_MONTO_XDS, OperacionesViewModel)
 
+DECLARE_CONTROL_BRIDGE(cmdCargarMock, OperacionesViewModel)
+DECLARE_CONTROL_BRIDGE(cmdLimpiarDB, OperacionesViewModel)
+
 DC_BRIDGE_EXPORT void OperacionesViewModel_cargarOperacion(void *vmPtr,
                                                            int index);
 DC_BRIDGE_EXPORT void OperacionesViewModel_limpiarEditor(void *vmPtr);
+DC_BRIDGE_EXPORT bool OperacionesViewModel_tieneMonedas(void *vmPtr);
 }

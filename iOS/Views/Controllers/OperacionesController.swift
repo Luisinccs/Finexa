@@ -111,7 +111,7 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
         headerView.backgroundColor = UIColor.systemBlue.withAlphaComponent(0.1)
         
         let lblTitle = UILabel()
-        lblTitle.text = "Moneda Ref:"
+        lblTitle.text = "Moneda Base:" // Renamed from Moneda Ref
         lblTitle.font = .systemFont(ofSize: 14, weight: .semibold)
         lblTitle.textColor = .secondaryLabel
         lblTitle.setContentHuggingPriority(.required, for: .horizontal)
@@ -132,6 +132,108 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
             hStack.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -16)
         ])
     }
+    
+    // ... (rest of setupFooter and methods)
+
+    // MARK: - Empty State & Coach Marks
+    
+    private var coachMarkView: UIView?
+    
+    private func checkEmptyState() {
+        guard let binder = binder else { return }
+        
+        // 1. Check Currencies
+        if !binder.hasCurrencies {
+            // Welcome & Redirect
+            let alert = UIAlertController(title: "Bienvenido a Finexa", message: "Para comenzar a registrar operaciones, primero debes crear al menos una moneda.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "Ir a Monedas", style: .default) { [weak self] _ in
+                self?.onMenuOptionSelected?("monedas_empty")
+            })
+            present(alert, animated: true)
+            return
+        }
+        
+        // 2. Check Operations
+        if binder.numberOfRows() == 0 {
+            lblTotal.isHidden = true
+            
+            if !binder.isRefCurrencySelected {
+                showCoachMark(message: "👆 Selecciona una Moneda Base para comenzar", target: cmbReference)
+            } else {
+                 // Target Add Button (Right Bar Button Item)
+                 // We need a view for the bar button item.
+                 if let view = navigationItem.rightBarButtonItem?.value(forKey: "view") as? UIView {
+                     showCoachMark(message: "👆 Agrega tu primera operación", target: view)
+                 } else {
+                     // Fallback if view not found (unlikely but possible)
+                     showCoachMark(message: "👆 Agrega tu primera operación (Botón +)", target: cmbReference)
+                 }
+            }
+        } else {
+            lblTotal.isHidden = false
+            hideCoachMark()
+        }
+        
+        // Additional Coach Mark logic for "Add Operation" could go here
+        // If Base is selected (how to check? combo has selection? 
+        // We might need to listen to combo changes or bind it)
+        // For now, simpler empty state is implemented.
+    }
+    
+    private func showCoachMark(message: String, target: UIView) {
+        hideCoachMark()
+        
+        let container = UIView()
+        container.backgroundColor = UIColor.systemYellow
+        container.layer.cornerRadius = 8
+        container.layer.shadowColor = UIColor.black.cgColor
+        container.layer.shadowOpacity = 0.2
+        container.layer.shadowOffset = CGSize(width: 0, height: 2)
+        
+        let lbl = UILabel()
+        lbl.text = message
+        lbl.font = .systemFont(ofSize: 14, weight: .medium)
+        lbl.textColor = .black
+        lbl.numberOfLines = 0
+        
+        container.addSubview(lbl)
+        lbl.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(container)
+        container.translatesAutoresizingMaskIntoConstraints = false
+        self.coachMarkView = container
+        
+        NSLayoutConstraint.activate([
+            lbl.topAnchor.constraint(equalTo: container.topAnchor, constant: 8),
+            lbl.bottomAnchor.constraint(equalTo: container.bottomAnchor, constant: -8),
+            lbl.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 12),
+            lbl.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -12),
+            
+            container.topAnchor.constraint(equalTo: target.bottomAnchor, constant: 8),
+            container.leadingAnchor.constraint(equalTo: target.leadingAnchor),
+            container.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
+        ])
+        
+        // Animation
+        container.transform = CGAffineTransform(translationX: 0, y: -10)
+        container.alpha = 0
+        UIView.animate(withDuration: 0.3) {
+            container.transform = .identity
+            container.alpha = 1
+        }
+    }
+    
+    private func hideCoachMark() {
+        coachMarkView?.removeFromSuperview()
+        coachMarkView = nil
+    }
+
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        checkEmptyState()
+    }
+    
+    // ...
     
     private func setupFooter() {
         footerView.backgroundColor = UIColor.systemGreen.withAlphaComponent(0.1)
@@ -165,6 +267,15 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
         
         alert.addAction(UIAlertAction(title: "💰 Monedas", style: .default) { [weak self] _ in
             self?.onMenuOptionSelected?("monedas")
+        })
+        
+        // God Mode
+        alert.addAction(UIAlertAction(title: "🛠️ Cargar Mock (God Mode)", style: .destructive) { [weak self] _ in
+            self?.binder?.cargarMock()
+        })
+        
+        alert.addAction(UIAlertAction(title: "💣 Limpiar DB (God Mode)", style: .destructive) { [weak self] _ in
+             self?.binder?.limpiarDB()
         })
         
         alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel))

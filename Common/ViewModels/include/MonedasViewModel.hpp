@@ -9,7 +9,7 @@
 #include <string>
 #include <vector>
 
-#include "Moneda.h"
+#include "../../Core/include/CalculadoraCore.h"
 
 // Definition of class and namespace
 #define MONEDAS_VIEW_MODEL MonedasViewModel
@@ -29,8 +29,11 @@ using namespace DualComponents::ViewModels;
 
 class MonedasViewModel {
 public:
-  MonedasViewModel();
+  MonedasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core);
   virtual ~MonedasViewModel();
+
+  static std::shared_ptr<MonedasViewModel>
+  create(std::shared_ptr<Finexa::CalculadoraCore> core);
   static std::shared_ptr<MonedasViewModel> create();
 
   void setup();
@@ -48,7 +51,7 @@ public:
 
 private:
   // Data
-  std::vector<std::shared_ptr<Moneda>> _monedas; // Keep alive tags
+  std::shared_ptr<Finexa::CalculadoraCore> _core;
 
   // Helpers
   std::shared_ptr<Moneda> currentEditingItem;

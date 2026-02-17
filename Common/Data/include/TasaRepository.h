@@ -17,8 +17,7 @@ namespace Finexa::Data {
 
 class TasaRepository {
 public:
-  static std::vector<std::shared_ptr<TasaDeCambio>>
-  getAll(const std::vector<std::shared_ptr<Moneda>> &monedas);
+  static std::vector<std::shared_ptr<TasaDeCambio>> getAll(const std::vector<std::shared_ptr<Moneda>> &monedas);
   static void save(std::shared_ptr<TasaDeCambio> tasa);
   static void remove(const std::string &uuid);
 };

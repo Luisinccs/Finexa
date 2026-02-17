@@ -2,6 +2,9 @@
 #include "../../Data/include/MonedaRepository.h"
 #include "../../Data/include/OperacionRepository.h"
 #include "../../Data/include/TasaRepository.h"
+// Relative path to DualComponents from Common/Core/src
+//#include "../../../../DualComponents/DcDataAccess/Core/DcDataService.hpp"
+#include "DcDataService.hpp"
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
@@ -45,8 +48,40 @@ void CalculadoraCore::establecerTasa(const std::string &siglasBase,
   auto tasaExistente = buscarTasa(siglasBase, siglasDestino);
   if (tasaExistente) {
     tasaExistente->setValor(valor);
+    guardarTasa(tasaExistente); // Integrar persistencia
   } else {
-    tasas.push_back(std::make_shared<TasaDeCambio>(mBase, mDestino, valor));
+    auto nueva = std::make_shared<TasaDeCambio>(mBase, mDestino, valor);
+    // guardarTasa ya lo agrega a la lista si no existe
+    guardarTasa(nueva);
+  }
+}
+
+std::shared_ptr<Moneda>
+CalculadoraCore::buscarMonedaPorUuid(const std::string &uuid) {
+  auto it = std::find_if(monedas.begin(), monedas.end(),
+                         [&](const auto &m) { return m->getUuid() == uuid; });
+  return (it != monedas.end()) ? *it : nullptr;
+}
+
+void CalculadoraCore::establecerTasaPorUuid(const std::string &uuidBase,
+                                            const std::string &uuidDestino,
+                                            double valor) {
+  auto mBase = buscarMonedaPorUuid(uuidBase);
+  auto mDestino = buscarMonedaPorUuid(uuidDestino);
+
+  if (!mBase || !mDestino) {
+    throw std::runtime_error("Una o ambas monedas no estan registradas.");
+  }
+
+  // Buscar tasa existente por siglas (unico identificador logico por ahora)
+  auto tasaExistente = buscarTasa(mBase->getSiglas(), mDestino->getSiglas());
+
+  if (tasaExistente) {
+    tasaExistente->setValor(valor);
+    guardarTasa(tasaExistente);
+  } else {
+    auto nueva = std::make_shared<TasaDeCambio>(mBase, mDestino, valor);
+    guardarTasa(nueva);
   }
 }
 
@@ -161,6 +196,51 @@ void CalculadoraCore::eliminarTasa(const std::string &uuid) {
       std::remove_if(tasas.begin(), tasas.end(),
                      [&](const auto &t) { return t->getUuid() == uuid; }),
       tasas.end());
+}
+
+// =========================================================
+// Herramientas de Debug (Modo Dios)
+// =========================================================
+
+void CalculadoraCore::limpiarBaseDeDatos() {
+  auto db = DualComponents::Data::DcDataService::get();
+  if (db) {
+    // Borrado duro para resetear todo
+    db->execute("DELETE FROM tasas");
+    db->execute("DELETE FROM operaciones");
+    db->execute("DELETE FROM monedas"); // Orden por FK constraints
+  }
+
+  // Limpiar memoria
+  monedas.clear();
+  tasas.clear();
+}
+
+void CalculadoraCore::cargarDatosMock() {
+  // 1. Limpiar primero para evitar duplicados en este modo de prueba
+  limpiarBaseDeDatos();
+
+  // 2. Crear Monedas Mock
+  auto usd = std::make_shared<Moneda>(1, "USD", "Dolar Americano", "$");
+  auto ves = std::make_shared<Moneda>(2, "VES", "Bolivar", "Bs");
+  auto eur = std::make_shared<Moneda>(3, "EUR", "Euro", "€");
+
+  guardarMoneda(usd);
+  guardarMoneda(ves);
+  guardarMoneda(eur);
+
+  // 3. Crear Tasas Mock
+  // USD -> VES (50)
+  auto t1 = std::make_shared<TasaDeCambio>(usd, ves, 50.0);
+  guardarTasa(t1);
+
+  // EUR -> USD (1.10)
+  auto t2 = std::make_shared<TasaDeCambio>(eur, usd, 1.10);
+  guardarTasa(t2);
+
+  // EUR -> VES (55)
+  auto t3 = std::make_shared<TasaDeCambio>(eur, ves, 55.0);
+  guardarTasa(t3);
 }
 
 } // namespace Finexa

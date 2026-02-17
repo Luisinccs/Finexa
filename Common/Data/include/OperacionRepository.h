@@ -17,8 +17,7 @@ namespace Finexa::Data {
 
 class OperacionRepository {
 public:
-  static std::vector<std::shared_ptr<Operacion>>
-  getAll(const std::vector<std::shared_ptr<Moneda>> &monedas);
+  static std::vector<std::shared_ptr<Operacion>> getAll(const std::vector<std::shared_ptr<Moneda>> &monedas);
   static void save(std::shared_ptr<Operacion> operacion);
   static void remove(const std::string &uuid);
 };

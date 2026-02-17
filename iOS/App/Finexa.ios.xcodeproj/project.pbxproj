@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		11152EA12F45017800DF271E /* DcDataAccess.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 11152EA02F45017800DF271E /* DcDataAccess.framework */; };
+		11152EA32F45018A00DF271E /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 11152EA22F45018900DF271E /* libsqlite3.tbd */; };
 		114E60142F421B1700A7770F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114E60132F421B1700A7770F /* AppDelegate.swift */; };
 		114E601D2F421B1900A7770F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 114E601C2F421B1900A7770F /* Assets.xcassets */; };
 		114E60202F421B1900A7770F /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 114E601F2F421B1900A7770F /* Base */; };
@@ -43,6 +45,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		11152EA02F45017800DF271E /* DcDataAccess.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DcDataAccess.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		11152EA22F45018900DF271E /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		114E60102F421B1700A7770F /* Finexa.ios.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Finexa.ios.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		114E60132F421B1700A7770F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		114E601C2F421B1900A7770F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -67,11 +71,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				11B72BA92F4268ED00FDA36A /* libFinexaCommonApple.a in Frameworks */,
-				11B72BB12F4268FC00FDA36A /* DcViewsIos.framework in Frameworks */,
-				11B72BAB2F4268ED00FDA36A /* libFinexaViewsIos.a in Frameworks */,
-				11B72BAC2F4268F800FDA36A /* DcBindingsIos.framework in Frameworks */,
+				11152EA32F45018A00DF271E /* libsqlite3.tbd in Frameworks */,
+				11152EA12F45017800DF271E /* DcDataAccess.framework in Frameworks */,
 				11B72BAF2F4268FA00FDA36A /* DcViewModels.framework in Frameworks */,
+				11B72BB12F4268FC00FDA36A /* DcViewsIos.framework in Frameworks */,
+				11B72BAC2F4268F800FDA36A /* DcBindingsIos.framework in Frameworks */,
+				11B72BA92F4268ED00FDA36A /* libFinexaCommonApple.a in Frameworks */,
+				11B72BAB2F4268ED00FDA36A /* libFinexaViewsIos.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -116,6 +122,8 @@
 		11B72BA12F4268ED00FDA36A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				11152EA22F45018900DF271E /* libsqlite3.tbd */,
+				11152EA02F45017800DF271E /* DcDataAccess.framework */,
 				11B72BA22F4268ED00FDA36A /* DcBindingsIos.framework */,
 				11B72BA42F4268ED00FDA36A /* DcViewModels.framework */,
 				11B72BA62F4268ED00FDA36A /* DcViewsIos.framework */,
@@ -351,10 +359,13 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../Common/ViewModels/include\"",
 					"\"$(SRCROOT)/../../Common/Core/include\"",
+					"\"$(SRCROOT)/../../Common/Data/include\"",
 					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/common\"",
 					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/public_api/Core\"",
 					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/public_api/UI\"",
 					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/Compiler/apple\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcDataAccess/Core/include\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcDataAccess/Platform/SQLite/include\"",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
@@ -390,10 +401,13 @@
 				HEADER_SEARCH_PATHS = (
 					"\"$(SRCROOT)/../../Common/ViewModels/include\"",
 					"\"$(SRCROOT)/../../Common/Core/include\"",
+					"\"$(SRCROOT)/../../Common/Data/include\"",
 					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/common\"",
 					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/public_api/Core\"",
 					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/include/public_api/UI\"",
 					"\"$(SRCROOT)/../../../DualComponents/DcViewModels/Compiler/apple\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcDataAccess/Core/include\"",
+					"\"$(SRCROOT)/../../../DualComponents/DcDataAccess/Platform/SQLite/include\"",
 				);
 				INFOPLIST_FILE = Info.plist;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";

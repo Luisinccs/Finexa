@@ -6,9 +6,9 @@
 namespace Finexa::Data {
 
 void DatabaseInitializer::setup(const std::string &dbPath) {
-  // 1. Crear conector SQLite
-  auto connector =
-      DualComponents::Data::SQLite::SQLiteConnector::create(dbPath);
+  
+    // 1. Crear conector SQLite
+  auto connector = DualComponents::Data::SQLite::SQLiteConnector::create(dbPath);
 
   // 2. Registrar en el servicio global
   DualComponents::Data::DcDataService::initialize(connector);
@@ -16,12 +16,15 @@ void DatabaseInitializer::setup(const std::string &dbPath) {
   // 3. Crear tablas
   crearTablas();
 
-  std::cout << "[Finexa] Base de datos inicializada en: " << dbPath
-            << std::endl;
+    // [todo]: quitar al momento del deploy
+  std::cout << "[Finexa] Base de datos inicializada en: " << dbPath << std::endl;
+    
 }
 
 void DatabaseInitializer::crearTablas() {
+    
   auto db = DualComponents::Data::DcDataService::get();
+    
   if (!db)
     return;
 

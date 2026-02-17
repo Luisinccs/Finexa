@@ -11,29 +11,33 @@
 #include <string>
 
 namespace Finexa {
-    /**
-     * @class Moneda
-     * @brief Clase que encapsula los datos de una moneda con ID unico.
-     */
-    class Moneda {
-    private:
-        int id;
-        std::string uuid;
-        std::string siglas;
-        std::string nombre;
-        std::string simbolo;
+/**
+ * @class Moneda
+ * @brief Clase que encapsula los datos de una moneda con ID unico.
+ */
+class Moneda {
+private:
+  int id;
+  std::string uuid;
+  std::string siglas;
+  std::string nombre;
+  std::string simbolo;
 
-    public:
-        Moneda(int id, std::string siglas, std::string nombre, std::string simbolo);
-        Moneda(std::string uuid, int id, std::string siglas, std::string nombre, std::string simbolo);
+public:
+  Moneda(int id, std::string siglas, std::string nombre, std::string simbolo);
+  Moneda(std::string uuid, int id, std::string siglas, std::string nombre,
+         std::string simbolo);
 
-        int getId() const;
-        std::string getUuid() const;
-        void setUuid(const std::string& newUuid);
-        std::string getSiglas() const;
-        std::string getNombre() const;
-        std::string getSimbolo() const;
-    };
-}
+  int getId() const;
+  std::string getUuid() const;
+  void setUuid(const std::string &newUuid);
+  std::string getSiglas() const;
+  void setSiglas(const std::string &siglas);
+  std::string getNombre() const;
+  void setNombre(const std::string &nombre);
+  std::string getSimbolo() const;
+  void setSimbolo(const std::string &simbolo);
+};
+} // namespace Finexa
 
 #endif

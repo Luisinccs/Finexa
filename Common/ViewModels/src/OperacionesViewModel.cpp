@@ -49,6 +49,23 @@ OperacionesViewModel::OperacionesViewModel(
   _cmdEliminar->setLabelText("Eliminar");
   _cmdEliminar->setOnExecuted([this]() { this->eliminarOperacion(); });
 
+  // God Mode Debug
+  _cmdCargarMock = std::make_shared<DcCommandViewModel>();
+  _cmdCargarMock->setLabelText("Cargar Mock");
+  _cmdCargarMock->setOnExecuted([this]() {
+    _core->cargarDatosMock();
+    this->inicializar(); // Recargar UI
+  });
+
+  _cmdLimpiarDB = std::make_shared<DcCommandViewModel>();
+  _cmdLimpiarDB->setLabelText("Limpiar DB");
+  _cmdLimpiarDB->setOnExecuted([this]() {
+    _core->limpiarBaseDeDatos();
+    this->inicializar(); // Recargar UI
+  });
+
+  // Cargar datos reales
+  _core->cargarDesdeBD();
   inicializar();
 }
 
@@ -64,6 +81,20 @@ IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_SELECTOR_MONEDA_REF,
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_LABEL_TOTAL, Input)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_LABEL_MONTO_XDS, Input)
 
+// God Mode Internals
+IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, cmdCargarMock, Command)
+IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, cmdLimpiarDB, Command)
+
+// --- Internal Impl ---
+
+bool OperacionesViewModel::tieneMonedas() {
+  return !_core->getMonedas().empty();
+}
+
+bool OperacionesViewModel::isRefCurrencySelected() {
+  return !_monedaRef.empty();
+}
+
 void OperacionesViewModel::configurarColumnas() {
   std::vector<DcGridColumn> cols = {
       {"Concepto", 150, DcTextAlign::Left, DcColumnType::Text},
@@ -74,19 +105,8 @@ void OperacionesViewModel::configurarColumnas() {
 }
 
 void OperacionesViewModel::inicializar() {
-  // Registrar monedas de prueba si el core está vacío
-  if (_core->getMonedas().empty()) {
-    _core->registrarMoneda(std::make_shared<Finexa::Moneda>(
-        1, "USD", "Dolar Estadounidense", "$"));
-    _core->registrarMoneda(
-        std::make_shared<Finexa::Moneda>(2, "VES", "Bolivar", "Bs"));
-    _core->registrarMoneda(
-        std::make_shared<Finexa::Moneda>(3, "EUR", "Euro", "\u20AC"));
-
-    // Tasas de prueba (pivote = VES)
-    _core->establecerTasa("VES", "USD", 36.50);
-    _core->establecerTasa("VES", "EUR", 40.00);
-  }
+  // Ya no inyectamos datos hardcoded aquí.
+  // Los datos vienen de _core->cargarDesdeBD()
 
   // Cargar items de los ComboBoxes de moneda
   std::vector<DcComboBoxItem> items;
@@ -297,6 +317,10 @@ IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_SELECTOR_MONEDA_REF)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_LABEL_TOTAL)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_LABEL_MONTO_XDS)
 
+// God Mode Bridge
+IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, cmdCargarMock)
+IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, cmdLimpiarDB)
+
 DC_BRIDGE_EXPORT void OperacionesViewModel_cargarOperacion(void *vmPtr,
                                                            int index) {
   if (vmPtr) {
@@ -310,6 +334,30 @@ DC_BRIDGE_EXPORT void OperacionesViewModel_limpiarEditor(void *vmPtr) {
   if (vmPtr) {
     auto vm = *static_cast<
         std::shared_ptr<Finexa::ViewModels::OperacionesViewModel> *>(vmPtr);
-    vm->limpiarEditor();
+    if (vm) {
+      vm->limpiarEditor();
+    }
   }
+}
+
+DC_BRIDGE_EXPORT bool OperacionesViewModel_tieneMonedas(void *vmPtr) {
+  if (vmPtr) {
+    auto vm = *static_cast<
+        std::shared_ptr<Finexa::ViewModels::OperacionesViewModel> *>(vmPtr);
+    if (vm) {
+      return vm->tieneMonedas();
+    }
+  }
+  return false;
+}
+
+DC_BRIDGE_EXPORT bool OperacionesViewModel_isRefCurrencySelected(void *vmPtr) {
+  if (vmPtr) {
+    auto vm = *static_cast<
+        std::shared_ptr<Finexa::ViewModels::OperacionesViewModel> *>(vmPtr);
+    if (vm) {
+      return vm->isRefCurrencySelected();
+    }
+  }
+  return false;
 }

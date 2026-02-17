@@ -6,6 +6,11 @@ public class MonedasController: UIViewController, UITableViewDataSource, UITable
     private var binder: MonedasBinder?
     private let tableView = UITableView()
     
+    // MARK: - Navigation Callbacks
+    public var onBackToOperations: (() -> Void)?
+    public var autoOpenEditor = false
+    private var wasEmpty = false
+    
     // MARK: - Initializers
     
     public init() {
@@ -21,16 +26,73 @@ public class MonedasController: UIViewController, UITableViewDataSource, UITable
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        // If binder not injected, it might be setup later. 
-        // But usually we inject it before push/present.
+    }
+    
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        if autoOpenEditor {
+            autoOpenEditor = false
+            onAdd()
+        }
     }
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         tableView.reloadData()
+        
+        // Check outcome of Add/Edit
+        if wasEmpty {
+            let count = binder?.numberOfRows() ?? 0
+            if count > 0 {
+                // Success: Return to Operations
+                wasEmpty = false
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+                    self?.onBackToOperations?()
+                }
+            } else {
+                // Cancelled / No currency created
+                // User is stuck in empty Monedas list.
+                // We show an alert explaining why needed.
+                wasEmpty = false // Reset so we don't loop alerts unless user tries again
+                
+                let alert = UIAlertController(title: "Atención", message: "Para registrar operaciones, necesitas crear al menos una moneda.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Crear Moneda", style: .default) { [weak self] _ in
+                    self?.onAdd()
+                })
+                alert.addAction(UIAlertAction(title: "Cancelar", style: .cancel, handler: nil))
+                
+                // Present alert only if we are the top controller
+                if presentedViewController == nil {
+                    present(alert, animated: true)
+                }
+            }
+        }
     }
     
-    // MARK: - Configuration
+    // ...
+    
+    // MARK: - Actions
+    
+    @objc private func onAdd() {
+        // Track if empty before adding
+        wasEmpty = (binder?.numberOfRows() ?? 0) == 0
+        
+        binder?.requestAdd()
+        openEditForm()
+    }
+    
+    private func openEditForm() {
+        guard let editorBinder = binder?.getEditorBinder() else { return }
+        
+        let editVC = EditorMonedaController()
+        editVC.configure(with: editorBinder)
+        
+        let nav = UINavigationController(rootViewController: editVC)
+        nav.modalPresentationStyle = .fullScreen
+        // Callback when dismissed? Editor dismisses itself.
+        // viewWillAppear will handle the check.
+        present(nav, animated: true, completion: nil)
+    }
     
     public func configure(with binder: MonedasBinder) {
         self.binder = binder
@@ -67,23 +129,6 @@ public class MonedasController: UIViewController, UITableViewDataSource, UITable
         ])
     }
     
-    // MARK: - Actions
-    
-    @objc private func onAdd() {
-        binder?.requestAdd()
-        openEditForm()
-    }
-    
-    private func openEditForm() {
-        guard let editorBinder = binder?.getEditorBinder() else { return }
-        
-        let editVC = EditorMonedaController()
-        editVC.configure(with: editorBinder)
-        
-        let nav = UINavigationController(rootViewController: editVC)
-        nav.modalPresentationStyle = .fullScreen
-        present(nav, animated: true, completion: nil)
-    }
     
     // MARK: - UITableViewDataSource
     

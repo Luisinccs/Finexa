@@ -134,6 +134,58 @@ public class OperacionesAppBinder: OperacionesBinder {
     }
     
     public func getEditorBinder() -> EditorOperacionBinder? {
+        // Assuming EditorOperacionesAppBinder is accessible or implemented similarly
+        // If not found, we might need to find where it is defined.
+        // For now, assuming it exists based on the file content I read.
         return EditorOperacionesAppBinder(viewModel: viewModelPtr)
     }
+    
+    // MARK: - God Mode
+    
+    public func cargarMock() {
+        let vm = viewModelPtr
+        withUnsafePointer(to: vm) { vmPtr in
+            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            if let cmdPtr = OperacionesViewModel_cmdCargarMock(rawPtr) {
+                DcCommand_Execute(cmdPtr)
+            }
+        }
+    }
+    
+    public func limpiarDB() {
+        let vm = viewModelPtr
+        withUnsafePointer(to: vm) { vmPtr in
+            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            if let cmdPtr = OperacionesViewModel_cmdLimpiarDB(rawPtr) {
+                DcCommand_Execute(cmdPtr)
+            }
+        }
+    }
+    
+    public var hasCurrencies: Bool {
+        let vm = viewModelPtr
+        var result = false
+        withUnsafePointer(to: vm) { vmPtr in
+            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            result = OperacionesViewModel_tieneMonedas(rawPtr)
+        }
+        return result
+    }
+    
+    public var isRefCurrencySelected: Bool {
+        let vm = viewModelPtr
+        var result = false
+        withUnsafePointer(to: vm) { vmPtr in
+            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            result = OperacionesViewModel_isRefCurrencySelected(rawPtr)
+        }
+        return result
+    }
 }
+
+// Ensure C function is available
+@_silgen_name("OperacionesViewModel_tieneMonedas")
+func OperacionesViewModel_tieneMonedas(_ vmPtr: UnsafeMutableRawPointer) -> Bool
+
+@_silgen_name("OperacionesViewModel_isRefCurrencySelected")
+func OperacionesViewModel_isRefCurrencySelected(_ vmPtr: UnsafeMutableRawPointer) -> Bool

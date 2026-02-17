@@ -9,6 +9,6 @@
 #import "TasasViewModel.h"
 
 // Data Layer (C-Bridge)
-#import "DatabaseInitializer.h"
+#import "../../Data/include/DatabaseInitializer.h"
 
 #endif /* FINEXA_VIEWMODELS_H */

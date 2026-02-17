@@ -3,6 +3,7 @@
 import UIKit
 import FinexaViewsIos
 
+
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -39,6 +40,23 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                     let monedasVC = MonedasController()
                     let monedasBinder = MonedasAppBinder()
                     monedasVC.configure(with: monedasBinder)
+                    
+                    monedasVC.onBackToOperations = { [weak navController] in
+                        navController?.popToRootViewController(animated: true)
+                    }
+                    
+                    navController?.pushViewController(monedasVC, animated: true)
+                    
+                case "monedas_empty":
+                    let monedasVC = MonedasController()
+                    let monedasBinder = MonedasAppBinder()
+                    monedasVC.configure(with: monedasBinder)
+                    monedasVC.autoOpenEditor = true // Open editor immediately
+                    
+                    monedasVC.onBackToOperations = { [weak navController] in
+                        navController?.popToRootViewController(animated: true)
+                    }
+                    
                     navController?.pushViewController(monedasVC, animated: true)
                     
                 default:

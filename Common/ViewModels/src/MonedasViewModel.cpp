@@ -3,7 +3,9 @@
 
 namespace Finexa::ViewModels {
 
-MonedasViewModel::MonedasViewModel() {
+MonedasViewModel::MonedasViewModel(
+    std::shared_ptr<Finexa::CalculadoraCore> core)
+    : _core(core) {
   // Init properties via macro-generated members
   _monedasGridViewModel = DcGridViewModel::create();
 
@@ -20,8 +22,14 @@ MonedasViewModel::MonedasViewModel() {
 
 MonedasViewModel::~MonedasViewModel() {}
 
+std::shared_ptr<MonedasViewModel>
+MonedasViewModel::create(std::shared_ptr<Finexa::CalculadoraCore> core) {
+  return std::make_shared<MonedasViewModel>(core);
+}
+
 std::shared_ptr<MonedasViewModel> MonedasViewModel::create() {
-  return std::make_shared<MonedasViewModel>();
+  return std::make_shared<MonedasViewModel>(
+      std::make_shared<Finexa::CalculadoraCore>());
 }
 
 void MonedasViewModel::setup() {
@@ -29,15 +37,10 @@ void MonedasViewModel::setup() {
   configureEditors();
   setupEditingLogic();
 
-  // Initial Data
-  auto m1 = std::make_shared<Moneda>(1, "USD", "Dolar Estadounidense", "$");
-  _monedas.push_back(m1);
-
-  auto m2 = std::make_shared<Moneda>(2, "VES", "Bolivar", "Bs");
-  _monedas.push_back(m2);
-
-  auto m3 = std::make_shared<Moneda>(3, "EUR", "Euro", "\u20AC");
-  _monedas.push_back(m3);
+  // Cargar datos del core (si no se han cargado)
+  // Nota: Esto recarga desde la BD. Si ya se cargó en Operaciones, es
+  // redundante pero seguro.
+  _core->cargarDesdeBD();
 
   refreshRows();
 }
@@ -70,14 +73,16 @@ void MonedasViewModel::configureEditors() {
 void MonedasViewModel::setupEditingLogic() {
   // 1. Activation
   auto startEdit = [this](int index) {
-    Moneda *item = nullptr;
-    if (index >= 0 && index < _monedas.size()) {
-      item = _monedas[index].get();
+    std::shared_ptr<Moneda> item = nullptr;
+    const auto &monedasList = _core->getMonedas();
+
+    if (index >= 0 && index < static_cast<int>(monedasList.size())) {
+      item = monedasList[index];
     }
 
     // Lock Grid
     _monedasGridViewModel->setIsInputLocked(true);
-    currentEditingItem.reset();
+    currentEditingItem = item; // Store for referencing during save if needed
 
     if (item) {
       isNewItem = false;
@@ -98,26 +103,30 @@ void MonedasViewModel::setupEditingLogic() {
       [this, startEdit]() { startEdit(-1); });
 
   // 2. Save (Aceptar)
-  // 2. Save (Aceptar)
   _aceptarViewModel->setOnExecuted([this]() {
     std::string nombre = _nombreViewModel->getText();
     std::string simbolo = _simboloViewModel->getText();
     std::string siglas = _siglasViewModel->getText();
 
     if (nombre.empty() || siglas.empty()) {
-      return;
+      return; // Validation failed
     }
 
     if (isNewItem) {
-      int nextId = _monedas.empty() ? 1 : _monedas.back()->getId() + 1;
+      // Create new
+      int nextId = 0; // ID no longer primarily used for logic, UUID is key
+      // ID auto-generation is database generated usually, or we pass 0
       auto newItem = std::make_shared<Moneda>(nextId, siglas, nombre, simbolo);
-      _monedas.push_back(newItem);
+      _core->guardarMoneda(newItem);
     } else {
-      int idx = _monedasGridViewModel->getSelectedIndex();
-      if (idx >= 0 && idx < _monedas.size()) {
-        int currentId = _monedas[idx]->getId();
-        _monedas[idx] =
-            std::make_shared<Moneda>(currentId, siglas, nombre, simbolo);
+      // Edit existing
+      if (currentEditingItem) {
+        currentEditingItem->setNombre(nombre);
+        currentEditingItem->setSimbolo(simbolo);
+        currentEditingItem->setSiglas(
+            siglas); // Changing primary key/siglas might require careful
+                     // handling if used as FK
+        _core->guardarMoneda(currentEditingItem);
       }
     }
 
@@ -136,9 +145,8 @@ void MonedasViewModel::setupEditingLogic() {
       return;
     }
 
-    int idx = _monedasGridViewModel->getSelectedIndex();
-    if (idx >= 0 && idx < _monedas.size()) {
-      _monedas.erase(_monedas.begin() + idx);
+    if (currentEditingItem) {
+      _core->eliminarMoneda(currentEditingItem->getUuid());
     }
 
     _monedasGridViewModel->setIsInputLocked(false);
@@ -148,8 +156,9 @@ void MonedasViewModel::setupEditingLogic() {
 
 void MonedasViewModel::refreshRows() {
   std::vector<DcGridRow> rows;
+  const auto &monedasList = _core->getMonedas();
 
-  for (auto &item : _monedas) {
+  for (auto &item : monedasList) {
     DcGridRow r;
     r.tag = item.get();
 
@@ -172,22 +181,22 @@ void MonedasViewModel::refreshRows() {
 // Accessor Implementations (Macro-based)
 // =========================================================
 
-IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
-                           GRID_MONEDAS, Grid)
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL, GRID_MONEDAS,
+                           Grid)
 
-IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
-                           TXT_NOMBRE, Input)
-IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
-                           TXT_SIMBOLO, Input)
-IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
-                           TXT_SIGLAS, Input)
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL, TXT_NOMBRE,
+                           Input)
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL, TXT_SIMBOLO,
+                           Input)
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL, TXT_SIGLAS,
+                           Input)
 
-IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
-                           CMD_ACEPTAR, Command)
-IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
-                           CMD_CANCELAR, Command)
-IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
-                           CMD_ELIMINAR, Command)
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL, CMD_ACEPTAR,
+                           Command)
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL, CMD_CANCELAR,
+                           Command)
+IMPLEMENT_CONTROL_INTERNAL(Finexa::ViewModels, MONEDAS_VIEW_MODEL, CMD_ELIMINAR,
+                           Command)
 
 } // namespace Finexa::ViewModels
 
@@ -202,8 +211,9 @@ IMPLEMENT_VIEWMODEL_LIFECYCLE(Finexa::ViewModels, MONEDAS_VIEW_MODEL)
 DC_BRIDGE_EXPORT void *MonedasViewModel_monedasGridViewModel(void *vmPtr) {
   if (!vmPtr)
     return nullptr;
-  auto vm = *static_cast<
-      std::shared_ptr<Finexa::ViewModels::MonedasViewModel> *>(vmPtr);
+  auto vm =
+      *static_cast<std::shared_ptr<Finexa::ViewModels::MonedasViewModel> *>(
+          vmPtr);
   auto *binding = vm->monedasGridViewModelBinding();
   return static_cast<IGridBinding *>(binding);
 }

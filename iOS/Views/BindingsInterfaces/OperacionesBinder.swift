@@ -33,6 +33,19 @@ public protocol OperacionesBinder: AnyObject {
     func deleteRow(at row: Int)
     
     /// Retorna el binder para el formulario de edición.
+    /// Retorna el binder para el formulario de edición.
     func getEditorBinder() -> EditorOperacionBinder?
+    
+    /// Carga datos de prueba (God Mode).
+    func cargarMock()
+    
+    /// Limpia la base de datos (God Mode).
+    func limpiarDB()
+    
+    /// Indica si existen monedas registradas.
+    var hasCurrencies: Bool { get }
+    
+    /// Indica si se ha seleccionado una moneda base/referencial.
+    var isRefCurrencySelected: Bool { get }
 }
 

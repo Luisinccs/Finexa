@@ -38,14 +38,21 @@ public:
   void eliminarMoneda(const std::string &uuid);
   void eliminarTasa(const std::string &uuid);
 
+  // --- Herramientas de Debug (Modo Dios) ---
+  void limpiarBaseDeDatos();
+  void cargarDatosMock();
+
   // --- Lógica existente ---
   std::shared_ptr<Moneda> buscarMoneda(const std::string &siglas);
+  std::shared_ptr<Moneda> buscarMonedaPorUuid(const std::string &uuid);
   void registrarMoneda(std::shared_ptr<Moneda> moneda);
 
   std::shared_ptr<TasaDeCambio> buscarTasa(const std::string &base,
                                            const std::string &destino);
   void establecerTasa(const std::string &siglasBase,
                       const std::string &siglasDestino, double valor);
+  void establecerTasaPorUuid(const std::string &uuidBase,
+                             const std::string &uuidDestino, double valor);
 
   double calcularValorImplicito(const std::string &base,
                                 const std::string &destino);

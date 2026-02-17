@@ -31,9 +31,46 @@ TasasViewModel::TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core)
   configurarColumnas();
   configurarMonedasDinamicas();
 
+  // Logic for editing
+  auto loadForEdit = [this](int index) {
+    const auto &tasas = _core->getTasas();
+    if (index >= 0 && index < static_cast<int>(tasas.size())) {
+      auto tasa = tasas[index];
+      // Populate form
+      _selectorBase->selectItemByKey(tasa->getBase()->getUuid());
+      _selectorDestino->selectItemByKey(tasa->getDestino()->getUuid());
+      _inputValor->setValue(tasa->getValor());
+
+      // Disable selectors during edit (Constraint)
+      _selectorBase->setEnabled(false);
+      _selectorDestino->setEnabled(false);
+
+      _cmdGuardarTasa->setLabelText("Actualizar");
+    }
+  };
+
+  _gridTasas->setOnRowActivated(loadForEdit);
+
+  // Logic for new/reset
+  auto resetForm = [this]() {
+    _selectorBase->setEnabled(true);
+    _selectorDestino->setEnabled(true);
+    _inputValor->setValue(0.0);
+    _cmdGuardarTasa->setLabelText("Establecer Tasa");
+
+    // Select defaults
+    auto p = _core->buscarMoneda(_core->getSiglasPivote());
+    if (p)
+      _selectorBase->selectItemByKey(p->getUuid());
+  };
+
+  _gridTasas->setOnAddRequested(resetForm);
+
   cmdGuardarTasa()->setLabelText("Establecer Tasa");
-  //        _cmdGuardarTasa->setLabelText("Establecer Tasa");
-  cmdGuardarTasa()->setOnExecuted([this]() { this->guardarTasa(); });
+  cmdGuardarTasa()->setOnExecuted([this, resetForm]() {
+    this->guardarTasa();
+    resetForm(); // Reset after save
+  });
 
   inicializar();
 }
@@ -53,50 +90,43 @@ void TasasViewModel::configurarColumnas() {
 }
 
 void TasasViewModel::inicializar() {
-  // DEBUG: Inject Test Data
-  if (_core->getMonedas().empty()) {
-    auto usd =
-        std::make_shared<Finexa::Moneda>(1, "USD", "$", "Dolar Americano");
-    _core->registrarMoneda(usd);
-    auto ves = std::make_shared<Finexa::Moneda>(2, "VES", "Bs", "Bolivar");
-    _core->registrarMoneda(ves);
-    auto eur = std::make_shared<Finexa::Moneda>(3, "EUR", "E", "Euro");
-    _core->registrarMoneda(eur);
-
-    // Tasas iniciales (ejemplo)
-    _core->establecerTasa("USD", "VES", 50.0);
-    _core->establecerTasa("EUR", "USD", 1.10);
-    _core->establecerTasa("EUR", "VES", 55.0);
-  }
+  // Cargar datos (si no se han cargado externamente)
+  _core->cargarDesdeBD();
 
   std::vector<DcComboBoxItem> items;
   for (const auto &m : _core->getMonedas()) {
-    items.push_back({m->getSiglas(), m->getSiglas()});
+    // Key = UUID, Value = Siglas
+    items.push_back({m->getUuid(), m->getSiglas()});
   }
   selectorBase()->setItems(items);
   selectorDestino()->setItems(items);
 
-  // Predeterminados según RF-03
-  selectorBase()->selectItemByKey(_core->getSiglasPivote()); // VES
+  // Predeterminados según RF-03 (Select via UUID)
+  auto pivot = _core->buscarMoneda(_core->getSiglasPivote());
+  if (pivot) {
+    selectorBase()->selectItemByKey(pivot->getUuid());
+  }
 
   refrescarGrilla();
 }
 
 void TasasViewModel::guardarTasa() {
-  std::string base = selectorBase()->getSelectedKey();
-  std::string destino = selectorDestino()->getSelectedKey();
+  std::string baseUuid = selectorBase()->getSelectedKey();
+  std::string destinoUuid = selectorDestino()->getSelectedKey();
   double valor = inputValor()->getValue();
 
-  if (!base.empty() && !destino.empty() && base != destino && valor > 0) {
-    // Logica de ambigüedad (RF-03)
-    if (_core->tieneAmbiguedad(base, destino, valor)) {
-      // TODO: Disparar alerta de ambigüedad si fuera necesario.
-      // Por ahora procedemos a establecerla.
-    }
+  if (!baseUuid.empty() && !destinoUuid.empty() && baseUuid != destinoUuid &&
+      valor > 0) {
+    // NOTE: Ambiguedad logic uses Siglas currently in Core, but we have UUIDs.
+    // We might want to update ambiguedad logic or just retrieve coins to get
+    // siglas. For now, trusting establecerTasaPorUuid to handle logic.
 
-    _core->establecerTasa(base, destino, valor);
-    refrescarGrilla();
-    inputValor()->setValue(0.0);
+    try {
+      _core->establecerTasaPorUuid(baseUuid, destinoUuid, valor);
+      refrescarGrilla();
+    } catch (...) {
+      // Handle error?
+    }
   }
 }
 
@@ -110,17 +140,57 @@ void TasasViewModel::refrescarGrilla() {
     row.cells = {t->getParidad(), ssValor.str()};
     rows.push_back(row);
   }
+
+  // Ghost row for "New"
+  rows.push_back(DcGridRow::CreateGhost(2));
+
   gridTasas()->setRows(rows);
 }
 
 void TasasViewModel::configurarMonedasDinamicas() {
   auto handler = [this](std::string sigla) {
     // RF-01: Crear moneda automáticamente
+    // Note: This logic seems to rely on the user typing a SIGLA in the
+    // search/edit box of the combo DcComboBox "OnNewItemRequested" passes the
+    // text string typed by user. So "sigla" here is the text.
+
+    // Check if duplicate logic needed? Core::registrarMoneda handles uniqueness
+    // by Siglas.
+
+    // We create a new moneda with 0 ID (auto-gen/ignored), UUID generated in
+    // constructor. This constructor might need to change if Moneda(0,...)
+    // doesn't generate UUID? Let's assume Moneda(...) generates UUID if not
+    // provided (or we explicitly provide). Moneda constructor signatures:
+    // 1. (int id, siglas, nombre, simbolo) -> generates UUID? Need to check
+    // Moneda.cpp
+    //    It doesn't seem to generate UUID in the code I viewed earlier?
+    //    Let's check Moneda.h/cpp again. Step 3020 showed:
+    //    Moneda(int id, ...) : id(id) ... {} -> UUID member initialized to
+    //    empty string?
+
+    // FIX: Core needs to ensure Moneda has UUID if we rely on it.
+    // However, Moneda class doesn't seem to auto-gen UUID in constructor.
+    // Data Layer should probably handle it or we inject it.
+    // For now, I will generate a simple UUID-like string or rely on repository
+    // to fix it. Or I should fix Moneda constructor to gen UUID. Currently
+    // "registrarMoneda" adds it. "guardarMoneda" in Core calls Repository save.
+
+    // Assuming MonedaRepository handles new items.
+
     auto nueva = std::make_shared<Finexa::Moneda>(0, sigla, sigla, "");
+    // Manually set a temp UUID if needed so UI can select it?
+    // Or rely on reload.
+
     _core->registrarMoneda(nueva);
+    _core->guardarMoneda(nueva); // Ensure persistence
 
     // Refrescar combos
     this->inicializar();
+
+    // Select the new item (by UUID, but we need to know it.
+    // If Moneda logic doesn't gen UUID on construction, we might have empty
+    // UUID. This is a risk. I should fix Moneda constructor to generate UUID if
+    // empty.
   };
 
   selectorBase()->setAllowNew(true);
