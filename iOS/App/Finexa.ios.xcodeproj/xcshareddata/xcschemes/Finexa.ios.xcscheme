@@ -15,10 +15,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "114E60692F4237BB00A7770F"
-               BuildableName = "FinexaViewsIosUITests.app"
-               BlueprintName = "FinexaViewsIosUITests"
-               ReferencedContainer = "container:FinexaViewsIosUITests.xcodeproj">
+               BlueprintIdentifier = "114E600F2F421B1700A7770F"
+               BuildableName = "Finexa.ios.app"
+               BlueprintName = "Finexa.ios"
+               ReferencedContainer = "container:Finexa.ios.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -44,10 +44,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "114E60692F4237BB00A7770F"
-            BuildableName = "FinexaViewsIosUITests.app"
-            BlueprintName = "FinexaViewsIosUITests"
-            ReferencedContainer = "container:FinexaViewsIosUITests.xcodeproj">
+            BlueprintIdentifier = "114E600F2F421B1700A7770F"
+            BuildableName = "Finexa.ios.app"
+            BlueprintName = "Finexa.ios"
+            ReferencedContainer = "container:Finexa.ios.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -61,10 +61,10 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "114E60692F4237BB00A7770F"
-            BuildableName = "FinexaViewsIosUITests.app"
-            BlueprintName = "FinexaViewsIosUITests"
-            ReferencedContainer = "container:FinexaViewsIosUITests.xcodeproj">
+            BlueprintIdentifier = "114E600F2F421B1700A7770F"
+            BuildableName = "Finexa.ios.app"
+            BlueprintName = "Finexa.ios"
+            ReferencedContainer = "container:Finexa.ios.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
