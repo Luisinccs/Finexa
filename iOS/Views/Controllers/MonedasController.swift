@@ -26,6 +26,11 @@ public class MonedasController: UIViewController, UITableViewDataSource, UITable
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        
+        // Hide table initially to avoid flash if auto-opening editor
+        if autoOpenEditor {
+            tableView.isHidden = true
+        }
     }
     
     public override func viewDidAppear(_ animated: Bool) {
@@ -33,6 +38,9 @@ public class MonedasController: UIViewController, UITableViewDataSource, UITable
         if autoOpenEditor {
             autoOpenEditor = false
             onAdd()
+        } else {
+            // Unhide when appearing normally or returning
+            tableView.isHidden = false
         }
     }
     
@@ -46,14 +54,16 @@ public class MonedasController: UIViewController, UITableViewDataSource, UITable
             if count > 0 {
                 // Success: Return to Operations
                 wasEmpty = false
+                tableView.isHidden = true // Hide while transitioning
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
                     self?.onBackToOperations?()
                 }
             } else {
                 // Cancelled / No currency created
-                // User is stuck in empty Monedas list.
-                // We show an alert explaining why needed.
-                wasEmpty = false // Reset so we don't loop alerts unless user tries again
+                // Determine if we should unhide or waiting for editor logic
+                // If editor was dismissed (which logic prevents now), we unhide.
+                tableView.isHidden = false
+                wasEmpty = false 
                 
                 let alert = UIAlertController(title: "Atención", message: "Para registrar operaciones, necesitas crear al menos una moneda.", preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: "Crear Moneda", style: .default) { [weak self] _ in
@@ -86,6 +96,22 @@ public class MonedasController: UIViewController, UITableViewDataSource, UITable
         
         let editVC = EditorMonedaController()
         editVC.configure(with: editorBinder)
+        
+        // Prevent swipe dismissal if empty
+        if (binder?.numberOfRows() ?? 0) == 0 {
+            editVC.isModalInPresentation = true
+            
+            // Intercept Cancel
+            editVC.onAttemptCancel = { [weak editVC] in
+                let alert = UIAlertController(title: "Atención", message: "Para registrar operaciones, necesitas crear al menos una moneda.", preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: "Entendido", style: .default, handler: nil))
+                
+                editVC?.present(alert, animated: true, completion: nil)
+                
+                // Return false to prevent dismissal
+                return false
+            }
+        }
         
         let nav = UINavigationController(rootViewController: editVC)
         nav.modalPresentationStyle = .fullScreen

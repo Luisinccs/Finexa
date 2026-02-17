@@ -106,7 +106,15 @@ public class EditorMonedaController: UIViewController {
         dismiss(animated: true, completion: nil)
     }
     
+    // MARK: - Callbacks
+    public var onAttemptCancel: (() -> Bool)?
+    
     @objc private func onCancel() {
+        // Allow interception
+        if let shouldCancel = onAttemptCancel, !shouldCancel() {
+            return
+        }
+    
         guard let binder = binder else {
             dismiss(animated: true, completion: nil)
             return

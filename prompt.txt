@@ -85,3 +85,12 @@ vamos ahora por la sección de operaciones.
 ---
 
 Perfecto, ya corre bien, pero recuerda que debe dirigir directamente al formulario editor de moneda, no a la sección de monedas.
+Al aceptar, se dirige directamente a la seccion de operaciones; si en ese punto el usuario le da al botón de cancelar, se le debe mostrar un mensaje indicandole que debe crear al menos una moneda para poder agregar operaciones.
+
+---
+
+Bien, al iniciar, se dirige bien al editor de monedas, solo que pasa visualmente primero por la sección y no me parece elegante; hay que evitar eso.
+
+Segundo, al darle cancelar, regresa a la sección de monedas con la lista vacia, y recuerda que debe mostrar el mensaje de advertencia y mantenerse en el editor de monedas.
+
+---
