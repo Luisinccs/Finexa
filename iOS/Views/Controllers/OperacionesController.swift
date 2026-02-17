@@ -12,9 +12,11 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
     private let lblTotal = UILabel()
     private let headerView = UIView()
     private let footerView = UIView()
+    // Layout
+    private let contentStack = UIStackView()
+    private let emptyStateView = UIView()
     
     /// Closure invoked when a menu option is selected.
-    /// Key values: "tasas", "monedas"
     public var onMenuOptionSelected: ((String) -> Void)?
     
     // MARK: - Init
@@ -85,26 +87,103 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
         tableView.register(OperacionCell.self, forCellReuseIdentifier: "OperacionCell")
         tableView.rowHeight = 70
         
-        // Layout
+        // Layout Content
         setupHeader()
         setupFooter()
         
-        let stackView = UIStackView(arrangedSubviews: [headerView, tableView, footerView])
-        stackView.axis = .vertical
-        stackView.spacing = 0
+        contentStack.axis = .vertical
+        contentStack.spacing = 0
+        contentStack.addArrangedSubview(headerView)
+        contentStack.addArrangedSubview(tableView)
+        contentStack.addArrangedSubview(footerView)
         
-        view.addSubview(stackView)
-        stackView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(contentStack)
+        contentStack.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             headerView.heightAnchor.constraint(equalToConstant: 50),
             footerView.heightAnchor.constraint(equalToConstant: 60),
             
-            stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            stackView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            stackView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+            contentStack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            contentStack.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            contentStack.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            contentStack.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+        
+        setupEmptyState()
+    }
+    
+    private func setupEmptyState() {
+        emptyStateView.backgroundColor = .systemBackground
+        view.addSubview(emptyStateView)
+        emptyStateView.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            emptyStateView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            emptyStateView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
+            emptyStateView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            emptyStateView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
+        ])
+        
+        // Icon
+        let iv = UIImageView(image: UIImage(systemName: "sparkles"))
+        iv.tintColor = .systemBlue
+        iv.contentMode = .scaleAspectFit
+        
+        // Title
+        let lblTitle = UILabel()
+        lblTitle.text = "Bienvenido a Finexa"
+        lblTitle.font = .systemFont(ofSize: 24, weight: .bold)
+        lblTitle.textAlignment = .center
+        
+        // Body
+        let lblBody = UILabel()
+        lblBody.text = "Para comenzar a registrar operaciones, primero debes crear al menos una moneda."
+        lblBody.font = .systemFont(ofSize: 16)
+        lblBody.textColor = .secondaryLabel
+        lblBody.textAlignment = .center
+        lblBody.numberOfLines = 0
+        
+        // Button
+        // Button (iOS 13 Compatible)
+        let btn = UIButton(type: .system)
+        btn.setTitle("Comenzar", for: .normal)
+        btn.setImage(UIImage(systemName: "arrow.right"), for: .normal)
+        
+        // Configuration equivalent
+        btn.backgroundColor = .systemBlue
+        btn.tintColor = .white
+        btn.layer.cornerRadius = 25 // Pill shape (height 50)
+        
+        // Padding and Image Placement
+        btn.contentEdgeInsets = UIEdgeInsets(top: 10, left: 20, bottom: 10, right: 20)
+        // Image on right requires transform or semantic content attribute
+        btn.semanticContentAttribute = .forceRightToLeft
+        btn.imageEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0) // Space between text and image
+        
+        btn.addTarget(self, action: #selector(onStartEmptyState), for: .touchUpInside)
+        
+        let stack = UIStackView(arrangedSubviews: [iv, lblTitle, lblBody, btn])
+        stack.axis = .vertical
+        stack.spacing = 20
+        stack.alignment = .center
+        
+        emptyStateView.addSubview(stack)
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            stack.centerYAnchor.constraint(equalTo: emptyStateView.centerYAnchor, constant: -40),
+            stack.leadingAnchor.constraint(equalTo: emptyStateView.leadingAnchor, constant: 40),
+            stack.trailingAnchor.constraint(equalTo: emptyStateView.trailingAnchor, constant: -40),
+            
+            iv.heightAnchor.constraint(equalToConstant: 60),
+            iv.widthAnchor.constraint(equalToConstant: 60),
+            
+            btn.heightAnchor.constraint(equalToConstant: 50),
+            btn.widthAnchor.constraint(equalToConstant: 200)
+        ])
+        
+        emptyStateView.isHidden = true
     }
     
     private func setupHeader() {
@@ -145,13 +224,14 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
         // 1. Check Currencies
         if !binder.hasCurrencies {
             // Welcome & Redirect
-            let alert = UIAlertController(title: "Bienvenido a Finexa", message: "Para comenzar a registrar operaciones, primero debes crear al menos una moneda.", preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: "Ir a Monedas", style: .default) { [weak self] _ in
-                self?.onMenuOptionSelected?("monedas_empty")
-            })
-            present(alert, animated: true)
+            emptyStateView.isHidden = false
+            contentStack.isHidden = true
             return
         }
+        
+        // Has Currencies -> Show Content
+        emptyStateView.isHidden = true
+        contentStack.isHidden = false
         
         // 2. Check Operations
         if binder.numberOfRows() == 0 {
@@ -256,6 +336,10 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
     
     @objc private func onAdd() {
         openEditForm(thenPrepareNew: true)
+    }
+    
+    @objc private func onStartEmptyState() {
+        onMenuOptionSelected?("monedas_empty")
     }
     
     @objc private func onMenuTapped() {

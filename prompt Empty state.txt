@@ -1,0 +1,121 @@
+Estoy intentando correr la aplicación Finexa/iOS/App/Finexa.ios.xcodeproj.
+Cuando presiono el botón de + en el OperacionesController.swift, tengo este error en tiempo de ejecución:
+
+---
+
+Bien, ya funciona. Ahora tengo dos problemas inmediatos.
+El combobox de la moneda hay que cargarlos con datos.
+Los datos son contenidos en un vector como en el patrón que observas en 
+Dual Components/DcBindings/Tests/Common/Include/ComboBoxTestViewModel:
+using DcComboBoxItemList = std::vector<DcComboBoxItem>;
+DcComboBoxItemList _listaMonedas;
+
+Al final, se cargaran las monedas de la base de datos; por ahora, llena ese vector con tres monedas para prueba; puedes usar las mismas monedas que en el Finexa/Common/include/MonedasViewModel
+
+El segundo problema es que al aceptar la creación de una operación, no se actiualiza la grilla, se debe mostrar tambien el total actualizado; reflejado en la moneda referencial.
+
+---
+
+Bien, tengo ahora este problema;
+Agrega el primer registro (con problemas en las cifras, pero lo resolvemos despues); actualiza bien la lista de operaciones, pero cuando intentas crear un segundo registro, veo este error en tiempo de ejecución:
+
+---
+
+Bien, ya funciona, hay que hacer algunas correcciones en el formato y la lógica:
+- Hay que colocar un selector para poder cambiar la moneda referencial para los cálculos. El actual lblReference.
+- El monto total debe actualizarce (expresado en la moneda referencial) cada vez que se agrega, edita o elimina una operación. Y debe verse Total(Moneda): Monto; (ej Total(USD): 100.00)
+- Hay un problema con las cifras reflejadas en la grilla; por ejemplo, si agrego 200$ en el formulario, se muestran 20000. 
+- En el formulario para editar las operaciones, tambien hay un label que muestra el monto en moneda refernecial (Ahora no se actualizad) hay que hacer que muestre el monto
+
+---
+
+Colócale en la barra de navagación al lado izquierdo, el ícono de hamburguesa para que se muestre el menú con las opciones. Por ahora solo la de mostrar la sección de tasas y la sección de monedas.
+Luego a acad una de esas secciones (MonedasController y TasasController), hay que agregarle el botón de volver tambien en la esquina superior izquierda para regresar a la sección de operaciones.
+
+---
+
+Bien, tengo este error de compilación en la aplicación:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/App/AppDelegate.swift:16:13 Cannot find 'Finexa_DatabaseInitializer_setup' in scope
+
+---
+
+Bien, vamos a trabajar con la base de datos ahora.
+- Quita de los view models: MonedasViewModel y TasasViewModel, los datos en memoria en la funcion setup, para cargar los datos desde la base de datos.
+
+- Agrega dos botones (solo modo Dios, para mi cuando hago pruebas), uno para cargar datos mock y otro para borrar la base de datos.
+
+---
+
+Tengo estos errores de compilación,
+/Users/luis_sonoma/Desarrollo/Finexa/Common/ViewModels/src/MonedasViewModel.cpp:124:29 No member named 'setNombre' in 'Finexa::Moneda'
+/Users/luis_sonoma/Desarrollo/Finexa/Common/ViewModels/src/MonedasViewModel.cpp:125:29 No member named 'setSimbolo' in 'Finexa::Moneda'
+/Users/luis_sonoma/Desarrollo/Finexa/Common/ViewModels/src/MonedasViewModel.cpp:126:29 No member named 'setSiglas' in 'Finexa::Moneda'
+
+Supongo que es porque las monedas en la defición las hemos hecho de solo lectura; vamos a modificarlas para que se puedan modificar sus datos, agregandoles esos accesores y confirmando en la lógica que se puedan modificar.
+
+Otra cosa, en el caso de las tasas, solo se debe modificar el valor de la tasa a la hora de modificar el registro, no se pueden modificar las monedas; es decir, los selectores de monedas del formulario pasarian a estas inhabilitados para edición.
+
+Otra cosa mas, en el el mismo formulario de tasas, ya no guarda un texto, sino una referencia a la moneda completa (su id), en ambas monedas
+
+---
+
+Tengo este error de compilación en la librería common:
+/Users/luis_sonoma/Desarrollo/Finexa/Common/Core/src/CalculadoraCore.cpp:203:13 Use of undeclared identifier 'DualComponents'
+
+---
+
+Vamos a trabajar los empty states. 
+
+Comencemos por las monedas.
+Como se requiere al menos una moneda para agregar operaciones y la aplicación arranca en la sección de operaciones; Cuando la aplicación arranca sin monedas creadas, hay que dirigirla al editor de monedas; y al agregar la primera moneda, debe volver a la sección de operaciones.
+
+Antes de mostrar el editor de moneda para crear esa primera moneda, se le debe mostrar un mensaje de bienvenida indicando que se debe crear al menos una moneda para poder agregar operaciones.
+
+---
+
+vamos ahora por la sección de operaciones.
+- No se debe mostrar el total si no hay operaciones.
+- Se debe mostrar un coach mark para indicar que se debe selecionar una moneda base (Reemplacemos el nombre y el concepto de moneda referencial por moneda base).
+- Luego de seleccionada la moneda, se debe mostrar un coach mark para indicar que se debe agregar una operación.
+
+--- Tengo estos errores de compilación en la librería FinexaViewsIos:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/MonedasController.swift:109:24 Invalid redeclaration of 'onAdd()'
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/MonedasController.swift:117:18 Invalid redeclaration of 'openEditForm()'
+
+---
+
+Perfecto, ya corre bien, pero recuerda que debe dirigir directamente al formulario editor de moneda, no a la sección de monedas.
+Al aceptar, se dirige directamente a la seccion de operaciones; si en ese punto el usuario le da al botón de cancelar, se le debe mostrar un mensaje indicandole que debe crear al menos una moneda para poder agregar operaciones.
+
+---
+
+Bien, al iniciar, se dirige bien al editor de monedas, solo que pasa visualmente primero por la sección y no me parece elegante; hay que evitar eso.
+
+Segundo, al darle cancelar, regresa a la sección de monedas con la lista vacia, y recuerda que debe mostrar el mensaje de advertencia y mantenerse en el editor de monedas.
+
+---
+
+Bien, me gustaría que el mensaje de bienvenida, no se mostrara con la sección de operaciones de fondo; Crees que sería conveniente crear un nuevo controlador aparte? o con ocultar la vista de la sección de operaciones sería suficiente (Mostrando otro background, mas adelante con una ilustración llamativa)?
+
+---
+La versión mínima de la aplicación del OS es 13.2
+hay que buscar de reemplazar esta parte:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/OperacionesController.swift:108:31 'Configuration' is only available in iOS 15.0 or newer
+
+Supongo que eso causa tambien estos otro errores de compilación en FinexaViewsIos:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/OperacionesController.swift:116:19 Value of type 'OperacionesController' has no member 'onMenuOptionSelected'
+
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/OperacionesController.swift:120:23 Cannot infer contextual base in reference to member 'vertical'
+
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/OperacionesController.swift:122:28 Cannot infer contextual base in reference to member 'center'
+
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/OperacionesController.swift:298:19 Value of type 'OperacionesController' has no member 'onMenuOptionSelected'
+
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/OperacionesController.swift:302:19 Value of type 'OperacionesController' has no member 'onMenuOptionSelected'
+
+---
+
+Tengo este último error en el app Delegate:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/App/AppDelegate.swift:23:28 Value of type 'OperacionesController' has no member 'configure'
+
+
