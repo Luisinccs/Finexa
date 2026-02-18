@@ -20,6 +20,7 @@
 		11B72BD32F42B1EC00FDA36A /* OperacionesController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BD12F42B1EC00FDA36A /* OperacionesController.swift */; };
 		11B72BD62F42B1F500FDA36A /* EditorOperacionBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BD42F42B1F500FDA36A /* EditorOperacionBinder.swift */; };
 		11B72BD72F42B1F500FDA36A /* OperacionesBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BD52F42B1F500FDA36A /* OperacionesBinder.swift */; };
+		11E5EE5D2F45399B00C06205 /* OnboardingController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11E5EE5C2F45399B00C06205 /* OnboardingController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -49,6 +50,7 @@
 		11B72BD12F42B1EC00FDA36A /* OperacionesController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperacionesController.swift; sourceTree = "<group>"; };
 		11B72BD42F42B1F500FDA36A /* EditorOperacionBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorOperacionBinder.swift; sourceTree = "<group>"; };
 		11B72BD52F42B1F500FDA36A /* OperacionesBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OperacionesBinder.swift; sourceTree = "<group>"; };
+		11E5EE5C2F45399B00C06205 /* OnboardingController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnboardingController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,6 +99,7 @@
 		114E605B2F422A1500A7770F /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				11E5EE5C2F45399B00C06205 /* OnboardingController.swift */,
 				11B72BD02F42B1EC00FDA36A /* EditorOperacionController.swift */,
 				11B72BD12F42B1EC00FDA36A /* OperacionesController.swift */,
 				11B72BBC2F428EFF00FDA36A /* EditorTasaController.swift */,
@@ -180,6 +183,7 @@
 				11B72BBE2F428EFF00FDA36A /* EditorTasaController.swift in Sources */,
 				114E605D2F422A5F00A7770F /* EditorMonedaBinder.swift in Sources */,
 				114E60592F4229F500A7770F /* EditorMonedaController.swift in Sources */,
+				11E5EE5D2F45399B00C06205 /* OnboardingController.swift in Sources */,
 				114E60A12F42400000A7770F /* MonedasController.swift in Sources */,
 				11B72BD62F42B1F500FDA36A /* EditorOperacionBinder.swift in Sources */,
 				11B72BC22F428F0E00FDA36A /* EditorTasaBinder.swift in Sources */,

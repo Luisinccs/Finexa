@@ -138,6 +138,11 @@ void OperacionesViewModel::inicializar() {
   refrescarGrilla();
 }
 
+void OperacionesViewModel::refrescarDatos() {
+  _core->cargarDesdeBD();
+  inicializar();
+}
+
 // --- Helpers ---
 
 double OperacionesViewModel::getMontoDouble() {
@@ -360,4 +365,14 @@ DC_BRIDGE_EXPORT bool OperacionesViewModel_isRefCurrencySelected(void *vmPtr) {
     }
   }
   return false;
+}
+
+DC_BRIDGE_EXPORT void OperacionesViewModel_refrescarDatos(void *vmPtr) {
+  if (vmPtr) {
+    auto vm = *static_cast<
+        std::shared_ptr<Finexa::ViewModels::OperacionesViewModel> *>(vmPtr);
+    if (vm) {
+      vm->refrescarDatos();
+    }
+  }
 }

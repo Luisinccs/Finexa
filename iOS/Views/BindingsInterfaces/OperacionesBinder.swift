@@ -42,6 +42,9 @@ public protocol OperacionesBinder: AnyObject {
     /// Limpia la base de datos (God Mode).
     func limpiarDB()
     
+    /// Refresca los datos desde el origen persistente.
+    func refreshData()
+    
     /// Indica si existen monedas registradas.
     var hasCurrencies: Bool { get }
     

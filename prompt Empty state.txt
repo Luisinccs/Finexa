@@ -119,3 +119,29 @@ Tengo este último error en el app Delegate:
 /Users/luis_sonoma/Desarrollo/Finexa/iOS/App/AppDelegate.swift:23:28 Value of type 'OperacionesController' has no member 'configure'
 
 
+---
+
+El empty state funciona, solo que cuando agregas la primera moneda, vuelve otra ves el mismo mensaje en la sección de operaciones. 
+En ese punto, se debería aparecer el coach mark para seleccionar la moneda base, y no mostrarse el mensaje del inicio (Y no mostrar el total que no se ve estético si está vacio en ese punto)
+
+---
+
+Tengo este error de compilación en FinexaViewsIos:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/OperacionesController.swift:69:17 Value of type 'any OperacionesBinder' has no member 'refreshData'
+
+---
+
+Error de última hora al compilar la app en el linker:
+Undefined symbol: _OperacionesViewModel_refrescarDatos
+
+---
+
+Hay que buscar la manera de que cuando se limpien los datos en modo Dios, se vuelva otra vez a mostrar el mensaje de bienvenida en la seccion de operaciones, y no mostrar el coach mark de seleccionar moneda base.
+
+---
+
+Prefiero que no se vea tampoco la barra de navegación al comienzo cuando sale el mensaje de requerir crear la primera moneda.
+
+Es mas nisiquiera quiero la barra de estado del teléfono en ese punto, quiero la pantalla solo con el mensaje de bienvenida y el botón de crear moneda (dejanod la opción para la ilustración futura).
+
+En ese caso, inicia la aplicación con un controlador distinto solo para eso; 

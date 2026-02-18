@@ -162,6 +162,14 @@ public class OperacionesAppBinder: OperacionesBinder {
         }
     }
     
+    public func refreshData() {
+        let vm = viewModelPtr
+        withUnsafePointer(to: vm) { vmPtr in
+            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            OperacionesViewModel_refrescarDatos(rawPtr)
+        }
+    }
+    
     public var hasCurrencies: Bool {
         let vm = viewModelPtr
         var result = false
@@ -189,3 +197,6 @@ func OperacionesViewModel_tieneMonedas(_ vmPtr: UnsafeMutableRawPointer) -> Bool
 
 @_silgen_name("OperacionesViewModel_isRefCurrencySelected")
 func OperacionesViewModel_isRefCurrencySelected(_ vmPtr: UnsafeMutableRawPointer) -> Bool
+
+@_silgen_name("OperacionesViewModel_refrescarDatos")
+func OperacionesViewModel_refrescarDatos(_ vmPtr: UnsafeMutableRawPointer)

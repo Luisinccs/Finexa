@@ -67,6 +67,7 @@ public:
   void cargarOperacion(int index);
   void limpiarEditor();
   void refrescarGrilla();
+  void refrescarDatos();
 
   bool tieneMonedas();          // Helper for Empty State
   bool isRefCurrencySelected(); // Helper for Coach Marks
@@ -104,4 +105,5 @@ DC_BRIDGE_EXPORT void OperacionesViewModel_cargarOperacion(void *vmPtr,
                                                            int index);
 DC_BRIDGE_EXPORT void OperacionesViewModel_limpiarEditor(void *vmPtr);
 DC_BRIDGE_EXPORT bool OperacionesViewModel_tieneMonedas(void *vmPtr);
+DC_BRIDGE_EXPORT void OperacionesViewModel_refrescarDatos(void *vmPtr);
 }
