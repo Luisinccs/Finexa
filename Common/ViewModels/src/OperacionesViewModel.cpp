@@ -30,10 +30,17 @@ OperacionesViewModel::OperacionesViewModel(
   _inputMonto = std::make_shared<DcNumberFieldViewModel>();
   _selectorMoneda = std::make_shared<DcComboBoxViewModel>();
   _cmdAgregar = std::make_shared<DcCommandViewModel>();
+  _cmdCancelar = std::make_shared<DcCommandViewModel>();
   _cmdEliminar = std::make_shared<DcCommandViewModel>();
   _selectorMonedaRef = std::make_shared<DcComboBoxViewModel>();
   _labelTotal = std::make_shared<DcInputViewModel>();
   _labelMontoXds = std::make_shared<DcInputViewModel>();
+
+  // Configurar textos de etiquetas (Labels)
+  _inputConcepto->setLabelText("Concepto");
+  _inputMonto->setLabelText("Monto");
+  _selectorMoneda->setLabelText("Moneda");
+  // _labelMontoXds no necesita label text fijo, ya que es el valor calculado
 
   configurarColumnas();
   configurarMonedasDinamicas();
@@ -46,6 +53,12 @@ OperacionesViewModel::OperacionesViewModel(
   // Configurar comandos
   _cmdAgregar->setLabelText("Registrar");
   _cmdAgregar->setOnExecuted([this]() { this->agregarOperacion(); });
+
+  _cmdCancelar->setLabelText("Cancelar");
+  _cmdCancelar->setOnExecuted([this]() {
+    if (_onRequestClose)
+      _onRequestClose();
+  });
 
   _cmdEliminar->setLabelText("Eliminar");
   _cmdEliminar->setOnExecuted([this]() { this->eliminarOperacion(); });
@@ -76,6 +89,7 @@ IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_INPUT_CONCEPTO, Input)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_INPUT_MONTO, NumberField)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_SELECTOR_MONEDA, ComboBox)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_CMD_AGREGAR, Command)
+IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_CMD_CANCELAR, Command)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_CMD_ELIMINAR, Command)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_SELECTOR_MONEDA_REF,
                            ComboBox)
@@ -294,19 +308,25 @@ void OperacionesViewModel::configurarMonedasDinamicas() {
 void OperacionesViewModel::recalcularXds() {
   double monto = getMontoDouble();
   std::string moneda = _selectorMoneda->getSelectedKey();
-  std::string label = "Monto en moneda Base: 0.00";
+
+  std::string labelTitle = "Monto en moneda Base";
+  std::string valueText = "0.00";
 
   if (!_monedaRef.empty()) {
-    label = "Monto en moneda Base (" + _monedaRef + "): 0.00";
+    labelTitle = "Monto en moneda Base (" + _monedaRef + ")";
+
     if (monto > 0 && !moneda.empty()) {
       double montoRef = convertir(monto, moneda, _monedaRef);
       std::stringstream ss;
-      ss << "Monto en moneda Base (" << _monedaRef << "): " << std::fixed
-         << std::setprecision(2) << montoRef;
-      label = ss.str();
+      ss << std::fixed << std::setprecision(2) << montoRef;
+      valueText = ss.str();
     }
   }
-  _labelMontoXds->setText(label);
+
+  // Set the "Label" text on the ViewModel (for the UILabel)
+  _labelMontoXds->setLabelText(labelTitle);
+  // Set the "Value" text on the ViewModel (for the UITextField)
+  _labelMontoXds->setText(valueText);
 }
 
 } // namespace Finexa::ViewModels
@@ -318,6 +338,7 @@ IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_INPUT_CONCEPTO)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_INPUT_MONTO)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_SELECTOR_MONEDA)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_CMD_AGREGAR)
+IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_CMD_CANCELAR)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_CMD_ELIMINAR)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_SELECTOR_MONEDA_REF)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_LABEL_TOTAL)
@@ -374,6 +395,21 @@ DC_BRIDGE_EXPORT void OperacionesViewModel_refrescarDatos(void *vmPtr) {
         std::shared_ptr<Finexa::ViewModels::OperacionesViewModel> *>(vmPtr);
     if (vm) {
       vm->refrescarDatos();
+    }
+  }
+}
+
+DC_BRIDGE_EXPORT void
+OperacionesViewModel_setOnRequestClose(void *vmPtr, void *ctx,
+                                       void (*callback)(void *)) {
+  if (vmPtr) {
+    auto vm = *static_cast<
+        std::shared_ptr<Finexa::ViewModels::OperacionesViewModel> *>(vmPtr);
+    if (vm) {
+      vm->setOnRequestClose([ctx, callback]() {
+        if (callback)
+          callback(ctx);
+      });
     }
   }
 }

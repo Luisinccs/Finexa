@@ -10,6 +10,7 @@
 #define VM_INPUT_MONTO inputMonto
 #define VM_SELECTOR_MONEDA selectorMoneda
 #define VM_CMD_AGREGAR cmdAgregar
+#define VM_CMD_CANCELAR cmdCancelar
 #define VM_CMD_ELIMINAR cmdEliminar
 
 #include "DcComboBoxViewModel.hpp"
@@ -18,6 +19,10 @@
 #include "DcInputViewModel.hpp"
 #include "DcNumberFieldViewModel.hpp"
 #include "DcViewModelToolkit.hpp"
+#include <functional>
+#include <memory>
+#include <string>
+#include <vector>
 
 #include "IComboBoxBinding.hpp"
 #include "ICommandBinding.hpp"
@@ -40,6 +45,7 @@ class OperacionesViewModel {
   DECLARE_CONTROL_BINDING(VM_INPUT_MONTO, NumberField)
   DECLARE_CONTROL_BINDING(VM_SELECTOR_MONEDA, ComboBox)
   DECLARE_CONTROL_BINDING(VM_CMD_AGREGAR, Command)
+  DECLARE_CONTROL_BINDING(VM_CMD_CANCELAR, Command)
   DECLARE_CONTROL_BINDING(VM_CMD_ELIMINAR, Command)
   DECLARE_CONTROL_BINDING(VM_SELECTOR_MONEDA_REF, ComboBox)
   DECLARE_CONTROL_BINDING(VM_LABEL_TOTAL, Input)
@@ -74,6 +80,11 @@ public:
   bool tieneMonedas();          // Helper for Empty State
   bool isRefCurrencySelected(); // Helper for Coach Marks
 
+  // Actions Callbacks
+  void setOnRequestClose(std::function<void()> callback) {
+    _onRequestClose = callback;
+  }
+
 private:
   void configurarColumnas();
   void configurarMonedasDinamicas();
@@ -81,6 +92,8 @@ private:
   double getMontoDouble();
   double convertir(double monto, const std::string &from,
                    const std::string &to);
+
+  std::function<void()> _onRequestClose;
 };
 
 using OperacionesViewModelPtr = std::shared_ptr<OperacionesViewModel>;
@@ -95,6 +108,7 @@ DECLARE_CONTROL_BRIDGE(VM_INPUT_CONCEPTO, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_INPUT_MONTO, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_SELECTOR_MONEDA, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_CMD_AGREGAR, OperacionesViewModel)
+DECLARE_CONTROL_BRIDGE(VM_CMD_CANCELAR, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_CMD_ELIMINAR, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_SELECTOR_MONEDA_REF, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_LABEL_TOTAL, OperacionesViewModel)
@@ -108,4 +122,7 @@ DC_BRIDGE_EXPORT void OperacionesViewModel_cargarOperacion(void *vmPtr,
 DC_BRIDGE_EXPORT void OperacionesViewModel_limpiarEditor(void *vmPtr);
 DC_BRIDGE_EXPORT bool OperacionesViewModel_tieneMonedas(void *vmPtr);
 DC_BRIDGE_EXPORT void OperacionesViewModel_refrescarDatos(void *vmPtr);
+DC_BRIDGE_EXPORT void
+OperacionesViewModel_setOnRequestClose(void *vmPtr, void *ctx,
+                                       void (*cb)(void *));
 }

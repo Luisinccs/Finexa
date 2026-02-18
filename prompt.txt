@@ -56,3 +56,17 @@ Supongo que es porque el NumberFieldViewModel no expone ese metodo en la interfa
 
 Estoy en el editor de operacion, en este punto ya agregué los tres campos y estoy a punto de darle aceptar. Abajo en la etiqueta REF: 0.00 USD, debería aparecer el monto en USD (la moneda base que elegimos en el combobox de la sección principal de operaciones).
 Corrigelo para que se muestre el monto actualizado; Y en lugar de "REF", debe decir "Monto en moneda Base (USD)": XXX,XX
+
+--- Estoy haciendo un refactor mayor para el editor de operacion; por ahora solo con el, luego lo hacemos con los otros. 
+- agregué una etiqueta para cada campo, de modo que el texto venga del view model y no hard coded; 
+- agregué los comandos para que tambien sean enlazados completos con el view model, de forma tal que su texto y las otras porpiedades bindables vengan del view model.
+- Faltaría (en el EdotorOperacionController) terminar de corregir la función setupUI; para que se muestren las etiquetas al lado de los campos, y se muestren al final los dos botones.
+- Para el layout de los campos, puedes usar un stack view que contenga la etiqueta y el campo; y luego el stack principal contiene esos stacks.
+- Para cerrar el formulario al presionar un botón, como ya la acción viene del view model, habría que pasar un parametro de vuelta, indicando que se completó la acción y el controlador debe cerrarce; quedo abierto a tu recomendación (algo como en el controlador colocar close(), y ser llamado desde el binder).
+
+- Bien, una cosa, el campo montoRef, debe ser un UITextField, se colocará como de solo lectura, pero debe ser un campo de texto para que actualice el monto; y la etiqueta lleva el texto completo, incluido las siglas de la moneda. Yo corregí el controller y el protocolo del binder; termina de corregri tu la implementación del binder
+
+--
+te pregunto dos cosas:
+- Por qué estas agregando un selector al comando de cancelar, si la orden viene del view model igual que la del comando de aceptar?
+- la llamada a setUpBingins, no deberia ser mejor en el metodo configure, luego de establecer el binder, en lugar de hacerlo en view did load?

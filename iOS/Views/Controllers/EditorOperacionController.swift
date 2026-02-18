@@ -6,15 +6,23 @@ public class EditorOperacionController: UIViewController {
     // MARK: - Properties
     private var binder: EditorOperacionBinder?
     
+    private let lblConcepto = UILabel()
+    private let lblMonto = UILabel()
+    private let lblMoneda = UILabel()
+    private let lblMontoBase = UILabel()
+    
     private let txtConcepto = UITextField()
     private let txtMonto = DcNumberTextField()
     private let cmbMoneda = DcComboBox()
-    private let lblMontoRef = UILabel()
+    private let txtMontoBase = UITextField()
     
-    // MARK: - Configuration
+    private let cmdAceptar = UIButton()
+    private let cmdCancelar = UIButton()
     
     public func configure(with binder: EditorOperacionBinder) {
         self.binder = binder
+        loadViewIfNeeded()
+        setupBindings()
     }
     
     // MARK: - Lifecycle
@@ -22,73 +30,87 @@ public class EditorOperacionController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupBindings()
     }
     
     // MARK: - UI Setup
     
     private func setupUI() {
-        title = "Editor Operación"
+        title = "Operación"
         view.backgroundColor = .systemBackground
-        
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .cancel, target: self, action: #selector(onCancel))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .save, target: self, action: #selector(onSave))
         
         // Styles
         txtConcepto.borderStyle = .roundedRect
-        txtConcepto.placeholder = "Concepto"
-        
         txtMonto.borderStyle = .roundedRect
-        txtMonto.placeholder = "Monto"
+        txtMontoBase.borderStyle = .roundedRect
+        txtMontoBase.isEnabled = false // Read-only but keep styling
+        txtMontoBase.textColor = .secondaryLabel
         
-        // Label Style
-        lblMontoRef.font = .boldSystemFont(ofSize: 16)
-        lblMontoRef.textColor = .secondaryLabel
-        lblMontoRef.textAlignment = .right
-        lblMontoRef.text = "Monto en moneda Base: ..."
+        // Buttons
+        cmdAceptar.backgroundColor = .systemBlue
+        cmdAceptar.setTitleColor(.white, for: .normal)
+        cmdAceptar.layer.cornerRadius = 8
         
-        let stack = UIStackView(arrangedSubviews: [
-            label("Concepto"), txtConcepto,
-            label("Monto"), txtMonto,
-            label("Moneda"), cmbMoneda,
-            lblMontoRef
+        cmdCancelar.setTitleColor(.systemRed, for: .normal)
+
+        // Layout Construction
+        let stackMain = UIStackView()
+        stackMain.axis = .vertical
+        stackMain.spacing = 20
+        stackMain.translatesAutoresizingMaskIntoConstraints = false
+        
+        // Fileds Stack
+        let stackFields = UIStackView(arrangedSubviews: [
+            makeFieldStack(label: lblConcepto, field: txtConcepto),
+            makeFieldStack(label: lblMonto, field: txtMonto),
+            makeFieldStack(label: lblMoneda, field: cmbMoneda),
+            makeFieldStack(label: lblMontoBase, field: txtMontoBase)
         ])
-        stack.axis = .vertical
-        stack.spacing = 15
+        stackFields.axis = .vertical
+        stackFields.spacing = 15
         
-        view.addSubview(stack)
-        stack.translatesAutoresizingMaskIntoConstraints = false
+        // Buttons Stack
+        let stackButtons = UIStackView(arrangedSubviews: [cmdAceptar, cmdCancelar])
+        stackButtons.axis = .vertical
+        stackButtons.spacing = 10
+        stackButtons.distribution = .fillEqually
+        
+        stackMain.addArrangedSubview(stackFields)
+        stackMain.addArrangedSubview(stackButtons)
+        
+        view.addSubview(stackMain)
         
         NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            stack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            stack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            stackMain.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            stackMain.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            stackMain.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             
-            cmbMoneda.heightAnchor.constraint(equalToConstant: 44)
+            cmbMoneda.heightAnchor.constraint(equalToConstant: 44),
+            cmdAceptar.heightAnchor.constraint(equalToConstant: 50),
+            cmdCancelar.heightAnchor.constraint(equalToConstant: 50)
         ])
     }
     
-    private func label(_ text: String) -> UILabel {
-        let l = UILabel()
-        l.text = text
-        l.font = .systemFont(ofSize: 14, weight: .semibold)
-        return l
+    private func makeFieldStack(label: UILabel, field: UIView) -> UIStackView {
+        label.font = .systemFont(ofSize: 14, weight: .semibold)
+        label.textColor = .label
+        
+        let stack = UIStackView(arrangedSubviews: [label, field])
+        stack.axis = .vertical
+        stack.spacing = 5
+        return stack
     }
     
     private func setupBindings() {
+        guard let binder = binder else { return }
+        
         // Bind UI to ViewModel via Binder
-        binder?.bind(concepto: txtConcepto, monto: txtMonto, moneda: cmbMoneda, montoRef: lblMontoRef)
-    }
-    
-    // MARK: - Actions
-    
-    @objc private func onSave() {
-        binder?.save()
-        dismiss(animated: true, completion: nil)
-    }
-    
-    @objc private func onCancel() {
-        binder?.cancel()
-        dismiss(animated: true, completion: nil)
+        binder.bindFields(concepto: txtConcepto, monto: txtMonto, moneda: cmbMoneda, montoRef: txtMontoBase)
+        binder.bindLabels(lblConcepto: lblConcepto, lblMonto: lblMonto, lblMoneda: lblMoneda, lblMontoBase: lblMontoBase)
+        binder.bindCommands(cmdAceptar: cmdAceptar, cmdCancelar: cmdCancelar)
+        
+        // Handle Close Request from ViewModel (e.g. after save)
+        binder.bindCloseRequest { [weak self] in
+            self?.dismiss(animated: true)
+        }
     }
 }
