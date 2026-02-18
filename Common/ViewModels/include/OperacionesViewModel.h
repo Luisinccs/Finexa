@@ -1,14 +1,16 @@
 #pragma once
 
+// Grid
 #define VM_GRID_OPERACIONES gridOperaciones
+#define VM_SELECTOR_MONEDA_REF selectorMonedaRef
+#define VM_LABEL_TOTAL labelTotal
+#define VM_LABEL_MONTO_XDS labelMontoXds
+// Editor
 #define VM_INPUT_CONCEPTO inputConcepto
 #define VM_INPUT_MONTO inputMonto
 #define VM_SELECTOR_MONEDA selectorMoneda
 #define VM_CMD_AGREGAR cmdAgregar
 #define VM_CMD_ELIMINAR cmdEliminar
-#define VM_SELECTOR_MONEDA_REF selectorMonedaRef
-#define VM_LABEL_TOTAL labelTotal
-#define VM_LABEL_MONTO_XDS labelMontoXds
 
 #include "DcComboBoxViewModel.hpp"
 #include "DcCommandViewModel.hpp"

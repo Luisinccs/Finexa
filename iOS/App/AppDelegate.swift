@@ -3,7 +3,6 @@
 import UIKit
 import FinexaViewsIos
 
-
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -37,6 +36,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         onboardingVC.onStart = { [weak self] in
             self?.showInitialCurrencySetup(from: onboardingVC)
         }
+        
+        onboardingVC.onLoadMock = { [weak self] in
+            binder.cargarMock()
+            // After loading mock, we should have currencies, so show main app
+            self?.showMainApp(with: binder)
+        }
+        
         window?.rootViewController = onboardingVC
     }
     

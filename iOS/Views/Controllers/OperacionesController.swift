@@ -83,6 +83,9 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
         // Add Button (right)
         navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(onAdd))
         
+        // Force centered title (no large titles for this screen)
+        navigationItem.largeTitleDisplayMode = .never
+        
         // TableView
         tableView.dataSource = self
         tableView.delegate = self
@@ -162,6 +165,7 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
         if binder.numberOfRows() == 0 {
             lblTotal.isHidden = true
             
+            /*
             if !binder.isRefCurrencySelected {
                 showCoachMark(message: "👆 Selecciona una Moneda Base para comenzar", target: cmbReference)
             } else {
@@ -174,6 +178,7 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
                      showCoachMark(message: "👆 Agrega tu primera operación (Botón +)", target: cmbReference)
                  }
             }
+            */
         } else {
             lblTotal.isHidden = false
             hideCoachMark()
@@ -204,9 +209,16 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
         container.addSubview(lbl)
         lbl.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addSubview(container)
+        // Add to NavigationController view to be on top of EVERYTHING
+        guard let hostView = self.navigationController?.view ?? self.view else { return }
+        hostView.addSubview(container)
+        
         container.translatesAutoresizingMaskIntoConstraints = false
         self.coachMarkView = container
+        
+        // IMPORTANT: Convert target's reference to hostView coordinates
+        // to avoid "pulling/shoving" the target view in the navigation bar.
+        let targetFrame = target.convert(target.bounds, to: hostView)
         
         NSLayoutConstraint.activate([
             lbl.topAnchor.constraint(equalTo: container.topAnchor, constant: 8),
@@ -214,9 +226,11 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
             lbl.leadingAnchor.constraint(equalTo: container.leadingAnchor, constant: 12),
             lbl.trailingAnchor.constraint(equalTo: container.trailingAnchor, constant: -12),
             
-            container.topAnchor.constraint(equalTo: target.bottomAnchor, constant: 8),
-            container.leadingAnchor.constraint(equalTo: target.leadingAnchor),
-            container.trailingAnchor.constraint(lessThanOrEqualTo: view.trailingAnchor, constant: -20)
+            // Positioning relative to target rect in the same coordinate space
+            container.topAnchor.constraint(equalTo: hostView.topAnchor, constant: targetFrame.maxY + 8),
+            // Align with target's leading, but keep within screen
+            container.leadingAnchor.constraint(greaterThanOrEqualTo: hostView.leadingAnchor, constant: 10),
+            container.trailingAnchor.constraint(equalTo: hostView.trailingAnchor, constant: -16)
         ])
         
         // Animation

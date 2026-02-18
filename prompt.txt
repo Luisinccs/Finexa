@@ -1,0 +1,58 @@
+Observa el OperacionesController.swift. En la imagen adjunta, puedes observar varias cosas:
+- El botón de + se muestra desajustado respecto al borde derecho (Supongo que trató de centrarse con el coach mark; debe mantenerse alineado a la derecha)
+- El título del formulario (Operaciones) debe mostrarse centrado en la barra de navegación, no mas abajo.
+- El coach mack, debe mostrarse encima de todo, (El texto Operaciones parece taparlo)
+
+---
+
+Tengo este error:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/OperacionesController.swift:212:9 Value of optional type 'UIView?' must be unwrapped to refer to member 'addSubview' of wrapped base type 'UIView'
+Mas abajo hay otros tres errores iguales, en el autolayout
+
+Corrigelo sin forzar (sin usar !) para comprobar si hubo algún error
+
+---
+
+Imagina que eres un usuario que no tiene idea de como usar la aplicación.
+Necesitaria una ayuda guiada para entender como usarla y que tocar.
+Diseña un tour didactico para implementarlo en la aplicación para enseñar al usuario como usarla.
+
+---
+
+Vamos a terminar de corregir los errores de lógica antes de planificar la ayuda guiada para los usuairos.
+Comienza retirando el coach mark que fuerza al usuario a crear una operación directamente. (puedes solo comentarlo para luego volver a activarlo si decidimos implementarlo)
+
+---
+
+Coloca un botón en el onboarding para poder cargar el mock para cargar datos de pruebas.
+
+---
+
+El coach mark "Selecciona una moneda base para comenzar" no se quita con nada. Suspendelo por ahora mientras terminamos de corregir los errores de lógica.
+
+--- En el editor de tasa (EditorTasaController.swift) no 
+
+Algo pasó ahora, surgieron una cantidad de errores de compilación, 
+comenzando por este:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/Controllers/OperacionesController.swift:4:14 Type 'OperacionesController' does not conform to protocol 'UITableViewDataSource'
+
+--- 
+
+
+---
+
+La función getValorDouble no está declarada en TasasViewModel.hpp, la hay en el operaciones view model. Podemos crear una función general para todos, en algún helper de fucniones, y quitarla de esos dos para limpiar.
+Como el numero de decimales y el valor de entrada podría variar segun el caso, conviene pasarlos como argumentos: getValorDouble(int numeroDecimales, int64_t valorEntrada)
+(Podría ser en el directorio Finexa/Common/Core/include/Helpers.hpp y .cpp)
+
+---
+
+Tengo este error de compilación:
+/Users/luis_sonoma/Desarrollo/Finexa/Common/ViewModels/src/TasasViewModel.cpp:121:55 No member named 'getDecimalPlaces' in 'DualComponents::ViewModels::INumberFieldViewModel'
+
+Supongo que es porque el NumberFieldViewModel no expone ese metodo en la interface INumberFieldViewModel en el framework DcViewModels; habría que modificarlo y recompilarlo
+
+---
+
+Estoy en el editor de operacion, en este punto ya agregué los tres campos y estoy a punto de darle aceptar. Abajo en la etiqueta REF: 0.00 USD, debería aparecer el monto en USD (la moneda base que elegimos en el combobox de la sección principal de operaciones).
+Corrigelo para que se muestre el monto actualizado; Y en lugar de "REF", debe decir "Monto en moneda Base (USD)": XXX,XX

@@ -45,7 +45,7 @@ public class EditorOperacionController: UIViewController {
         lblMontoRef.font = .boldSystemFont(ofSize: 16)
         lblMontoRef.textColor = .secondaryLabel
         lblMontoRef.textAlignment = .right
-        lblMontoRef.text = "REF: 0.00"
+        lblMontoRef.text = "Monto en moneda Base: ..."
         
         let stack = UIStackView(arrangedSubviews: [
             label("Concepto"), txtConcepto,

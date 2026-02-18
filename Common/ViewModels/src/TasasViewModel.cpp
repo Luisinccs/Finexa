@@ -1,4 +1,6 @@
 #include "../include/TasasViewModel.h"
+#include "../../Core/include/Helpers.hpp"
+#include <cmath>
 #include <iomanip>
 #include <sstream>
 
@@ -39,7 +41,9 @@ TasasViewModel::TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core)
       // Populate form
       _selectorBase->selectItemByKey(tasa->getBase()->getUuid());
       _selectorDestino->selectItemByKey(tasa->getDestino()->getUuid());
-      _inputValor->setValue(tasa->getValor());
+
+      int dp = _inputValor->getDecimalPlaces();
+      _inputValor->setValue(Finexa::getValorRaw(tasa->getValor(), dp));
 
       // Disable selectors during edit (Constraint)
       _selectorBase->setEnabled(false);
@@ -113,7 +117,8 @@ void TasasViewModel::inicializar() {
 void TasasViewModel::guardarTasa() {
   std::string baseUuid = selectorBase()->getSelectedKey();
   std::string destinoUuid = selectorDestino()->getSelectedKey();
-  double valor = inputValor()->getValue();
+  double valor = Finexa::getValorDouble(inputValor()->getValue(),
+                                        inputValor()->getDecimalPlaces());
 
   if (!baseUuid.empty() && !destinoUuid.empty() && baseUuid != destinoUuid &&
       valor > 0) {

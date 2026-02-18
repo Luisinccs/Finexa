@@ -3,6 +3,7 @@ import UIKit
 public class OnboardingController: UIViewController {
     
     public var onStart: (() -> Void)?
+    public var onLoadMock: (() -> Void)?
     
     // MARK: - Lifecycle
     
@@ -48,9 +49,16 @@ public class OnboardingController: UIViewController {
         btn.layer.cornerRadius = 25
         btn.addTarget(self, action: #selector(onStartTapped), for: .touchUpInside)
         
-        let stack = UIStackView(arrangedSubviews: [iv, lblTitle, lblBody, btn])
+        // Mock Button (God Mode)
+        let btnMock = UIButton(type: .system)
+        btnMock.setTitle("Cargar Datos de Prueba", for: .normal)
+        btnMock.titleLabel?.font = .systemFont(ofSize: 14)
+        btnMock.tintColor = .systemGray
+        btnMock.addTarget(self, action: #selector(onLoadMockTapped), for: .touchUpInside)
+        
+        let stack = UIStackView(arrangedSubviews: [iv, lblTitle, lblBody, btn, btnMock])
         stack.axis = .vertical
-        stack.spacing = 30
+        stack.spacing = 25
         stack.alignment = .center
         
         view.addSubview(stack)
@@ -71,5 +79,9 @@ public class OnboardingController: UIViewController {
     
     @objc private func onStartTapped() {
         onStart?()
+    }
+    
+    @objc private func onLoadMockTapped() {
+        onLoadMock?()
     }
 }

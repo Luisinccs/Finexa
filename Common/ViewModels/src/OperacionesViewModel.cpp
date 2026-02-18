@@ -1,4 +1,5 @@
 #include "../include/OperacionesViewModel.h"
+#include "../../Core/include/Helpers.hpp"
 #include <cmath>
 #include <iomanip>
 #include <sstream>
@@ -146,9 +147,8 @@ void OperacionesViewModel::refrescarDatos() {
 // --- Helpers ---
 
 double OperacionesViewModel::getMontoDouble() {
-  int64_t raw = _inputMonto->getValue();
-  int dp = _inputMonto->getDecimalPlaces();
-  return static_cast<double>(raw) / std::pow(10, dp);
+  return Finexa::getValorDouble(_inputMonto->getValue(),
+                                _inputMonto->getDecimalPlaces());
 }
 
 double OperacionesViewModel::convertir(double monto, const std::string &from,
@@ -230,9 +230,7 @@ void OperacionesViewModel::cargarOperacion(int index) {
 
     // Convertir double a raw int64 para el NumberField
     int dp = _inputMonto->getDecimalPlaces();
-    int64_t rawValue =
-        static_cast<int64_t>(op->getMontoOriginal() * std::pow(10, dp));
-    _inputMonto->setValue(rawValue);
+    _inputMonto->setValue(Finexa::getValorRaw(op->getMontoOriginal(), dp));
 
     _selectorMoneda->selectItemByKey(op->getMonedaOriginal()->getSiglas());
 
@@ -296,16 +294,19 @@ void OperacionesViewModel::configurarMonedasDinamicas() {
 void OperacionesViewModel::recalcularXds() {
   double monto = getMontoDouble();
   std::string moneda = _selectorMoneda->getSelectedKey();
-  std::string label = "REF: 0.00";
+  std::string label = "Monto en moneda Base: 0.00";
 
-  if (monto > 0 && !moneda.empty() && !_monedaRef.empty()) {
-    double montoRef = convertir(monto, moneda, _monedaRef);
-    std::stringstream ss;
-    ss << "REF: " << std::fixed << std::setprecision(2) << montoRef << " "
-       << _monedaRef;
-    label = ss.str();
+  if (!_monedaRef.empty()) {
+    label = "Monto en moneda Base (" + _monedaRef + "): 0.00";
+    if (monto > 0 && !moneda.empty()) {
+      double montoRef = convertir(monto, moneda, _monedaRef);
+      std::stringstream ss;
+      ss << "Monto en moneda Base (" << _monedaRef << "): " << std::fixed
+         << std::setprecision(2) << montoRef;
+      label = ss.str();
+    }
   }
-  _labelMontoXds->setLabelText(label);
+  _labelMontoXds->setText(label);
 }
 
 } // namespace Finexa::ViewModels
