@@ -70,6 +70,7 @@
 		114E60392F42293700A7770F = {
 			isa = PBXGroup;
 			children = (
+				1162FB432F479E9C00145638 /* Editores */,
 				114E605B2F422A1500A7770F /* Controllers */,
 				114E605A2F422A0100A7770F /* BindingsInterfaces */,
 				114E60432F42293700A7770F /* Products */,
@@ -103,14 +104,21 @@
 			isa = PBXGroup;
 			children = (
 				11E5EE5C2F45399B00C06205 /* OnboardingController.swift */,
-				11B72BD02F42B1EC00FDA36A /* EditorOperacionController.swift */,
 				11B72BD12F42B1EC00FDA36A /* OperacionesController.swift */,
-				11B72BBC2F428EFF00FDA36A /* EditorTasaController.swift */,
 				11B72BBB2F428EFF00FDA36A /* TasasController.swift */,
-				114E60582F4229F500A7770F /* EditorMonedaController.swift */,
 				114E60A02F42400000A7770F /* MonedasController.swift */,
 			);
 			path = Controllers;
+			sourceTree = "<group>";
+		};
+		1162FB432F479E9C00145638 /* Editores */ = {
+			isa = PBXGroup;
+			children = (
+				114E60582F4229F500A7770F /* EditorMonedaController.swift */,
+				11B72BD02F42B1EC00FDA36A /* EditorOperacionController.swift */,
+				11B72BBC2F428EFF00FDA36A /* EditorTasaController.swift */,
+			);
+			name = Editores;
 			sourceTree = "<group>";
 		};
 		11B72BC32F4292F700FDA36A /* Frameworks */ = {

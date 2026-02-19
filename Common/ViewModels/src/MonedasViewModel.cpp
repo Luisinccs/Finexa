@@ -17,6 +17,8 @@ MonedasViewModel::MonedasViewModel(
   _cancelarViewModel = std::make_shared<DcCommandViewModel>();
   _eliminarViewModel = std::make_shared<DcCommandViewModel>();
 
+  dialogViewModel = DcDialogViewModel::crearDialogViewModel();
+
   setup();
 }
 
@@ -141,9 +143,29 @@ void MonedasViewModel::setupEditingLogic() {
 
   // 3. Cancel
   _cancelarViewModel->setOnExecuted([this]() {
+    std::cout << "[MonedasViewModel] Cancel command executed." << std::endl;
     _monedasGridViewModel->setIsInputLocked(false);
-    if (_onRequestClose)
-      _onRequestClose();
+
+    // Onboarding check: If no currencies exist, warn user instead of closing
+    bool isEmpty = _core->getMonedas().empty();
+    std::cout << "[MonedasViewModel] Has currencies: "
+              << (isEmpty ? "No" : "Yes") << std::endl;
+
+    if (isEmpty) {
+      if (dialogViewModel) {
+        std::cout << "[MonedasViewModel] Showing alert dialog..." << std::endl;
+        dialogViewModel->showUiAlert(
+            "Atención", "Debe crear al menos una moneda para continuar.");
+      } else {
+        std::cout << "[MonedasViewModel] Error: dialogViewModel is null!"
+                  << std::endl;
+      }
+    } else {
+      if (_onRequestClose) {
+        std::cout << "[MonedasViewModel] Requesting close." << std::endl;
+        _onRequestClose();
+      }
+    }
   });
 
   // 4. Delete
@@ -256,4 +278,19 @@ MonedasViewModel_setOnRequestClose(void *vmPtr, void *ctx,
   }
 }
 
+DC_BRIDGE_EXPORT void *MonedasViewModel_dialogViewModel(void *vmPtr) {
+  if (vmPtr) {
+    auto vm =
+        *static_cast<std::shared_ptr<Finexa::ViewModels::MonedasViewModel> *>(
+            vmPtr);
+    if (vm) {
+      // Explicitly cast to IDialogBinding* to handle virtual inheritance offset
+      // before returning as void*
+      auto dialogVm = vm->dialogViewModel;
+      IDialogBinding *binding = dynamic_cast<IDialogBinding *>(dialogVm.get());
+      return static_cast<void *>(binding);
+    }
+  }
+  return nullptr;
+}
 } // extern "C"

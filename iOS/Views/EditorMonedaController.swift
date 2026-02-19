@@ -87,6 +87,8 @@ public class EditorMonedaController: UIViewController {
         binder.bindCloseRequest { [weak self] in
             self?.dismiss(animated: true)
         }
+        
+        binder.bindDialog(to: self)
     }
     
     private func setupUI() {
@@ -107,9 +109,9 @@ public class EditorMonedaController: UIViewController {
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
-        addField("Nombre", lblNombre, txtNombre)
-        addField("Símbolo", lblSimbolo, txtSimbolo)
-        addField("Siglas", lblSiglas, txtSiglas)
+        addField(lblNombre, txtNombre)
+        addField( lblSimbolo, txtSimbolo)
+        addField(lblSiglas, txtSiglas)
         
         // Spacer to push command bar to bottom (optional, but good for stack)
         let spacer = UIView()
@@ -126,8 +128,8 @@ public class EditorMonedaController: UIViewController {
         commandBar.btnNext.addTarget(self, action: #selector(onNext), for: .touchUpInside)
     }
     
-    private func addField(_ title: String, _ label: UILabel, _ control: UIView) {
-        label.text = title
+    private func addField(_ label: UILabel, _ control: UIView) {
+
         label.font = .systemFont(ofSize: 14, weight: .medium)
         label.textColor = .secondaryLabel
         
@@ -138,7 +140,3 @@ public class EditorMonedaController: UIViewController {
     }
     
 }
-
-// MARK: - Custom Controls
-// HaloTextField removed - replaced by DcTextField in DcViewsIos
-

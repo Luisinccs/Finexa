@@ -27,5 +27,8 @@ public protocol EditorMonedaBinder: FormBindingProtocol {
     ///   - lblSiglas: Etiqueta para el nombre.
     func bindLabels(lblNombre: UILabel, lblSimbolo: UILabel, lblSiglas: UILabel)
     
+    
+    func bindDialog(to viewController: UIViewController)
+    
 }
 

@@ -2,6 +2,7 @@
 
 #include "DcCommandViewModel.hpp"
 #include "DcControlViewModel.hpp"
+#include "DcDialogViewModel.hpp"
 #include "DcGridViewModel.hpp"
 #include "DcInputViewModel.hpp"
 #include "DcViewModelToolkit.hpp"
@@ -49,6 +50,9 @@ public:
   DECLARE_CONTROL_BINDING(CMD_CANCELAR, Command)
   DECLARE_CONTROL_BINDING(CMD_ELIMINAR, Command)
 
+  // Dialog
+  std::shared_ptr<DcDialogViewModel> dialogViewModel;
+
   void setOnRequestClose(std::function<void()> callback) {
     _onRequestClose = callback;
   }
@@ -91,8 +95,9 @@ DECLARE_CONTROL_BRIDGE(eliminarViewModel, MONEDAS_VIEW_MODEL)
 // Helper bridge used in Swift
 DC_BRIDGE_EXPORT void DcGrid_RequestAdd(void *gridPtr);
 
-DC_BRIDGE_EXPORT void
-MonedasViewModel_setOnRequestClose(void *vmPtr, void *ctx,
-                                   void (*cb)(void *));
+DC_BRIDGE_EXPORT void MonedasViewModel_setOnRequestClose(void *vmPtr, void *ctx,
+                                                         void (*cb)(void *));
+
+DC_BRIDGE_EXPORT void *MonedasViewModel_dialogViewModel(void *vmPtr);
 
 } // extern "C"

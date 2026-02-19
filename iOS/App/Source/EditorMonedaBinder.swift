@@ -112,21 +112,35 @@ class EditorMonedaAppBinder: EditorMonedaBinder {
         }
     }
     
+    func bindDialog(to viewController: UIViewController) {
+        print("[EditorMonedaBinder] Binding dialog...")
+        var vm = viewModel
+        withUnsafeMutablePointer(to: &vm) { vmPtr in
+            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            if let dialogPtr = MonedasViewModel_dialogViewModel(rawPtr) {
+                print("[EditorMonedaBinder] Found dialogViewModel pointer, calling setViewModel")
+                DcDialogBinder.setViewModel(dialogPtr, to: viewController)
+            } else {
+                print("[EditorMonedaBinder] Error: MonedasViewModel_dialogViewModel returned nil")
+            }
+        }
+    }
+    
 }
 
-// Helper para pasar closures a C++ (duplicated, should be moved to shared location eventually)
+// Helpers
 private class ClosureWrapper {
     let closure: () -> Void
-    init(closure: @escaping () -> Void) {
-        self.closure = closure
-    }
+    init(closure: @escaping () -> Void) { self.closure = closure }
 }
 
-// MARK: - Extensions for Custom Controls
 // MARK: - Extensions for Custom Controls
 // HaloTextField extension removed.
 
 // Ensure C function is available
 @_silgen_name("MonedasViewModel_setOnRequestClose")
 func MonedasViewModel_setOnRequestClose(_ vmPtr: UnsafeMutableRawPointer, _ closureCtx: UnsafeMutableRawPointer, _ callback: @convention(c) (UnsafeMutableRawPointer?) -> Void)
+
+@_silgen_name("MonedasViewModel_dialogViewModel")
+func MonedasViewModel_dialogViewModel(_ vmPtr: UnsafeMutableRawPointer) -> UnsafeMutableRawPointer?
 

@@ -106,3 +106,12 @@ Evaluea si es conveniente crear una clase base DcTextField: UITextField, y que l
 --- Bien, solo queda un error de link que te lo paso adjunto. Ya volví a compilar la librería common (c++) a ver si era eso, pero el error sigue
 
 --- Bien, no veo el texto de los botones de aceptar y cancelar de la barra, revisa que se esté haciendo bien el bind al view model; y trata de que los botones de tab next y prev, no sean chevron verticales, sino las flechas horizontales con la barrita al final de la punta de la flecha (simbolo caracteriztico de tab)
+
+---
+
+Bien, hay que volver activar la funcionalidad de que cuando se le da al botón de cancelar en el formulario editor de moneas, estando en el estado de creación de la primera moneda (Cuando viene directamente del onboard), se muestre la advertencia de que no se ha creado ninguna moneda y se debe crear una para continuar. 
+
+---
+
+Tengo errores al compilar el proyecto FinexaViewsIos, te los paso adjuntos. 
+Aprovecho para preguntar lo siguiente: no podemos utilizar los componentes DcDialogViewModel, y DcDialogBinder.swift (Ver frameworks DcViewModels y DcBindingsIos), para hacerlo mas simple?
