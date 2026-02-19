@@ -74,3 +74,35 @@ te pregunto dos cosas:
 --- 
 
 Perfecto, se ve y funciona bastante bien. Al darle Aceptar, no cierra el formulario ni vuelve a la grilla, solo reinicia los campos en cero, pero se queda en el formulario de operaciones
+
+---
+
+Bien, estoy haciendo el refactor ahora del formulario editor de moneda; el mismo estilo del editor de operacion. 
+recuerda que la versión mínima de ios es 13.2
+Para este formulario editor de moneda, habia implementado un patrón de diseño para los botones de aceptar y cancelar, incluyendolos en una barra junto con un par de botones de tab next y tab prev.
+Deseo crear un componente reutilizables con esos cuatro botones; los botones de aceptar y cancelar, deben poder enlazarse con command view models como los ui button; en ese caso habría que crear un binder en la librería DcBindingsIos para esos botones, para que se enlacen con el mismo view model de los ui buttons.
+La barra de comando, se crearía en DcViewsIos, como componente reutilizable para formularios futuros.
+
+- El estilo de stack para los campos con la etiqueta y el control se mantiene igual que en el editor de operaicón (Label, field); y luego el stack que agrupa esos tres stacks.
+
+- Tambien estoy pensando reutilizar algunas funciones de los protocolos como func bindCommands y func bindCloseReques, que parcen ser comunes a los formularios, y crear un protocolo base.
+
+- por último, hay que implementar de la misma manera el cierre del formulario; presta atención al caso de cancelar cuando el formulario viene del onboardl tambien debería venir la orden del view model.
+
+Plantea el refactor para proceder
+
+---
+
+
+---
+
+Perfecto, ahora sí.
+Me gustaría llevar ese control personalizado HaloTextField: UITextField que colocalste en el editor de moneda al framework DcViewsIos, como un control reutilizable.
+
+La cuestión es que esa funcionalidad del halo cuando tiene el enfoque, tambien me gustaría tenerla en los otros controles de entrada de texto, como el number field, y el combobox.
+
+Evaluea si es conveniente crear una clase base DcTextField: UITextField, y que los otros controles hereden de ella, o si en mejor un protocolo.
+
+--- Bien, solo queda un error de link que te lo paso adjunto. Ya volví a compilar la librería common (c++) a ver si era eso, pero el error sigue
+
+--- Bien, no veo el texto de los botones de aceptar y cancelar de la barra, revisa que se esté haciendo bien el bind al view model; y trata de que los botones de tab next y prev, no sean chevron verticales, sino las flechas horizontales con la barrita al final de la punta de la flecha (simbolo caracteriztico de tab)

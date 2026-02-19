@@ -1,4 +1,4 @@
-#include "MonedasViewModel.hpp"
+#include "../include/MonedasViewModel.hpp"
 #include <iostream>
 
 namespace Finexa::ViewModels {
@@ -68,6 +68,9 @@ void MonedasViewModel::configureEditors() {
   _nombreViewModel->setLabelText("Nombre");
   _simboloViewModel->setLabelText("Símbolo");
   _siglasViewModel->setLabelText("Siglas");
+
+  _aceptarViewModel->setLabelText("Aceptar");
+  _cancelarViewModel->setLabelText("Cancelar");
 }
 
 void MonedasViewModel::setupEditingLogic() {
@@ -132,11 +135,16 @@ void MonedasViewModel::setupEditingLogic() {
 
     _monedasGridViewModel->setIsInputLocked(false);
     refreshRows();
+    if (_onRequestClose)
+      _onRequestClose();
   });
 
   // 3. Cancel
-  _cancelarViewModel->setOnExecuted(
-      [this]() { _monedasGridViewModel->setIsInputLocked(false); });
+  _cancelarViewModel->setOnExecuted([this]() {
+    _monedasGridViewModel->setIsInputLocked(false);
+    if (_onRequestClose)
+      _onRequestClose();
+  });
 
   // 4. Delete
   _eliminarViewModel->setOnExecuted([this]() {
@@ -231,5 +239,21 @@ IMPLEMENT_CONTROL_BRIDGE(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                          cancelarViewModel)
 IMPLEMENT_CONTROL_BRIDGE(Finexa::ViewModels, MONEDAS_VIEW_MODEL,
                          eliminarViewModel)
+
+DC_BRIDGE_EXPORT void
+MonedasViewModel_setOnRequestClose(void *vmPtr, void *ctx,
+                                   void (*callback)(void *)) {
+  if (vmPtr) {
+    auto vm =
+        *static_cast<std::shared_ptr<Finexa::ViewModels::MonedasViewModel> *>(
+            vmPtr);
+    if (vm) {
+      vm->setOnRequestClose([ctx, callback]() {
+        if (callback)
+          callback(ctx);
+      });
+    }
+  }
+}
 
 } // extern "C"

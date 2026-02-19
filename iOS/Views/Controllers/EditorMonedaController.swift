@@ -1,16 +1,21 @@
 import UIKit
-// import DcViewModels // Removed to decouple
-// import DcViewsIos // Removed to decouple (assuming HaloTextField is local or imported from a UI module, but if it depends on DcViewsIos for 'setViewModel', we might strictly need it only if we call it here. Wait, the Controller doesn't call setViewModel anymore! The Binder does. So we can remove this import if HaloTextField is defined here or in a UI-only module.
-// However, HaloTextField is defined in this file at the bottom. It uses `setViewModel`? No, the Binder calls `setViewModel` on it. 
-// Let's check HaloTextField implementation in this file. It inherits UITextField. It does NOT have `setViewModel`.
-// Ah, `setViewModel` is likely an extension on UITextField provided by `DcViewsIos`.
-// Since the Controller doesn't call `setViewModel`, it doesn't need `DcViewsIos` for that.
-// BUT, HaloTextField might need to be moved or keep existing.
-// The user said "EditorMonedaController se pueda llevar al proyecto Finexa/iOS/Views/Finexa.Views.ios.xcodeproj". 
-// So it should rely on UIKit.
-
+import DcViewsIos
 
 public class EditorMonedaController: UIViewController {
+    
+    // MARK: - UI Controls
+    private let stackView = UIStackView()
+    private let commandBar = DcCommandBar()
+    
+    // Campos
+    private let lblNombre = UILabel()
+    private let txtNombre = DcTextField()
+    
+    private let lblSimbolo = UILabel()
+    private let txtSimbolo = DcTextField()
+    
+    private let lblSiglas = UILabel()
+    private let txtSiglas = DcTextField()
     
     // MARK: - Dependencies
     
@@ -27,59 +32,25 @@ public class EditorMonedaController: UIViewController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-    // MARK: - UI Controls
-    private let stackView = UIStackView()
-    
-    // Exposed for Binder if needed, or passed in `bindControls`
-    private let lblNombre = UILabel()
-    private let txtNombre = HaloTextField()
-    
-    private let lblSimbolo = UILabel()
-    private let txtSimbolo = HaloTextField()
-    
-    private let lblSiglas = UILabel()
-    private let txtSiglas = HaloTextField()
-    
-    // Toolbar Buttons
-    private var btnPrev: UIBarButtonItem!
-    private var btnNext: UIBarButtonItem!
-    private var btnAccept: UIBarButtonItem!
-    private var btnCancel: UIBarButtonItem!
-    
+        
     // MARK: - Lifecycle
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupToolbar()
-        
-        // If binder is already set, bind now.
-        // Or we can wait for `configure` to be called.
-        // If `configure` is called before viewDidLoad, we need to bind in viewDidLoad.
-        // If `configure` is called after, we bind in configure.
-        applyBinding()
     }
     
     // MARK: - Configuration
     
     public func configure(with binder: EditorMonedaBinder) {
         self.binder = binder
-        if isViewLoaded {
-            applyBinding()
-        }
-    }
-    
-    private func applyBinding() {
-        guard let binder = binder else { return }
-        
-        // Pass controls to binder
-        binder.bind(nombre: txtNombre, simbolo: txtSimbolo, siglas: txtSiglas)
+        loadViewIfNeeded()
+        setupBindings()
     }
     
     // MARK: - Actions
     
-    @objc private func onPrev() {
+    @objc private func onPrev() { // Keeping method name but target connects from viewDidLoad
         // Simple focus logic
         if txtSiglas.isFirstResponder {
             _ = txtSimbolo.becomeFirstResponder()
@@ -96,35 +67,27 @@ public class EditorMonedaController: UIViewController {
         }
     }
     
-    @objc private func onAccept() {
-        guard let binder = binder else {
-            dismiss(animated: true, completion: nil)
-            return
-        }
-        
-        binder.accept()
-        dismiss(animated: true, completion: nil)
-    }
-    
     // MARK: - Callbacks
     public var onAttemptCancel: (() -> Bool)?
     
-    @objc private func onCancel() {
-        // Allow interception
-        if let shouldCancel = onAttemptCancel, !shouldCancel() {
-            return
-        }
-    
-        guard let binder = binder else {
-            dismiss(animated: true, completion: nil)
-            return
-        }
-        
-        binder.cancel()
-        dismiss(animated: true, completion: nil)
-    }
+    // Legacy onCancel removed as binding handles it directly.
+    // However, if we need interception, we would bind cancel manually or handle it here.
+    // Assuming ViewModel-driven cancel is preferred.
     
     // MARK: - UI Setup
+    
+    private func setupBindings(){
+        guard let binder = binder else { return }
+        binder.bindFields(nombre: txtNombre, simbolo: txtSimbolo, siglas: txtSiglas)
+        binder.bindLabels(lblNombre: lblNombre, lblSimbolo: lblSimbolo, lblSiglas: lblSiglas)
+        
+        binder.bindCommands(bar: commandBar) // Updated to new signature
+        
+        // Handle Close Request from ViewModel (e.g. after save)
+        binder.bindCloseRequest { [weak self] in
+            self?.dismiss(animated: true)
+        }
+    }
     
     private func setupUI() {
         view.backgroundColor = .systemBackground
@@ -148,8 +111,19 @@ public class EditorMonedaController: UIViewController {
         addField("Símbolo", lblSimbolo, txtSimbolo)
         addField("Siglas", lblSiglas, txtSiglas)
         
+        // Spacer to push command bar to bottom (optional, but good for stack)
+        let spacer = UIView()
+        stackView.addArrangedSubview(spacer)
+        
+        // Add Command Bar
+        stackView.addArrangedSubview(commandBar)
+        
         // Focus first field
         _ = txtNombre.becomeFirstResponder()
+        
+        // Wire Navigation Buttons
+        commandBar.btnPrev.addTarget(self, action: #selector(onPrev), for: .touchUpInside)
+        commandBar.btnNext.addTarget(self, action: #selector(onNext), for: .touchUpInside)
     }
     
     private func addField(_ title: String, _ label: UILabel, _ control: UIView) {
@@ -163,84 +137,8 @@ public class EditorMonedaController: UIViewController {
         control.heightAnchor.constraint(equalToConstant: 44).isActive = true
     }
     
-    private func setupToolbar() {
-        // Initialize with a frame to satisfy internal constraints
-        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
-        // toolbar.sizeToFit() // Not strictly needed if frame is set, but harmless
-        
-        // Use SF Symbols for Tab/BackTab
-        let imgPrev = UIImage(systemName: "arrow.left.to.line") ?? UIImage(systemName: "chevron.up")
-        let imgNext = UIImage(systemName: "arrow.right.to.line") ?? UIImage(systemName: "chevron.down")
-        
-        btnPrev = UIBarButtonItem(image: imgPrev, style: .plain, target: self, action: #selector(onPrev))
-        btnNext = UIBarButtonItem(image: imgNext, style: .plain, target: self, action: #selector(onNext))
-        
-        // "Aceptar" and "Cancelar"
-        btnAccept = UIBarButtonItem(title: "Aceptar", style: .done, target: self, action: #selector(onAccept))
-        btnCancel = UIBarButtonItem(title: "Cancelar", style: .plain, target: self, action: #selector(onCancel))
-        btnCancel.tintColor = .systemRed
-        
-        let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        
-        // Layout: [Prev] [Next] ... [Cancel] [Accept] to keep functionality grouped
-        toolbar.items = [btnPrev, btnNext, flexible, btnCancel, btnAccept]
-        
-        // Assign to textfields
-        txtNombre.inputAccessoryView = toolbar
-        txtSimbolo.inputAccessoryView = toolbar
-        txtSiglas.inputAccessoryView = toolbar
-    }
-    
 }
 
 // MARK: - Custom Controls
+// HaloTextField removed - replaced by DcTextField in DcViewsIos
 
-public class HaloTextField: UITextField {
-    
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
-        setup()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    private func setup() {
-        borderStyle = .none
-        backgroundColor = UIColor.secondarySystemBackground
-        layer.cornerRadius = 8
-        layer.borderWidth = 1
-        layer.borderColor = UIColor.systemGray4.cgColor
-        
-        // Padding
-        let paddingView = UIView(frame: CGRect(x: 0, y: 0, width: 10, height: 10))
-        leftView = paddingView
-        leftViewMode = .always
-        rightView = paddingView
-        rightViewMode = .always
-    }
-    
-    public override func becomeFirstResponder() -> Bool {
-        let result = super.becomeFirstResponder()
-        if result {
-            // Apply Halo
-            layer.borderColor = UIColor.systemBlue.cgColor
-            layer.shadowColor = UIColor.systemBlue.cgColor // Or specific cyan
-            layer.shadowOpacity = 0.5
-            layer.shadowOffset = .zero
-            layer.shadowRadius = 4
-        }
-        return result
-    }
-    
-    public override func resignFirstResponder() -> Bool {
-        let result = super.resignFirstResponder()
-        if result {
-            // Remove Halo
-            layer.borderColor = UIColor.systemGray4.cgColor
-            layer.shadowOpacity = 0
-        }
-        return result
-    }
-}

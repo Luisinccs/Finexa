@@ -49,9 +49,14 @@ public:
   DECLARE_CONTROL_BINDING(CMD_CANCELAR, Command)
   DECLARE_CONTROL_BINDING(CMD_ELIMINAR, Command)
 
+  void setOnRequestClose(std::function<void()> callback) {
+    _onRequestClose = callback;
+  }
+
 private:
   // Data
   std::shared_ptr<Finexa::CalculadoraCore> _core;
+  std::function<void()> _onRequestClose;
 
   // Helpers
   std::shared_ptr<Moneda> currentEditingItem;
@@ -85,5 +90,9 @@ DECLARE_CONTROL_BRIDGE(eliminarViewModel, MONEDAS_VIEW_MODEL)
 
 // Helper bridge used in Swift
 DC_BRIDGE_EXPORT void DcGrid_RequestAdd(void *gridPtr);
+
+DC_BRIDGE_EXPORT void
+MonedasViewModel_setOnRequestClose(void *vmPtr, void *ctx,
+                                   void (*cb)(void *));
 
 } // extern "C"
