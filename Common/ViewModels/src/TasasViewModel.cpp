@@ -29,9 +29,23 @@ TasasViewModel::TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core)
   _selectorDestino = std::make_shared<DcComboBoxViewModel>();
   _inputValor = std::make_shared<DcNumberFieldViewModel>();
   _cmdGuardarTasa = std::make_shared<DcCommandViewModel>();
+  _cmdCancelar = std::make_shared<DcCommandViewModel>();
+  _dialog = std::make_shared<DcDialogViewModel>();
 
   configurarColumnas();
   configurarMonedasDinamicas();
+
+  // Initial setup for labels
+  _selectorBase->setLabelText("Moneda Base");
+  _selectorDestino->setLabelText("Moneda Destino");
+  _inputValor->setLabelText("Tasa");
+
+  _cmdCancelar->setLabelText("Cancelar");
+  _cmdCancelar->setOnExecuted([this]() {
+    if (_onRequestClose) {
+      _onRequestClose();
+    }
+  });
 
   // Logic for editing
   auto loadForEdit = [this](int index) {
@@ -85,6 +99,8 @@ IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_SELECTOR_BASE, ComboBox)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_SELECTOR_DESTINO, ComboBox)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_INPUT_VALOR, NumberField)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_CMD_GUARDAR_TASA, Command)
+IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_CMD_CANCELAR, Command)
+IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_DIALOG, Dialog)
 
 void TasasViewModel::configurarColumnas() {
   std::vector<DcGridColumn> cols = {
@@ -213,3 +229,28 @@ IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_SELECTOR_BASE)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_SELECTOR_DESTINO)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_INPUT_VALOR)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_CMD_GUARDAR_TASA)
+IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_CMD_CANCELAR)
+
+extern "C" {
+DC_BRIDGE_EXPORT void TasasViewModel_setOnRequestClose(void *vmPtr, void *ctx,
+                                                       void (*cb)(void *)) {
+  if (!vmPtr || !cb)
+    return;
+  auto vm = *static_cast<std::shared_ptr<Finexa::ViewModels::TasasViewModel> *>(
+      vmPtr);
+
+  vm->setOnRequestClose([ctx, cb]() { cb(ctx); });
+}
+
+DC_BRIDGE_EXPORT void *TasasViewModel_dialog(void *vmPtr) {
+  if (vmPtr) {
+    auto vm =
+        *static_cast<std::shared_ptr<Finexa::ViewModels::TasasViewModel> *>(
+            vmPtr);
+    if (vm) {
+      return vm->dialogBinding();
+    }
+  }
+  return nullptr;
+}
+}

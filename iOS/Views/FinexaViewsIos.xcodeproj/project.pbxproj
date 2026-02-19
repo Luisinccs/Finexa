@@ -12,6 +12,7 @@
 		114E60A12F42400000A7770F /* MonedasController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114E60A02F42400000A7770F /* MonedasController.swift */; };
 		114E60A32F42400000A7770F /* MonedasBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 114E60A22F42400000A7770F /* MonedasBinder.swift */; };
 		115A03B32F46A2780011A148 /* FormBindingProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 115A03B22F46A2780011A148 /* FormBindingProtocol.swift */; };
+		1162FB462F47B85900145638 /* EditorViewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1162FB442F47B85900145638 /* EditorViewHelper.swift */; };
 		11B72BBD2F428EFF00FDA36A /* TasasController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BBB2F428EFF00FDA36A /* TasasController.swift */; };
 		11B72BBE2F428EFF00FDA36A /* EditorTasaController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BBC2F428EFF00FDA36A /* EditorTasaController.swift */; };
 		11B72BC12F428F0E00FDA36A /* TasasBinder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BBF2F428F0E00FDA36A /* TasasBinder.swift */; };
@@ -43,6 +44,7 @@
 		114E60A02F42400000A7770F /* MonedasController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonedasController.swift; sourceTree = "<group>"; };
 		114E60A22F42400000A7770F /* MonedasBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MonedasBinder.swift; sourceTree = "<group>"; };
 		115A03B22F46A2780011A148 /* FormBindingProtocol.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FormBindingProtocol.swift; sourceTree = "<group>"; };
+		1162FB442F47B85900145638 /* EditorViewHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorViewHelper.swift; sourceTree = "<group>"; };
 		11B72BBB2F428EFF00FDA36A /* TasasController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TasasController.swift; sourceTree = "<group>"; };
 		11B72BBC2F428EFF00FDA36A /* EditorTasaController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EditorTasaController.swift; sourceTree = "<group>"; };
 		11B72BBF2F428F0E00FDA36A /* TasasBinder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TasasBinder.swift; sourceTree = "<group>"; };
@@ -70,6 +72,7 @@
 		114E60392F42293700A7770F = {
 			isa = PBXGroup;
 			children = (
+				1162FB452F47B85900145638 /* Helpers */,
 				1162FB432F479E9C00145638 /* Editores */,
 				114E605B2F422A1500A7770F /* Controllers */,
 				114E605A2F422A0100A7770F /* BindingsInterfaces */,
@@ -119,6 +122,14 @@
 				11B72BBC2F428EFF00FDA36A /* EditorTasaController.swift */,
 			);
 			name = Editores;
+			sourceTree = "<group>";
+		};
+		1162FB452F47B85900145638 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				1162FB442F47B85900145638 /* EditorViewHelper.swift */,
+			);
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		11B72BC32F4292F700FDA36A /* Frameworks */ = {
@@ -194,6 +205,7 @@
 				11B72BBE2F428EFF00FDA36A /* EditorTasaController.swift in Sources */,
 				114E605D2F422A5F00A7770F /* EditorMonedaBinder.swift in Sources */,
 				114E60592F4229F500A7770F /* EditorMonedaController.swift in Sources */,
+				1162FB462F47B85900145638 /* EditorViewHelper.swift in Sources */,
 				11E5EE5D2F45399B00C06205 /* OnboardingController.swift in Sources */,
 				114E60A12F42400000A7770F /* MonedasController.swift in Sources */,
 				11B72BD62F42B1F500FDA36A /* EditorOperacionBinder.swift in Sources */,

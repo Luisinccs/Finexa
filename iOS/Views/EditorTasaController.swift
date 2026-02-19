@@ -1,13 +1,14 @@
 import UIKit
 import DcViewsIos
 
-public class EditorTasaController: UIViewController {
+public class EditorTasaController: UIViewController, EditorViewHelper {
     
     // MARK: - Properties
     private var binder: EditorTasaBinder?
     
     // MARK: - UI Controls
     private let stackView = UIStackView()
+    private let commandBar = DcCommandBar()
     
     private let lblBase = UILabel()
     private let cmbBase = DcComboBox() // Selector
@@ -17,12 +18,6 @@ public class EditorTasaController: UIViewController {
     
     private let lblValor = UILabel()
     private let txtValor = DcNumberTextField() // Numérico
-    
-    // Toolbar
-    private var btnPrev: UIBarButtonItem!
-    private var btnNext: UIBarButtonItem!
-    private var btnAccept: UIBarButtonItem!
-    private var btnCancel: UIBarButtonItem!
     
     // MARK: - Init
     
@@ -34,27 +29,34 @@ public class EditorTasaController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Configuration
-    
-    public func configure(with binder: EditorTasaBinder) {
-        self.binder = binder
-        if isViewLoaded {
-            applyBinding()
-        }
-    }
-    
-    private func applyBinding() {
-        guard let binder = binder else { return }
-        binder.bind(base: cmbBase, destino: cmbDestino, valor: txtValor)
-    }
-    
     // MARK: - Lifecycle
     
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
-        setupToolbar()
-        applyBinding()
+    }
+    
+    // MARK: - Configuration
+    
+    public func configure(with binder: EditorTasaBinder) {
+        self.binder = binder
+        loadViewIfNeeded()
+        setupBindings()
+    }
+    
+    private func setupBindings() {
+        guard let binder = binder else { return }
+        
+        binder.bindFields(base: cmbBase, destino: cmbDestino, valor: txtValor)
+        binder.bindLabels(lblBase: lblBase, lblDestino: lblDestino, lblValor: lblValor)
+        
+        binder.bindCommands(bar: commandBar)
+        
+        binder.bindCloseRequest { [weak self] in
+            self?.dismiss(animated: true)
+        }
+        
+        binder.bindDialog(to: self)
     }
     
     // MARK: - Actions
@@ -73,16 +75,6 @@ public class EditorTasaController: UIViewController {
         } else if cmbDestino.isFirstResponder {
             _ = txtValor.becomeFirstResponder()
         }
-    }
-    
-    @objc private func onAccept() {
-        binder?.save()
-        dismiss(animated: true, completion: nil)
-    }
-    
-    @objc private func onCancel() {
-        binder?.cancel()
-        dismiss(animated: true, completion: nil)
     }
     
     // MARK: - UI Setup
@@ -105,44 +97,26 @@ public class EditorTasaController: UIViewController {
             stackView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
         
-        addField("Moneda Base", lblBase, cmbBase)
-        addField("Moneda Destino", lblDestino, cmbDestino)
-        addField("Tasa", lblValor, txtValor)
+        let stackFields = UIStackView(arrangedSubviews: [
+            makeFieldStack(label: lblBase, field: cmbBase),
+            makeFieldStack(label: lblDestino, field: cmbDestino),
+            makeFieldStack(label: lblValor, field: txtValor)
+        ])
+        stackFields.axis = .vertical
+        stackFields.spacing = 15
+        
+        stackView.addArrangedSubview(stackFields)
+        
+        let spacer = UIView()
+        stackView.addArrangedSubview(spacer)
+        
+        stackView.addArrangedSubview(commandBar)
         
         // Auto focus
         _ = cmbBase.becomeFirstResponder()
-    }
-    
-    private func addField(_ title: String, _ label: UILabel, _ control: UIView) {
-        label.text = title
-        label.font = .systemFont(ofSize: 14, weight: .medium)
-        label.textColor = .secondaryLabel
         
-        stackView.addArrangedSubview(label)
-        stackView.addArrangedSubview(control)
-        
-        control.heightAnchor.constraint(equalToConstant: 44).isActive = true
-    }
-    
-    private func setupToolbar() {
-        let toolbar = UIToolbar(frame: CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 44))
-        
-        let imgPrev = UIImage(systemName: "arrow.left.to.line") ?? UIImage(systemName: "chevron.up")
-        let imgNext = UIImage(systemName: "arrow.right.to.line") ?? UIImage(systemName: "chevron.down")
-        
-        btnPrev = UIBarButtonItem(image: imgPrev, style: .plain, target: self, action: #selector(onPrev))
-        btnNext = UIBarButtonItem(image: imgNext, style: .plain, target: self, action: #selector(onNext))
-        
-        btnAccept = UIBarButtonItem(title: "Aceptar", style: .done, target: self, action: #selector(onAccept))
-        btnCancel = UIBarButtonItem(title: "Cancelar", style: .plain, target: self, action: #selector(onCancel))
-        btnCancel.tintColor = .systemRed
-        
-        let flexible = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-        
-        toolbar.items = [btnPrev, btnNext, flexible, btnCancel, btnAccept]
-        
-        cmbBase.inputAccessoryView = toolbar
-        cmbDestino.inputAccessoryView = toolbar
-        txtValor.inputAccessoryView = toolbar
+        // Wire Navigation Buttons
+        commandBar.btnPrev.addTarget(self, action: #selector(onPrev), for: .touchUpInside)
+        commandBar.btnNext.addTarget(self, action: #selector(onNext), for: .touchUpInside)
     }
 }

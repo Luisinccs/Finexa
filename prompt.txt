@@ -127,3 +127,14 @@ Ejemplo, en Mondeas View model, _monedasGridViewModel, _nombreViewModel, etc, so
 ---
 
 Funciona bien todo. Te pregunto una cosa, la variable std::shared_ptr<DcDialogViewModel> dialogViewModel; no podría se declarada como los otros componentes view model del View model? con las macros DECLARE_CONTROL_BINDING e IMPLEMENT_CONTROL_INTERNAL. Para mantener el estilo de los otros view models. Otra cosa; como podría hacer para establecer un tipo de advertencia para que esas variables creadas solo para los constructores muestren una advertncia cuando se usan en otros métodos del view model? (Aunque sea deprecated)
+
+--- Procede a hacer el refactor del EditorTasaController para que siga los mismos patrones que el EditorMonedaController.
+- Aplicar el tool bar
+- Vista bruta, todo viene del view model.
+- Busquemos generalizar la función makeFieldStack del EditorMonedaController para reutilizarla en el EditorTasaController (posiblemente en un protocolo con helpers).
+- Modifica tambien el binder (TasaBinder, protocolo e implementación) para que siga los mismos patrones que el EditorMonedaBinder (incluir etiquetas, dialogos si hay, etc).
+
+---
+
+Tengo este error de compilación:
+/Users/luis_sonoma/Desarrollo/Finexa/Common/ViewModels/src/TasasViewModel.cpp:233:1 Static_cast from 'IDialogBinding *' to 'DualComponents::ViewModels::IControlBinding *', which are not related by inheritance, is not allowed
