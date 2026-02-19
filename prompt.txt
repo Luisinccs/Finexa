@@ -115,3 +115,11 @@ Bien, hay que volver activar la funcionalidad de que cuando se le da al botón d
 
 Tengo errores al compilar el proyecto FinexaViewsIos, te los paso adjuntos. 
 Aprovecho para preguntar lo siguiente: no podemos utilizar los componentes DcDialogViewModel, y DcDialogBinder.swift (Ver frameworks DcViewModels y DcBindingsIos), para hacerlo mas simple?
+
+---
+
+Recuerda una cosa, las macros DECLARE_CONTROL_BINDING e IMPLEMENT_CONTROL_INTERNAL, crean tres identificadores, la variable del view model del componente y dos accesores para las interfaces Core y UI respectivas; la idea es que la interface UI se exponga a la UI y la interface Core sea la que se use para acceder a ese view model internamente para trabajar la lógica y no usar directamente la variable para no usar funciones no dedebidas. Solo se accede a la variable (la que tiene el underscore _) en el constructor para crear el objeto.
+
+Procede a cambiar cada ves que aparece la variable por su respectivo accesor (UI o Core) en MonedasViewModel.cpp.
+
+Ejemplo, en Mondeas View model, _monedasGridViewModel, _nombreViewModel, etc, solo deben aparecer en el constructor para crear el objeto. En la función configureEditors(), coloca nombreViewModel()->setLabelText("Nombre"); en lugar de _nombreViewModel->setLabelText("Nombre"); y así con todos

@@ -63,16 +63,18 @@ void MonedasViewModel::setupGrid() {
   cols.push_back(
       DcGridColumn("Acciones", 20, DcTextAlign::Center, DcColumnType::Actions));
 
-  _monedasGridViewModel->setColumns(cols);
+  monedasGridViewModel()->setColumns(cols);
 }
 
 void MonedasViewModel::configureEditors() {
-  _nombreViewModel->setLabelText("Nombre");
-  _simboloViewModel->setLabelText("Símbolo");
-  _siglasViewModel->setLabelText("Siglas");
+    
+  nombreViewModel()->setLabelText("Nombre");
+  simboloViewModel()->setLabelText("Símbolo");
+  siglasViewModel()->setLabelText("Siglas");
 
-  _aceptarViewModel->setLabelText("Aceptar");
-  _cancelarViewModel->setLabelText("Cancelar");
+  aceptarViewModel()->setLabelText("Aceptar");
+  cancelarViewModel()->setLabelText("Cancelar");
+    
 }
 
 void MonedasViewModel::setupEditingLogic() {
@@ -86,32 +88,32 @@ void MonedasViewModel::setupEditingLogic() {
     }
 
     // Lock Grid
-    _monedasGridViewModel->setIsInputLocked(true);
+    monedasGridViewModel()->setIsInputLocked(true);
     currentEditingItem = item; // Store for referencing during save if needed
 
     if (item) {
       isNewItem = false;
-      _nombreViewModel->setText(item->getNombre());
-      _simboloViewModel->setText(item->getSimbolo());
-      _siglasViewModel->setText(item->getSiglas());
+      nombreViewModel()->setText(item->getNombre());
+      simboloViewModel()->setText(item->getSimbolo());
+      siglasViewModel()->setText(item->getSiglas());
     } else {
       isNewItem = true;
-      _nombreViewModel->setText("");
-      _simboloViewModel->setText("");
-      _siglasViewModel->setText("");
+      nombreViewModel()->setText("");
+      simboloViewModel()->setText("");
+      siglasViewModel()->setText("");
     }
   };
 
-  _monedasGridViewModel->setOnRowActivated(
+  monedasGridViewModel()->setOnRowActivated(
       [this, startEdit](int index) { startEdit(index); });
-  _monedasGridViewModel->setOnAddRequested(
+  monedasGridViewModel()->setOnAddRequested(
       [this, startEdit]() { startEdit(-1); });
 
   // 2. Save (Aceptar)
-  _aceptarViewModel->setOnExecuted([this]() {
-    std::string nombre = _nombreViewModel->getText();
-    std::string simbolo = _simboloViewModel->getText();
-    std::string siglas = _siglasViewModel->getText();
+  aceptarViewModel()->setOnExecuted([this]() {
+    std::string nombre = nombreViewModel()->getText();
+    std::string simbolo = simboloViewModel()->getText();
+    std::string siglas = siglasViewModel()->getText();
 
     if (nombre.empty() || siglas.empty()) {
       return; // Validation failed
@@ -135,16 +137,16 @@ void MonedasViewModel::setupEditingLogic() {
       }
     }
 
-    _monedasGridViewModel->setIsInputLocked(false);
+    monedasGridViewModel()->setIsInputLocked(false);
     refreshRows();
     if (_onRequestClose)
       _onRequestClose();
   });
 
   // 3. Cancel
-  _cancelarViewModel->setOnExecuted([this]() {
+  cancelarViewModel()->setOnExecuted([this]() {
     std::cout << "[MonedasViewModel] Cancel command executed." << std::endl;
-    _monedasGridViewModel->setIsInputLocked(false);
+    monedasGridViewModel()->setIsInputLocked(false);
 
     // Onboarding check: If no currencies exist, warn user instead of closing
     bool isEmpty = _core->getMonedas().empty();
@@ -169,9 +171,9 @@ void MonedasViewModel::setupEditingLogic() {
   });
 
   // 4. Delete
-  _eliminarViewModel->setOnExecuted([this]() {
+  eliminarViewModel()->setOnExecuted([this]() {
     if (isNewItem) {
-      _monedasGridViewModel->setIsInputLocked(false);
+      monedasGridViewModel()->setIsInputLocked(false);
       return;
     }
 
@@ -179,7 +181,7 @@ void MonedasViewModel::setupEditingLogic() {
       _core->eliminarMoneda(currentEditingItem->getUuid());
     }
 
-    _monedasGridViewModel->setIsInputLocked(false);
+    monedasGridViewModel()->setIsInputLocked(false);
     refreshRows();
   });
 }
@@ -204,7 +206,7 @@ void MonedasViewModel::refreshRows() {
   // Ghost row
   rows.push_back(DcGridRow::CreateGhost(4));
 
-  _monedasGridViewModel->setRows(rows);
+  monedasGridViewModel()->setRows(rows);
 }
 
 // =========================================================
