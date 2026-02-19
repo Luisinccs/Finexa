@@ -222,6 +222,8 @@ void OperacionesViewModel::agregarOperacion() {
 
       limpiarEditor();
       refrescarGrilla();
+      if (_onRequestClose)
+        _onRequestClose();
     }
   }
 }

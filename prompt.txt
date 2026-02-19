@@ -70,3 +70,7 @@ Corrigelo para que se muestre el monto actualizado; Y en lugar de "REF", debe de
 te pregunto dos cosas:
 - Por qué estas agregando un selector al comando de cancelar, si la orden viene del view model igual que la del comando de aceptar?
 - la llamada a setUpBingins, no deberia ser mejor en el metodo configure, luego de establecer el binder, en lugar de hacerlo en view did load?
+
+--- 
+
+Perfecto, se ve y funciona bastante bien. Al darle Aceptar, no cierra el formulario ni vuelve a la grilla, solo reinicia los campos en cero, pero se queda en el formulario de operaciones
