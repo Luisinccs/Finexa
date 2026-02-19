@@ -23,6 +23,7 @@
 #define CMD_ACEPTAR aceptarViewModel
 #define CMD_CANCELAR cancelarViewModel
 #define CMD_ELIMINAR eliminarViewModel
+#define DIALOG dialogViewModel
 
 namespace Finexa::ViewModels {
 
@@ -51,7 +52,7 @@ public:
   DECLARE_CONTROL_BINDING(CMD_ELIMINAR, Command)
 
   // Dialog
-  std::shared_ptr<DcDialogViewModel> dialogViewModel;
+  DECLARE_CONTROL_BINDING(DIALOG, Dialog)
 
   void setOnRequestClose(std::function<void()> callback) {
     _onRequestClose = callback;
@@ -92,12 +93,13 @@ DECLARE_CONTROL_BRIDGE(aceptarViewModel, MONEDAS_VIEW_MODEL)
 DECLARE_CONTROL_BRIDGE(cancelarViewModel, MONEDAS_VIEW_MODEL)
 DECLARE_CONTROL_BRIDGE(eliminarViewModel, MONEDAS_VIEW_MODEL)
 
+// Dialog Bridge
+DECLARE_CONTROL_BRIDGE(dialogViewModel, MONEDAS_VIEW_MODEL)
+
 // Helper bridge used in Swift
 DC_BRIDGE_EXPORT void DcGrid_RequestAdd(void *gridPtr);
 
 DC_BRIDGE_EXPORT void MonedasViewModel_setOnRequestClose(void *vmPtr, void *ctx,
                                                          void (*cb)(void *));
-
-DC_BRIDGE_EXPORT void *MonedasViewModel_dialogViewModel(void *vmPtr);
 
 } // extern "C"

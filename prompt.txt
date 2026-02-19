@@ -123,3 +123,7 @@ Recuerda una cosa, las macros DECLARE_CONTROL_BINDING e IMPLEMENT_CONTROL_INTERN
 Procede a cambiar cada ves que aparece la variable por su respectivo accesor (UI o Core) en MonedasViewModel.cpp.
 
 Ejemplo, en Mondeas View model, _monedasGridViewModel, _nombreViewModel, etc, solo deben aparecer en el constructor para crear el objeto. En la función configureEditors(), coloca nombreViewModel()->setLabelText("Nombre"); en lugar de _nombreViewModel->setLabelText("Nombre"); y así con todos
+
+---
+
+Funciona bien todo. Te pregunto una cosa, la variable std::shared_ptr<DcDialogViewModel> dialogViewModel; no podría se declarada como los otros componentes view model del View model? con las macros DECLARE_CONTROL_BINDING e IMPLEMENT_CONTROL_INTERNAL. Para mantener el estilo de los otros view models. Otra cosa; como podría hacer para establecer un tipo de advertencia para que esas variables creadas solo para los constructores muestren una advertncia cuando se usan en otros métodos del view model? (Aunque sea deprecated)
