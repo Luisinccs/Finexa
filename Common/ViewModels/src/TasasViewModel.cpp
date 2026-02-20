@@ -86,8 +86,12 @@ TasasViewModel::TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core)
 
   cmdGuardarTasa()->setLabelText("Establecer Tasa");
   cmdGuardarTasa()->setOnExecuted([this, resetForm]() {
-    this->guardarTasa();
-    resetForm(); // Reset after save
+    if (this->guardarTasa()) {
+      resetForm(); // Reset after save
+      if (_onRequestClose) {
+        _onRequestClose(); // Solo se cierra si fue exitoso
+      }
+    }
   });
 
   inicializar();
@@ -130,7 +134,7 @@ void TasasViewModel::inicializar() {
   refrescarGrilla();
 }
 
-void TasasViewModel::guardarTasa() {
+bool TasasViewModel::guardarTasa() {
   std::string baseUuid = selectorBase()->getSelectedKey();
   std::string destinoUuid = selectorDestino()->getSelectedKey();
   double valor = Finexa::getValorDouble(inputValor()->getValue(),
@@ -138,17 +142,16 @@ void TasasViewModel::guardarTasa() {
 
   if (!baseUuid.empty() && !destinoUuid.empty() && baseUuid != destinoUuid &&
       valor > 0) {
-    // NOTE: Ambiguedad logic uses Siglas currently in Core, but we have UUIDs.
-    // We might want to update ambiguedad logic or just retrieve coins to get
-    // siglas. For now, trusting establecerTasaPorUuid to handle logic.
-
     try {
       _core->establecerTasaPorUuid(baseUuid, destinoUuid, valor);
       refrescarGrilla();
+      return true;
     } catch (...) {
       // Handle error?
+      return false;
     }
   }
+  return false;
 }
 
 void TasasViewModel::refrescarGrilla() {

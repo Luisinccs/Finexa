@@ -25,6 +25,10 @@ public class EditorOperacionController: UIViewController {
         setupBindings()
     }
     
+    deinit {
+        binder?.unbind()
+    }
+    
     // MARK: - Lifecycle
     
     public override func viewDidLoad() {

@@ -126,6 +126,28 @@ class EditorMonedaAppBinder: EditorMonedaBinder {
         }
     }
     
+    func unbind() {
+        var vm = viewModel
+        withUnsafeMutablePointer(to: &vm) { vmPtr in
+            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            
+            if let ptr = MonedasViewModel_nombreViewModel(rawPtr) {
+                DcControl_BindLabelText(ptr, nil, nil)
+                DcInput_BindTextChange(ptr, nil, nil)
+                DcInput_BindPlaceholderChange(ptr, nil, nil)
+            }
+            if let ptr = MonedasViewModel_simboloViewModel(rawPtr) {
+                DcControl_BindLabelText(ptr, nil, nil)
+                DcInput_BindTextChange(ptr, nil, nil)
+                DcInput_BindPlaceholderChange(ptr, nil, nil)
+            }
+            if let ptr = MonedasViewModel_siglasViewModel(rawPtr) {
+                DcControl_BindLabelText(ptr, nil, nil)
+                DcInput_BindTextChange(ptr, nil, nil)
+                DcInput_BindPlaceholderChange(ptr, nil, nil)
+            }
+        }
+    }
 }
 
 // Helpers

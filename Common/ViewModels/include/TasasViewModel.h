@@ -10,21 +10,21 @@
 
 #include "DcComboBoxViewModel.hpp"
 #include "DcCommandViewModel.hpp"
+#include "DcDialogViewModel.hpp" // Added
 #include "DcGridViewModel.hpp"
 #include "DcNumberFieldViewModel.hpp"
-#include "DcDialogViewModel.hpp" // Added
 #include "DcViewModelToolkit.hpp"
 
 #include "IComboBoxBinding.hpp"
 #include "ICommandBinding.hpp"
+#include "IDialogBinding.hpp" // Added
 #include "IGridBinding.hpp"
 #include "INumberFieldBinding.hpp"
-#include "IDialogBinding.hpp" // Added
 
 #include "../../Core/include/CalculadoraCore.h"
 
-#include <memory>
 #include <functional> // Added for std::function
+#include <memory>
 
 namespace Finexa::ViewModels {
 
@@ -36,7 +36,7 @@ class TasasViewModel {
   DECLARE_CONTROL_BINDING(VM_INPUT_VALOR, NumberField)
   DECLARE_CONTROL_BINDING(VM_CMD_GUARDAR_TASA, Command)
   DECLARE_CONTROL_BINDING(VM_CMD_CANCELAR, Command) // Added
-  DECLARE_CONTROL_BINDING(VM_DIALOG, Dialog)         // Added
+  DECLARE_CONTROL_BINDING(VM_DIALOG, Dialog)        // Added
 
 public: // Moved setOnRequestClose to public as per instruction
   void setOnRequestClose(std::function<void()> callback) {
@@ -56,7 +56,7 @@ public:
   static std::shared_ptr<TasasViewModel> create();
 
   void inicializar();
-  void guardarTasa();
+  bool guardarTasa();
   void refrescarGrilla();
 
 private:

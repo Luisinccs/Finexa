@@ -44,6 +44,10 @@ public class EditorTasaController: UIViewController, EditorViewHelper {
         setupBindings()
     }
     
+    deinit {
+        binder?.unbind()
+    }
+    
     private func setupBindings() {
         guard let binder = binder else { return }
         

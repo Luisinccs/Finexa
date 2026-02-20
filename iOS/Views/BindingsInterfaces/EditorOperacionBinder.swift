@@ -29,5 +29,9 @@ public protocol EditorOperacionBinder: AnyObject {
     /// Vincula la solicitud de cierre del ViewModel (al completar la operación).
     /// - Parameter onClose: Closure a ejecutar cuando se solicite el cierre.
     func bindCloseRequest(onClose: @escaping () -> Void)
+    
+    /// Desvincula todos los controles para evitar crashes por punteros colgantes
+    /// a vistas que han sido destruidas.
+    func unbind()
         
 }

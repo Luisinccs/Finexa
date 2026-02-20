@@ -48,6 +48,10 @@ public class EditorMonedaController: UIViewController {
         setupBindings()
     }
     
+    deinit {
+        binder?.unbind()
+    }
+    
     // MARK: - Actions
     
     @objc private func onPrev() { // Keeping method name but target connects from viewDidLoad

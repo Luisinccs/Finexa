@@ -8,4 +8,5 @@ public protocol EditorTasaBinder {
     func bindCommands(bar: DcCommandBar)
     func bindCloseRequest(handler: @escaping () -> Void)
     func bindDialog(to viewController: UIViewController)
+    func unbind()
 }

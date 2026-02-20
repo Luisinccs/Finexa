@@ -29,6 +29,6 @@ public protocol EditorMonedaBinder: FormBindingProtocol {
     
     
     func bindDialog(to viewController: UIViewController)
-    
+    func unbind()
 }
 

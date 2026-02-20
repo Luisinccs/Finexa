@@ -138,3 +138,7 @@ Funciona bien todo. Te pregunto una cosa, la variable std::shared_ptr<DcDialogVi
 
 Tengo este error de compilación:
 /Users/luis_sonoma/Desarrollo/Finexa/Common/ViewModels/src/TasasViewModel.cpp:233:1 Static_cast from 'IDialogBinding *' to 'DualComponents::ViewModels::IControlBinding *', which are not related by inheritance, is not allowed
+
+---
+
+Cuando estoy en el formulario de edicion de tasa, y presiono el boton de aceptar, no se cierra el formulario, ni vuelve a la grilla. Si procede a crear el registro, porque luego presiono cancelra, y regresa a la grilla de tasas y muestra el registro creado. 

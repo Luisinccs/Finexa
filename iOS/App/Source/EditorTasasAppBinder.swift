@@ -86,6 +86,30 @@ public class EditorTasasAppBinder: EditorTasaBinder {
             }
         }
     }
+    
+    public func unbind() {
+        withUnsafePointer(to: viewModel) { vmPtr in
+            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            
+            if let ptr = TasasViewModel_selectorBase(rawPtr) {
+                DcControl_BindLabelText(ptr, nil, nil)
+                DcComboBox_BindTextChange(ptr, nil, nil)
+                DcComboBox_BindListUpdate(ptr, nil, nil)
+                DcComboBox_BindSelectionChange(ptr, nil, nil)
+            }
+            if let ptr = TasasViewModel_selectorDestino(rawPtr) {
+                DcControl_BindLabelText(ptr, nil, nil)
+                DcComboBox_BindTextChange(ptr, nil, nil)
+                DcComboBox_BindListUpdate(ptr, nil, nil)
+                DcComboBox_BindSelectionChange(ptr, nil, nil)
+            }
+            if let ptr = TasasViewModel_inputValor(rawPtr) {
+                DcControl_BindLabelText(ptr, nil, nil)
+                DcInput_BindTextChange(ptr, nil, nil)
+                DcInput_BindPlaceholderChange(ptr, nil, nil)
+            }
+        }
+    }
 }
 
 // Helpers

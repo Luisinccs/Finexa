@@ -91,6 +91,41 @@ public class EditorOperacionesAppBinder: EditorOperacionBinder {
             }
         }
     }
+    
+    public func unbind() {
+        withUnsafePointer(to: viewModel) { vmPtr in
+            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            
+            // Clear bindings for Concepto
+            if let ptr = OperacionesViewModel_inputConcepto(rawPtr) {
+                DcControl_BindLabelText(ptr, nil, nil)
+                DcInput_BindTextChange(ptr, nil, nil)
+                DcInput_BindPlaceholderChange(ptr, nil, nil)
+            }
+            
+            // Clear bindings for Monto
+            if let ptr = OperacionesViewModel_inputMonto(rawPtr) {
+                DcControl_BindLabelText(ptr, nil, nil)
+                DcInput_BindTextChange(ptr, nil, nil)
+                DcInput_BindPlaceholderChange(ptr, nil, nil)
+            }
+            
+            // Clear bindings for Moneda Selector
+            if let ptr = OperacionesViewModel_selectorMoneda(rawPtr) {
+                DcControl_BindLabelText(ptr, nil, nil)
+                DcComboBox_BindTextChange(ptr, nil, nil)
+                DcComboBox_BindListUpdate(ptr, nil, nil)
+                DcComboBox_BindSelectionChange(ptr, nil, nil)
+            }
+            
+            // Clear bindings for Monto Ref
+            if let ptr = OperacionesViewModel_labelMontoXds(rawPtr) {
+                DcControl_BindLabelText(ptr, nil, nil)
+                DcInput_BindTextChange(ptr, nil, nil)
+                DcInput_BindPlaceholderChange(ptr, nil, nil)
+            }
+        }
+    }
 }
 
 // Helper para pasar closures a C++
