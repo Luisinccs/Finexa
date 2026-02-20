@@ -96,34 +96,37 @@ public class EditorOperacionesAppBinder: EditorOperacionBinder {
         withUnsafePointer(to: viewModel) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
             
-            // Clear bindings for Concepto
-            if let ptr = OperacionesViewModel_inputConcepto(rawPtr) {
+            // Helpers
+            let unbindControl: (UnsafeMutableRawPointer) -> Void = { ptr in
                 DcControl_BindLabelText(ptr, nil, nil)
+                DcControl_BindEnabledState(ptr, nil, nil)
+                DcControl_BindVisibleState(ptr, nil, nil)
+            }
+            let unbindInput: (UnsafeMutableRawPointer) -> Void = { ptr in
+                unbindControl(ptr)
                 DcInput_BindTextChange(ptr, nil, nil)
                 DcInput_BindPlaceholderChange(ptr, nil, nil)
             }
-            
-            // Clear bindings for Monto
-            if let ptr = OperacionesViewModel_inputMonto(rawPtr) {
-                DcControl_BindLabelText(ptr, nil, nil)
-                DcInput_BindTextChange(ptr, nil, nil)
-                DcInput_BindPlaceholderChange(ptr, nil, nil)
+            let unbindNumber: (UnsafeMutableRawPointer) -> Void = { ptr in
+                unbindControl(ptr)
+                DcNumber_BindTextChange(ptr, nil, nil)
+                DcNumber_BindValueChange(ptr, nil, nil)
             }
-            
-            // Clear bindings for Moneda Selector
-            if let ptr = OperacionesViewModel_selectorMoneda(rawPtr) {
-                DcControl_BindLabelText(ptr, nil, nil)
+            let unbindCombo: (UnsafeMutableRawPointer) -> Void = { ptr in
+                unbindControl(ptr)
                 DcComboBox_BindTextChange(ptr, nil, nil)
                 DcComboBox_BindListUpdate(ptr, nil, nil)
                 DcComboBox_BindSelectionChange(ptr, nil, nil)
             }
             
-            // Clear bindings for Monto Ref
-            if let ptr = OperacionesViewModel_labelMontoXds(rawPtr) {
-                DcControl_BindLabelText(ptr, nil, nil)
-                DcInput_BindTextChange(ptr, nil, nil)
-                DcInput_BindPlaceholderChange(ptr, nil, nil)
-            }
+            if let ptr = OperacionesViewModel_inputConcepto(rawPtr) { unbindInput(ptr) }
+            if let ptr = OperacionesViewModel_inputMonto(rawPtr) { unbindNumber(ptr) }
+            if let ptr = OperacionesViewModel_labelMontoXds(rawPtr) { unbindInput(ptr) }
+            if let ptr = OperacionesViewModel_selectorMoneda(rawPtr) { unbindCombo(ptr) }
+            
+            if let ptr = OperacionesViewModel_cmdAgregar(rawPtr) { unbindControl(ptr) }
+            if let ptr = OperacionesViewModel_cmdCancelar(rawPtr) { unbindControl(ptr) }
+            if let ptr = OperacionesViewModel_cmdEliminar(rawPtr) { unbindControl(ptr) }
         }
     }
 }

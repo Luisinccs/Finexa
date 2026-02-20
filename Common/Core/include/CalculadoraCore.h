@@ -9,6 +9,7 @@
 #define FINEXA_CALCULADORA_CORE_H
 
 #include "Moneda.h"
+#include "Operacion.h"
 #include "TasaDeCambio.h"
 #include <memory>
 #include <string>
@@ -24,6 +25,7 @@ class CalculadoraCore {
 private:
   std::vector<std::shared_ptr<Moneda>> monedas;
   std::vector<std::shared_ptr<TasaDeCambio>> tasas;
+  std::vector<std::shared_ptr<Operacion>> operaciones;
 
   const std::string PIVOTE = "VES";
   const std::string OBJETIVO = "XDS";
@@ -35,8 +37,10 @@ public:
   void cargarDesdeBD();
   void guardarMoneda(std::shared_ptr<Moneda> moneda);
   void guardarTasa(std::shared_ptr<TasaDeCambio> tasa);
+  void guardarOperacion(std::shared_ptr<Operacion> operacion);
   void eliminarMoneda(const std::string &uuid);
   void eliminarTasa(const std::string &uuid);
+  void eliminarOperacion(const std::string &uuid);
 
   // --- Herramientas de Debug (Modo Dios) ---
   void limpiarBaseDeDatos();
@@ -64,6 +68,7 @@ public:
   std::string getSiglasObjetivo() const;
   const std::vector<std::shared_ptr<Moneda>> &getMonedas() const;
   const std::vector<std::shared_ptr<TasaDeCambio>> &getTasas() const;
+  const std::vector<std::shared_ptr<Operacion>> &getOperaciones() const;
 };
 } // namespace Finexa
 

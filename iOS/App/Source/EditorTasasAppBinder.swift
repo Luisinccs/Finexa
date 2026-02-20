@@ -91,23 +91,35 @@ public class EditorTasasAppBinder: EditorTasaBinder {
         withUnsafePointer(to: viewModel) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
             
-            if let ptr = TasasViewModel_selectorBase(rawPtr) {
+            let unbindControl: (UnsafeMutableRawPointer) -> Void = { ptr in
                 DcControl_BindLabelText(ptr, nil, nil)
-                DcComboBox_BindTextChange(ptr, nil, nil)
-                DcComboBox_BindListUpdate(ptr, nil, nil)
-                DcComboBox_BindSelectionChange(ptr, nil, nil)
+                DcControl_BindEnabledState(ptr, nil, nil)
+                DcControl_BindVisibleState(ptr, nil, nil)
             }
-            if let ptr = TasasViewModel_selectorDestino(rawPtr) {
-                DcControl_BindLabelText(ptr, nil, nil)
-                DcComboBox_BindTextChange(ptr, nil, nil)
-                DcComboBox_BindListUpdate(ptr, nil, nil)
-                DcComboBox_BindSelectionChange(ptr, nil, nil)
-            }
-            if let ptr = TasasViewModel_inputValor(rawPtr) {
-                DcControl_BindLabelText(ptr, nil, nil)
+            let _: (UnsafeMutableRawPointer) -> Void = { ptr in
+                unbindControl(ptr)
                 DcInput_BindTextChange(ptr, nil, nil)
                 DcInput_BindPlaceholderChange(ptr, nil, nil)
             }
+            let unbindNumber: (UnsafeMutableRawPointer) -> Void = { ptr in
+                unbindControl(ptr)
+                DcNumber_BindTextChange(ptr, nil, nil)
+                DcNumber_BindValueChange(ptr, nil, nil)
+            }
+            let unbindCombo: (UnsafeMutableRawPointer) -> Void = { ptr in
+                unbindControl(ptr)
+                DcComboBox_BindTextChange(ptr, nil, nil)
+                DcComboBox_BindListUpdate(ptr, nil, nil)
+                DcComboBox_BindSelectionChange(ptr, nil, nil)
+            }
+            
+            if let ptr = TasasViewModel_selectorBase(rawPtr) { unbindCombo(ptr) }
+            if let ptr = TasasViewModel_selectorDestino(rawPtr) { unbindCombo(ptr) }
+            if let ptr = TasasViewModel_inputValor(rawPtr) { unbindNumber(ptr) }
+            
+            // Commands
+            if let ptr = TasasViewModel_cmdGuardarTasa(rawPtr) { unbindControl(ptr) }
+            if let ptr = TasasViewModel_cmdCancelar(rawPtr) { unbindControl(ptr) }
         }
     }
 }

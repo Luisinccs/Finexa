@@ -122,13 +122,35 @@ void TasasViewModel::inicializar() {
     // Key = UUID, Value = Siglas
     items.push_back({m->getUuid(), m->getSiglas()});
   }
+
+  // Guardamos las selecciones actuales
+  std::string currBase = selectorBase()->getSelectedKey();
+  std::string currDestino = selectorDestino()->getSelectedKey();
+
   selectorBase()->setItems(items);
   selectorDestino()->setItems(items);
 
-  // Predeterminados según RF-03 (Select via UUID)
-  auto pivot = _core->buscarMoneda(_core->getSiglasPivote());
-  if (pivot) {
-    selectorBase()->selectItemByKey(pivot->getUuid());
+  bool baseFound = false;
+  bool destinoFound = false;
+  for (const auto &item : items) {
+    if (item.key == currBase)
+      baseFound = true;
+    if (item.key == currDestino)
+      destinoFound = true;
+  }
+
+  // Predeterminados según RF-03 (Select via UUID) si no hay selección válida
+  if (!baseFound) {
+    auto pivot = _core->buscarMoneda(_core->getSiglasPivote());
+    if (pivot) {
+      selectorBase()->selectItemByKey(pivot->getUuid());
+    }
+  } else {
+    selectorBase()->selectItemByKey(currBase);
+  }
+
+  if (destinoFound) {
+    selectorDestino()->selectItemByKey(currDestino);
   }
 
   refrescarGrilla();

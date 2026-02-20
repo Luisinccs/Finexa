@@ -131,10 +131,23 @@ void OperacionesViewModel::inicializar() {
   _selectorMoneda->setItems(items);
   _selectorMonedaRef->setItems(items);
 
-  // Seleccionar moneda referencial por defecto (primera moneda)
+  // Preservar la moneda referencial actual si existe y sigue siendo válida
   if (!items.empty()) {
-    _monedaRef = items[0].key;
+    bool found = false;
+    for (const auto &item : items) {
+      if (item.key == _monedaRef) {
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      // Si no hay moneda actual o fue eliminada, tomar la primera
+      _monedaRef = items[0].key;
+    }
     _selectorMonedaRef->selectItemByKey(_monedaRef);
+  } else {
+    _monedaRef = "";
   }
 
   // Cuando cambia la moneda referencial, recalcular todo
@@ -149,6 +162,8 @@ void OperacionesViewModel::inicializar() {
       [this](int index) { this->cargarOperacion(index); });
 
   _gridOperaciones->setOnAddRequested([this]() { this->limpiarEditor(); });
+
+  _operaciones = _core->getOperaciones(); // Sincronizar con el repositorio
 
   refrescarGrilla();
 }
@@ -213,15 +228,16 @@ void OperacionesViewModel::agregarOperacion() {
         op->setMontoOriginal(monto);
         op->setMonedaOriginal(m);
         op->setMontoXds(montoRef);
+        _core->guardarOperacion(op);
       } else {
         // Nuevo
         auto op =
             std::make_shared<Finexa::Operacion>(concepto, monto, m, montoRef);
-        _operaciones.push_back(op);
+        _core->guardarOperacion(op);
       }
 
       limpiarEditor();
-      refrescarGrilla();
+      this->inicializar();
       if (_onRequestClose)
         _onRequestClose();
     }
@@ -231,9 +247,10 @@ void OperacionesViewModel::agregarOperacion() {
 void OperacionesViewModel::eliminarOperacion() {
   if (_selectedIndex >= 0 &&
       _selectedIndex < static_cast<int>(_operaciones.size())) {
-    _operaciones.erase(_operaciones.begin() + _selectedIndex);
+    auto op = _operaciones[_selectedIndex];
+    _core->eliminarOperacion(op->getUuid());
     limpiarEditor();
-    refrescarGrilla();
+    this->inicializar();
   }
 }
 

@@ -142,3 +142,30 @@ Tengo este error de compilación:
 ---
 
 Cuando estoy en el formulario de edicion de tasa, y presiono el boton de aceptar, no se cierra el formulario, ni vuelve a la grilla. Si procede a crear el registro, porque luego presiono cancelra, y regresa a la grilla de tasas y muestra el registro creado. 
+
+---
+
+Estoy teniendo un error en tiempo de ejecución, te paso la captura adjunto.
+Te explico lo que hice:
+Creé tres monedas
+Luegro dos tasas
+Creé una operación
+Luego quise crear otra operación, y me dio el error; logró crearla y la muestra incluso en la grilla.
+No se si tenga que ver con el error, pero el selector de moneda base, siempre se quedaba en la última moneda que habia creado, intenté cambiarlo y se cambió temporalmente; pero luego al querer agregar otra operacón, se cambió otra ves.
+
+---
+
+Bien, se resolvió el problema.
+Ahora tengo otro crash cuando intento eliminar un registro de la tabla de operaciones; te lo paso adjunto.
+Sigo teniendo el problema con el selector de moneda base, siempre se queda en la última moneda que habia creado, intenté cambiarlo y se cambió temporalmente; pero luego al querer agregar otra operacón, se cambió otra ves.
+
+-- tengo este error de compilación:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/App/Source/EditorTasasAppBinder.swift:118:26 Cannot find 'TasasViewModel_cmdEliminar' in scope
+
+---
+
+Bien, ya por lo menos se mantiene la moneda base cuando la cambio; pero sigo con un crash cuando intento eliminar un registro de operaciones
+
+---
+
+Tengo este crahs cuando inicio una nueva operación y el doy cancelar (comenzando la aplicación, al crear una moneda y luego intentar crear una operación)

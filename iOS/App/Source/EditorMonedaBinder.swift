@@ -131,21 +131,23 @@ class EditorMonedaAppBinder: EditorMonedaBinder {
         withUnsafeMutablePointer(to: &vm) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
             
-            if let ptr = MonedasViewModel_nombreViewModel(rawPtr) {
+            let unbindControl: (UnsafeMutableRawPointer) -> Void = { ptr in
                 DcControl_BindLabelText(ptr, nil, nil)
+                DcControl_BindEnabledState(ptr, nil, nil)
+                DcControl_BindVisibleState(ptr, nil, nil)
+            }
+            let unbindInput: (UnsafeMutableRawPointer) -> Void = { ptr in
+                unbindControl(ptr)
                 DcInput_BindTextChange(ptr, nil, nil)
                 DcInput_BindPlaceholderChange(ptr, nil, nil)
             }
-            if let ptr = MonedasViewModel_simboloViewModel(rawPtr) {
-                DcControl_BindLabelText(ptr, nil, nil)
-                DcInput_BindTextChange(ptr, nil, nil)
-                DcInput_BindPlaceholderChange(ptr, nil, nil)
-            }
-            if let ptr = MonedasViewModel_siglasViewModel(rawPtr) {
-                DcControl_BindLabelText(ptr, nil, nil)
-                DcInput_BindTextChange(ptr, nil, nil)
-                DcInput_BindPlaceholderChange(ptr, nil, nil)
-            }
+            
+            if let ptr = MonedasViewModel_nombreViewModel(rawPtr) { unbindInput(ptr) }
+            if let ptr = MonedasViewModel_simboloViewModel(rawPtr) { unbindInput(ptr) }
+            if let ptr = MonedasViewModel_siglasViewModel(rawPtr) { unbindInput(ptr) }
+            
+            if let ptr = MonedasViewModel_aceptarViewModel(rawPtr) { unbindControl(ptr) }
+            if let ptr = MonedasViewModel_cancelarViewModel(rawPtr) { unbindControl(ptr) }
         }
     }
 }

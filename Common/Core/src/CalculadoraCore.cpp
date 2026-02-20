@@ -3,7 +3,7 @@
 #include "../../Data/include/OperacionRepository.h"
 #include "../../Data/include/TasaRepository.h"
 // Relative path to DualComponents from Common/Core/src
-//#include "../../../../DualComponents/DcDataAccess/Core/DcDataService.hpp"
+// #include "../../../../DualComponents/DcDataAccess/Core/DcDataService.hpp"
 #include "DcDataService.hpp"
 #include <algorithm>
 #include <cmath>
@@ -156,6 +156,10 @@ const std::vector<std::shared_ptr<TasaDeCambio>> &
 CalculadoraCore::getTasas() const {
   return tasas;
 }
+const std::vector<std::shared_ptr<Operacion>> &
+CalculadoraCore::getOperaciones() const {
+  return operaciones;
+}
 
 // =========================================================
 // Persistencia
@@ -164,6 +168,7 @@ CalculadoraCore::getTasas() const {
 void CalculadoraCore::cargarDesdeBD() {
   monedas = Data::MonedaRepository::getAll();
   tasas = Data::TasaRepository::getAll(monedas);
+  operaciones = Data::OperacionRepository::getAll(monedas);
 }
 
 void CalculadoraCore::guardarMoneda(std::shared_ptr<Moneda> moneda) {
@@ -198,6 +203,25 @@ void CalculadoraCore::eliminarTasa(const std::string &uuid) {
       tasas.end());
 }
 
+void CalculadoraCore::guardarOperacion(std::shared_ptr<Operacion> operacion) {
+  Data::OperacionRepository::save(operacion);
+  operaciones.erase(std::remove_if(operaciones.begin(), operaciones.end(),
+                                   [&](const auto &o) {
+                                     return o->getUuid() ==
+                                            operacion->getUuid();
+                                   }),
+                    operaciones.end());
+  operaciones.push_back(operacion);
+}
+
+void CalculadoraCore::eliminarOperacion(const std::string &uuid) {
+  Data::OperacionRepository::remove(uuid);
+  operaciones.erase(
+      std::remove_if(operaciones.begin(), operaciones.end(),
+                     [&](const auto &o) { return o->getUuid() == uuid; }),
+      operaciones.end());
+}
+
 // =========================================================
 // Herramientas de Debug (Modo Dios)
 // =========================================================
@@ -214,6 +238,7 @@ void CalculadoraCore::limpiarBaseDeDatos() {
   // Limpiar memoria
   monedas.clear();
   tasas.clear();
+  operaciones.clear();
 }
 
 void CalculadoraCore::cargarDatosMock() {
