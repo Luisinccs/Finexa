@@ -9,7 +9,7 @@ public protocol MonedasBinder: AnyObject {
     func numberOfRows() -> Int
     
     /// Returns the text for a specific row.
-    func cellData(for row: Int) -> (nombre: String, simbolo: String, siglas: String)
+    func cellData(for row: Int) -> (nombre: String, simbolo: String, siglas: String, isDeletable: Bool)
     
     /// Selects a row (e.g., to prepare for editing).
     func selectRow(at row: Int)

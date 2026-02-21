@@ -183,6 +183,11 @@ public class MonedasController: UIViewController, UITableViewDataSource, UITable
     }
     
     public func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+        if let data = binder?.cellData(for: indexPath.row), !data.isDeletable {
+            // Return empty configuration to disable swipe completely
+            return UISwipeActionsConfiguration(actions: [])
+        }
+        
         let deleteAction = UIContextualAction(style: .destructive, title: "Eliminar") { [weak self] (_, _, completion) in
              self?.binder?.deleteRow(at: indexPath.row)
              completion(true)

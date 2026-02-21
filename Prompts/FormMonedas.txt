@@ -43,3 +43,7 @@ Puedes modificar el componente reutilizable Dual Componentes/DcViews/iOS/Product
 El estado de error debe desaparecer cuando el campo comience a modificarse, o si se le da al botón de cancelar.
 
 Los mensajes de error no deben entorpecer la vista de los demás elementos del formulario.
+
+---
+
+Agrega la funcionalidad para que una moneda solo se pueda eliminar si no tiene registros asociados a ellas. Para que el swipe con la opción de eliminar no aparezca si la moneda tiene registros asociados. Para lograr esto, hay que verificar si una moneda es eliminable al cargarla en la lista, e incuir ese campo en el modelo de datos de la moneda. La aplicación no debe permitir el swipe con la opción de eliminar si la moneda no es eliminable.

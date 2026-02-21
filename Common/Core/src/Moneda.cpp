@@ -25,4 +25,7 @@ void Moneda::setNombre(const std::string &newNombre) { nombre = newNombre; }
 std::string Moneda::getSimbolo() const { return simbolo; }
 void Moneda::setSimbolo(const std::string &newSimbolo) { simbolo = newSimbolo; }
 
+bool Moneda::isDeletable() const { return _isDeletable; }
+void Moneda::setIsDeletable(bool deletable) { _isDeletable = deletable; }
+
 } // namespace Finexa

@@ -22,6 +22,7 @@ private:
   std::string siglas;
   std::string nombre;
   std::string simbolo;
+  bool _isDeletable = true;
 
 public:
   Moneda(int id, std::string siglas, std::string nombre, std::string simbolo);
@@ -37,6 +38,9 @@ public:
   void setNombre(const std::string &nombre);
   std::string getSimbolo() const;
   void setSimbolo(const std::string &simbolo);
+
+  bool isDeletable() const;
+  void setIsDeletable(bool deletable);
 };
 } // namespace Finexa
 

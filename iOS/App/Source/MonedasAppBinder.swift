@@ -48,9 +48,9 @@ class MonedasAppBinder: MonedasBinder {
         return Int(count)
     }
     
-    func cellData(for row: Int) -> (nombre: String, simbolo: String, siglas: String) {
+    func cellData(for row: Int) -> (nombre: String, simbolo: String, siglas: String, isDeletable: Bool) {
         let vm = viewModelPtr
-        var nombre = "", simbolo = "", siglas = ""
+        var nombre = "", simbolo = "", siglas = "", isDeletable = true
         
         withUnsafePointer(to: vm) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
@@ -58,9 +58,10 @@ class MonedasAppBinder: MonedasBinder {
                 nombre = getCellText(gridPtr, row, 0)
                 siglas = getCellText(gridPtr, row, 1)
                 simbolo = getCellText(gridPtr, row, 2)
+                isDeletable = getCellText(gridPtr, row, 3) == "true"
             }
         }
-        return (nombre, simbolo, siglas)
+        return (nombre, simbolo, siglas, isDeletable)
     }
     
     private func getCellText(_ gridPtr: UnsafeMutableRawPointer, _ row: Int, _ col: Int) -> String {

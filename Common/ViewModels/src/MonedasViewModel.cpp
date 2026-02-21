@@ -243,11 +243,11 @@ void MonedasViewModel::refreshRows() {
     DcGridRow r;
     r.tag = item.get();
 
-    // Columns: Nombre, Siglas, Simbolo, Acciones
+    // Columns: Nombre, Siglas, Simbolo, Acciones/isDeletable
     r.cells.push_back(item->getNombre());
     r.cells.push_back(item->getSiglas());
     r.cells.push_back(item->getSimbolo());
-    r.cells.push_back(""); // Actions placeholder
+    r.cells.push_back(item->isDeletable() ? "true" : "false");
 
     rows.push_back(r);
   }

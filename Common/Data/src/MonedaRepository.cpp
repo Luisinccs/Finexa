@@ -17,8 +17,13 @@ std::vector<std::shared_ptr<Moneda>> MonedaRepository::getAll() {
   if (!db)
     return result;
 
-  auto rows = db->query("SELECT id, siglas, nombre, simbolo FROM monedas WHERE "
-                        "is_deleted = 0 ORDER BY siglas");
+  auto rows = db->query(
+      "SELECT m.id, m.siglas, m.nombre, m.simbolo, "
+      "(SELECT COUNT(*) FROM operaciones o WHERE o.moneda_id = m.id "
+      "AND o.is_deleted = 0) as usos_op, "
+      "(SELECT COUNT(*) FROM tasas t WHERE (t.moneda_base_id = m.id OR "
+      "t.moneda_dest_id = m.id) AND t.is_deleted = 0) as usos_tasa "
+      "FROM monedas m WHERE m.is_deleted = 0 ORDER BY m.siglas");
 
   int localId = 1;
   for (const auto &row : rows) {
@@ -27,8 +32,13 @@ std::vector<std::shared_ptr<Moneda>> MonedaRepository::getAll() {
     std::string nombre = std::get<std::string>(row.at("nombre"));
     std::string simbolo = std::get<std::string>(row.at("simbolo"));
 
-    result.push_back(
-        std::make_shared<Moneda>(uuid, localId++, siglas, nombre, simbolo));
+    int64_t usosOp = std::get<int64_t>(row.at("usos_op"));
+    int64_t usosTasa = std::get<int64_t>(row.at("usos_tasa"));
+
+    auto moneda =
+        std::make_shared<Moneda>(uuid, localId++, siglas, nombre, simbolo);
+    moneda->setIsDeletable((usosOp + usosTasa) == 0);
+    result.push_back(moneda);
   }
 
   return result;
