@@ -43,3 +43,10 @@ Genera los archivos
 - Finexa/ios/App/Source/EditorOperacionesAppBinder.swift
 
 - Actualiza el App Delegate para que comience con el grid de las operaciones en lugar de las monedas para probarlo.
+
+---
+
+Bien, falta agregar un punto interesante en la validación. 
+Una operación no se le puede asignar una moneda que no tenga una tasa de cambio asociada a la moneda base (La comprobación no debe ser solo directa, es decir, a lo mejor el euro no tiene una tasa directa con el bolivar, pero si tiene una tasa con el dolar, y el dolar si tiene una tasa con el bolivar, entonces se debe poder usar el euro).
+
+Y hay que terminar de validar el formualrio de operaciones, con el monto que no debe ser cero ni vacio, ni el campo de la descripción vacio o duplicado

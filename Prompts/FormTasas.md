@@ -44,3 +44,10 @@ Genera los archivos
 - Finexa/ios/App/Source/EditorTasasAppBinder.swift
 
 - Actualiza el App Delegate para que comience con el grid de las tasas en lugar de las monedas para probarlo.
+
+----
+
+Bien, hay que meterle cabeza a esto.
+Necesitamos crear un mecanismo para validar las tasas cuando se crean de modo de evitar las triangulaciones.
+Es decir, si hay una tasa VES/USD y otra VES/EUR, no se puede crear una tercera tasa USD/EUR porque viola la regla de las triangulaciones.
+Nuevamente, la validación se debe realizar en el view model. y se debe mostrar al usuario un mensaje explicando por qué no se puede crear la tasa.

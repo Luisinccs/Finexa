@@ -44,11 +44,16 @@ public class EditorOperacionesAppBinder: EditorOperacionBinder {
             }
             
             // Bind Commands
-            if let ptr = OperacionesViewModel_cmdAgregar(rawPtr) {
-                controller.cmdAceptar.setViewModel(ptr)
+            if let cmdPtr = OperacionesViewModel_cmdAgregar(rawPtr) {
+                controller.cmdAceptar.setViewModel(cmdPtr)
             }
-            if let ptr = OperacionesViewModel_cmdCancelar(rawPtr) {
-                controller.cmdCancelar.setViewModel(ptr)
+            if let cmdPtr = OperacionesViewModel_cmdCancelar(rawPtr) {
+                controller.cmdCancelar.setViewModel(cmdPtr)
+            }
+            
+            // Bind Dialog
+            if let dialogPtr = OperacionesViewModel_dialog(rawPtr) {
+                DcDialogBinder.setViewModel(dialogPtr, to: controller)
             }
             
             // Bind Close Request

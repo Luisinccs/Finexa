@@ -12,9 +12,11 @@
 #define VM_CMD_AGREGAR cmdAgregar
 #define VM_CMD_CANCELAR cmdCancelar
 #define VM_CMD_ELIMINAR cmdEliminar
+#define VM_DIALOG dialog
 
 #include "DcComboBoxViewModel.hpp"
 #include "DcCommandViewModel.hpp"
+#include "DcDialogViewModel.hpp"
 #include "DcGridViewModel.hpp"
 #include "DcInputViewModel.hpp"
 #include "DcNumberFieldViewModel.hpp"
@@ -26,6 +28,7 @@
 
 #include "IComboBoxBinding.hpp"
 #include "ICommandBinding.hpp"
+#include "IDialogBinding.hpp"
 #include "IGridBinding.hpp"
 #include "IInputBinding.hpp"
 #include "INumberFieldBinding.hpp"
@@ -50,6 +53,7 @@ class OperacionesViewModel {
   DECLARE_CONTROL_BINDING(VM_SELECTOR_MONEDA_REF, ComboBox)
   DECLARE_CONTROL_BINDING(VM_LABEL_TOTAL, Input)
   DECLARE_CONTROL_BINDING(VM_LABEL_MONTO_XDS, Input)
+  DECLARE_CONTROL_BINDING(VM_DIALOG, Dialog)
 
   // God Mode Commands
   DECLARE_CONTROL_BINDING(cmdCargarMock, Command)
@@ -113,6 +117,12 @@ DECLARE_CONTROL_BRIDGE(VM_CMD_ELIMINAR, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_SELECTOR_MONEDA_REF, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_LABEL_TOTAL, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(VM_LABEL_MONTO_XDS, OperacionesViewModel)
+DECLARE_CONTROL_BRIDGE(VM_DIALOG, OperacionesViewModel)
+
+DECLARE_CONTROL_BRIDGE(cmdCargarMock, OperacionesViewModel)
+DECLARE_CONTROL_BRIDGE(cmdLimpiarDB, OperacionesViewModel)
+
+DC_BRIDGE_EXPORT void *OperacionesViewModel_dialog(void *vmPtr);
 
 DECLARE_CONTROL_BRIDGE(cmdCargarMock, OperacionesViewModel)
 DECLARE_CONTROL_BRIDGE(cmdLimpiarDB, OperacionesViewModel)

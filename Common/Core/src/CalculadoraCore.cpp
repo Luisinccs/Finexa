@@ -7,7 +7,9 @@
 #include "DcDataService.hpp"
 #include <algorithm>
 #include <cmath>
+#include <queue>
 #include <stdexcept>
+#include <unordered_map>
 
 namespace Finexa {
 
@@ -90,29 +92,42 @@ double CalculadoraCore::calcularValorImplicito(const std::string &base,
   if (base == destino)
     return 1.0;
 
-  // Triangulacion: (VES/Destino) / (VES/Base)
-  double tasaVesBase = 0.0;
-  double tasaVesDestino = 0.0;
+  // BFS to find a conversion path from base to destino
+  std::unordered_map<std::string, double> visited;
+  std::queue<std::string> q;
 
-  if (base == PIVOTE)
-    tasaVesBase = 1.0;
-  else {
-    auto t = buscarTasa(PIVOTE, base);
-    if (t)
-      tasaVesBase = t->getValor();
+  visited[base] = 1.0;
+  q.push(base);
+
+  while (!q.empty()) {
+    std::string current = q.front();
+    q.pop();
+
+    if (current == destino) {
+      return visited[current];
+    }
+
+    // Try all possible direct rates from 'current' to any other node
+    for (const auto &t : tasas) {
+      std::string tBase = t->getBase()->getSiglas();
+      std::string tDestino = t->getDestino()->getSiglas();
+      double valorTasa = t->getValor();
+
+      if (tBase == current) {
+        if (visited.find(tDestino) == visited.end()) {
+          visited[tDestino] = visited[current] * valorTasa;
+          q.push(tDestino);
+        }
+      } else if (tDestino == current) {
+        if (visited.find(tBase) == visited.end() && valorTasa > 0) {
+          visited[tBase] = visited[current] * (1.0 / valorTasa);
+          q.push(tBase);
+        }
+      }
+    }
   }
 
-  if (destino == PIVOTE)
-    tasaVesDestino = 1.0;
-  else {
-    auto t = buscarTasa(PIVOTE, destino);
-    if (t)
-      tasaVesDestino = t->getValor();
-  }
-
-  if (tasaVesBase == 0.0)
-    return 0.0;
-  return tasaVesDestino / tasaVesBase;
+  return 0.0; // Path not found
 }
 
 double CalculadoraCore::convertirAXds(double monto,

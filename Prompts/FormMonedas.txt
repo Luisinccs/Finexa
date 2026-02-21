@@ -47,3 +47,19 @@ Los mensajes de error no deben entorpecer la vista de los demás elementos del f
 ---
 
 Agrega la funcionalidad para que una moneda solo se pueda eliminar si no tiene registros asociados a ellas. Para que el swipe con la opción de eliminar no aparezca si la moneda tiene registros asociados. Para lograr esto, hay que verificar si una moneda es eliminable al cargarla en la lista, e incuir ese campo en el modelo de datos de la moneda. La aplicación no debe permitir el swipe con la opción de eliminar si la moneda no es eliminable.
+
+--- 
+Wow, hay un bug ahora en la aplicación, al intentar a cargar los datos de prueba al comienzo, no hace nada. 
+Puedo comenzar llendo al fomrulario de creación de la primera moneda  Presionando el botón configurar moneda del onboard, pero cuando le doy a aceptar en el formulario, regresa otra vez a l onboard.
+
+Revisa que está pasando
+
+---
+
+Bien, he aplicado los cambios y compilé la librería core y la aplicación pero no veo la validación de las tasas en acción. Intenté creando una tasa trinagulada, y me la creó y no mostró nungun mensaje de error.
+
+---
+
+Bien, la validación del formulario de operacion está bien pero sigue la situación con el formulario de tasas:
+Tengo una tasa USD/VES otra EUR/USD, y trato de agregar una tasa EUR/VES y me deja hacerlo.
+Hay que ver que esta pasando

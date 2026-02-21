@@ -171,18 +171,74 @@ bool TasasViewModel::guardarTasa() {
   double valor = Finexa::getValorDouble(inputValor()->getValue(),
                                         inputValor()->getDecimalPlaces());
 
-  if (!baseUuid.empty() && !destinoUuid.empty() && baseUuid != destinoUuid &&
-      valor > 0) {
-    try {
-      _core->establecerTasaPorUuid(baseUuid, destinoUuid, valor);
-      refrescarGrilla();
-      return true;
-    } catch (...) {
-      // Handle error?
-      return false;
+  if (baseUuid.empty() || destinoUuid.empty()) {
+    if (_dialog)
+      _dialog->showUiAlert("Error", "Debe seleccionar ambas monedas.");
+    return false;
+  }
+
+  if (baseUuid == destinoUuid) {
+    if (_dialog)
+      _dialog->showUiAlert("Error",
+                           "Las monedas base y destino no pueden ser iguales.");
+    return false;
+  }
+
+  if (valor <= 0) {
+    if (_dialog)
+      _dialog->showUiAlert("Error", "El valor de la tasa debe ser mayor a 0.");
+    return false;
+  }
+
+  // Si estamos creando una nueva tasa (no editando)
+  if (_selectedIndex < 0) {
+    auto mBase = _core->buscarMonedaPorUuid(baseUuid);
+    auto mDestino = _core->buscarMonedaPorUuid(destinoUuid);
+
+    if (mBase && mDestino) {
+      // 1. Verificar si ya existe una tasa directa entre estas dos (en ambos
+      // sentidos)
+      auto tasaExistente =
+          _core->buscarTasa(mBase->getSiglas(), mDestino->getSiglas());
+      if (!tasaExistente) {
+        tasaExistente =
+            _core->buscarTasa(mDestino->getSiglas(), mBase->getSiglas());
+      }
+
+      if (tasaExistente) {
+        if (_dialog)
+          _dialog->showUiAlert("Tasa Duplicada",
+                               "Ya existe una tasa entre estas dos monedas. "
+                               "Puede editarla desde la lista.");
+        return false;
+      }
+
+      // 2. Verificar si existe triangulación implícita
+      std::string pivote = _core->getSiglasPivote();
+      if (mBase->getSiglas() != pivote && mDestino->getSiglas() != pivote) {
+        double valorImplicito = _core->calcularValorImplicito(
+            mBase->getSiglas(), mDestino->getSiglas());
+        if (valorImplicito > 0.0) {
+          if (_dialog)
+            _dialog->showUiAlert("Triangulación detectada",
+                                 "Ya existe una tasa calculada implícitamente "
+                                 "entre estas monedas a través del VES. No se "
+                                 "permite crear una tasa directa redundante.");
+          return false;
+        }
+      }
     }
   }
-  return false;
+
+  try {
+    _core->establecerTasaPorUuid(baseUuid, destinoUuid, valor);
+    refrescarGrilla();
+    return true;
+  } catch (...) {
+    if (_dialog)
+      _dialog->showUiAlert("Error", "Ocurrió un error al guardar la tasa.");
+    return false;
+  }
 }
 
 void TasasViewModel::eliminarTasa() {

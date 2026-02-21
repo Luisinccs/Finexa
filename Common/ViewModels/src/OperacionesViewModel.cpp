@@ -14,12 +14,12 @@ using namespace DualComponents::ViewModels;
 
 std::shared_ptr<OperacionesViewModel>
 OperacionesViewModel::create(std::shared_ptr<Finexa::CalculadoraCore> core) {
-  return std::make_shared<OperacionesViewModel>(core);
+  return std::shared_ptr<OperacionesViewModel>(new OperacionesViewModel(core));
 }
 
 std::shared_ptr<OperacionesViewModel> OperacionesViewModel::create() {
-  return std::make_shared<OperacionesViewModel>(
-      std::make_shared<Finexa::CalculadoraCore>());
+  return std::shared_ptr<OperacionesViewModel>(
+      new OperacionesViewModel(std::make_shared<Finexa::CalculadoraCore>()));
 }
 
 OperacionesViewModel::OperacionesViewModel(
@@ -64,6 +64,8 @@ OperacionesViewModel::OperacionesViewModel(
   _cmdEliminar->setLabelText("Eliminar");
   _cmdEliminar->setOnExecuted([this]() { this->eliminarOperacion(); });
 
+  _dialog = std::make_shared<DcDialogViewModel>();
+
   // God Mode Debug
   _cmdCargarMock = std::make_shared<DcCommandViewModel>();
   _cmdCargarMock->setLabelText("Cargar Mock");
@@ -96,6 +98,7 @@ IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_SELECTOR_MONEDA_REF,
                            ComboBox)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_LABEL_TOTAL, Input)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_LABEL_MONTO_XDS, Input)
+IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_DIALOG, Dialog)
 
 // God Mode Internals
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, cmdCargarMock, Command)
@@ -192,27 +195,15 @@ double OperacionesViewModel::convertir(double monto, const std::string &from,
   if (from == to)
     return monto;
 
-  std::string pivote = _core->getSiglasPivote();
+  // Utilizamos el motor de triangulación (BFS) construido en el core
+  // calcularValorImplicito ya busca la forma de conectar from y to.
+  double tasaDeCambio = _core->calcularValorImplicito(from, to);
 
-  double tasaVesFrom = 1.0;
-  if (from != pivote) {
-    auto t = _core->buscarTasa(pivote, from);
-    if (!t)
-      return 0.0;
-    tasaVesFrom = t->getValor();
+  if (tasaDeCambio > 0.0) {
+    return monto * tasaDeCambio;
   }
 
-  double tasaVesTo = 1.0;
-  if (to != pivote) {
-    auto t = _core->buscarTasa(pivote, to);
-    if (!t || t->getValor() == 0.0)
-      return 0.0;
-    tasaVesTo = t->getValor();
-  }
-
-  // Triangulación: monto(from) → VES → monto(to)
-  double montoVes = monto * tasaVesFrom;
-  return montoVes / tasaVesTo;
+  return 0.0;
 }
 
 // --- Operaciones CRUD ---
@@ -222,32 +213,72 @@ void OperacionesViewModel::agregarOperacion() {
   double monto = getMontoDouble();
   std::string moneda = _selectorMoneda->getSelectedKey();
 
-  if (!concepto.empty() && monto > 0 && !moneda.empty()) {
-    auto m = _core->buscarMoneda(moneda);
-    if (m) {
-      double montoRef = convertir(monto, moneda, _monedaRef);
+  if (concepto.empty()) {
+    if (_dialog)
+      _dialog->showUiAlert("Error",
+                           "Debe ingresar un concepto para la operación.");
+    return;
+  }
 
-      if (_selectedIndex >= 0 &&
-          _selectedIndex < static_cast<int>(_operaciones.size())) {
-        // Edición
-        auto op = _operaciones[_selectedIndex];
-        op->setConcepto(concepto);
-        op->setMontoOriginal(monto);
-        op->setMonedaOriginal(m);
-        op->setMontoXds(montoRef);
-        _core->guardarOperacion(op);
-      } else {
-        // Nuevo
-        auto op =
-            std::make_shared<Finexa::Operacion>(concepto, monto, m, montoRef);
-        _core->guardarOperacion(op);
-      }
-
-      limpiarEditor();
-      this->inicializar();
-      if (_onRequestClose)
-        _onRequestClose();
+  // Verificar concepto duplicado (opcional si es requerido pero en las reglas
+  // se mencionó "no vacio ni duplicado")
+  for (int i = 0; i < static_cast<int>(_operaciones.size()); ++i) {
+    if (i != _selectedIndex && _operaciones[i]->getConcepto() == concepto) {
+      if (_dialog)
+        _dialog->showUiAlert(
+            "Concepto Duplicado",
+            "Ya existe una operación registrada con este concepto.");
+      return;
     }
+  }
+
+  if (monto <= 0) {
+    if (_dialog)
+      _dialog->showUiAlert("Error",
+                           "El monto de la operación debe ser mayor a 0.");
+    return;
+  }
+
+  if (moneda.empty()) {
+    if (_dialog)
+      _dialog->showUiAlert("Error", "Debe seleccionar una moneda.");
+    return;
+  }
+
+  auto m = _core->buscarMoneda(moneda);
+  if (m) {
+    double montoRef = convertir(monto, moneda, _monedaRef);
+
+    if (montoRef == 0.0 && moneda != _monedaRef) {
+      if (_dialog)
+        _dialog->showUiAlert(
+            "Conversión Imposible",
+            "No existe una tasa de cambio o ruta de triangulación que conecte "
+            "esta moneda con la moneda base referencial. Por favor registre "
+            "una tasa de cambio primero.");
+      return;
+    }
+
+    if (_selectedIndex >= 0 &&
+        _selectedIndex < static_cast<int>(_operaciones.size())) {
+      // Edición
+      auto op = _operaciones[_selectedIndex];
+      op->setConcepto(concepto);
+      op->setMontoOriginal(monto);
+      op->setMonedaOriginal(m);
+      op->setMontoXds(montoRef);
+      _core->guardarOperacion(op);
+    } else {
+      // Nuevo
+      auto op =
+          std::make_shared<Finexa::Operacion>(concepto, monto, m, montoRef);
+      _core->guardarOperacion(op);
+    }
+
+    limpiarEditor();
+    this->inicializar();
+    if (_onRequestClose)
+      _onRequestClose();
   }
 }
 
@@ -439,4 +470,15 @@ OperacionesViewModel_setOnRequestClose(void *vmPtr, void *ctx,
       });
     }
   }
+}
+
+DC_BRIDGE_EXPORT void *OperacionesViewModel_dialog(void *vmPtr) {
+  if (vmPtr) {
+    auto vm = *static_cast<
+        std::shared_ptr<Finexa::ViewModels::OperacionesViewModel> *>(vmPtr);
+    if (vm) {
+      return vm->dialogBinding();
+    }
+  }
+  return nullptr;
 }
