@@ -249,14 +249,16 @@ void CalculadoraCore::cargarDatosMock() {
   auto usd = std::make_shared<Moneda>(1, "USD", "Dolar Americano", "$");
   auto ves = std::make_shared<Moneda>(2, "VES", "Bolivar", "Bs");
   auto eur = std::make_shared<Moneda>(3, "EUR", "Euro", "€");
+  auto bcv = std::make_shared<Moneda>(4, "REF", "Dolar BCV", "$B");
 
   guardarMoneda(usd);
   guardarMoneda(ves);
   guardarMoneda(eur);
+  guardarMoneda(bcv);
 
   // 3. Crear Tasas Mock
   // USD -> VES (50)
-  auto t1 = std::make_shared<TasaDeCambio>(usd, ves, 50.0);
+  auto t1 = std::make_shared<TasaDeCambio>(ves, usd, 520.0);
   guardarTasa(t1);
 
   // EUR -> USD (1.10)
@@ -264,7 +266,7 @@ void CalculadoraCore::cargarDatosMock() {
   guardarTasa(t2);
 
   // EUR -> VES (55)
-  auto t3 = std::make_shared<TasaDeCambio>(eur, ves, 55.0);
+  auto t3 = std::make_shared<TasaDeCambio>(ves, bcv, 380.0);
   guardarTasa(t3);
 }
 
