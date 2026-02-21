@@ -213,19 +213,18 @@ bool TasasViewModel::guardarTasa() {
         return false;
       }
 
-      // 2. Verificar si existe triangulación implícita
-      std::string pivote = _core->getSiglasPivote();
-      if (mBase->getSiglas() != pivote && mDestino->getSiglas() != pivote) {
-        double valorImplicito = _core->calcularValorImplicito(
-            mBase->getSiglas(), mDestino->getSiglas());
-        if (valorImplicito > 0.0) {
-          if (_dialog)
-            _dialog->showUiAlert("Triangulación detectada",
-                                 "Ya existe una tasa calculada implícitamente "
-                                 "entre estas monedas a través del VES. No se "
-                                 "permite crear una tasa directa redundante.");
-          return false;
-        }
+      // 2. Verificar si existe triangulación implícita o ruta existente
+      double valorImplicito = _core->calcularValorImplicito(
+          mBase->getSiglas(), mDestino->getSiglas());
+
+      if (valorImplicito > 0.0) {
+        if (_dialog)
+          _dialog->showUiAlert(
+              "Ruta de conversión existente",
+              "Ya existe una forma de convertir entre estas monedas "
+              "(posiblemente a través de triangulación con otras). "
+              "No se permite crear tasas redundantes para evitar ambigüedad.");
+        return false;
       }
     }
   }
