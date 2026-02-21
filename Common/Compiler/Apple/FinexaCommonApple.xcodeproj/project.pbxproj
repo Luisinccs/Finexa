@@ -27,6 +27,8 @@
 		112A4F072F3015FE00A6CF06 /* DcViewModels.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 112A4F062F3015FE00A6CF06 /* DcViewModels.framework */; };
 		1142548E2F465FC4006A72C6 /* Helpers.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 1142548D2F465FC4006A72C6 /* Helpers.hpp */; };
 		114254902F465FCC006A72C6 /* Helpers.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 1142548F2F465FCC006A72C6 /* Helpers.cpp */; };
+		11AE5DBA2F495DC3007F4CF0 /* ConfigRepository.h in Headers */ = {isa = PBXBuildFile; fileRef = 11AE5DB92F495DC3007F4CF0 /* ConfigRepository.h */; };
+		11AE5DBC2F495DCC007F4CF0 /* ConfigRepository.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11AE5DBB2F495DCC007F4CF0 /* ConfigRepository.cpp */; };
 		11B72BB62F426AA600FDA36A /* MonedasViewModel.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 11B72BB52F426AA600FDA36A /* MonedasViewModel.hpp */; };
 		11B72BB82F426AAE00FDA36A /* MonedasViewModel.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 11B72BB72F426AAE00FDA36A /* MonedasViewModel.cpp */; };
 		11B72BBA2F427BBA00FDA36A /* FinexaViewModels.h in Headers */ = {isa = PBXBuildFile; fileRef = 11B72BB92F427BBA00FDA36A /* FinexaViewModels.h */; };
@@ -58,6 +60,8 @@
 		112A4F062F3015FE00A6CF06 /* DcViewModels.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = DcViewModels.framework; path = ../../../../Distribution/DcViewModels/Apple/Release/DcViewModels.framework; sourceTree = "<group>"; };
 		1142548D2F465FC4006A72C6 /* Helpers.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Helpers.hpp; sourceTree = "<group>"; };
 		1142548F2F465FCC006A72C6 /* Helpers.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Helpers.cpp; sourceTree = "<group>"; };
+		11AE5DB92F495DC3007F4CF0 /* ConfigRepository.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfigRepository.h; sourceTree = "<group>"; };
+		11AE5DBB2F495DCC007F4CF0 /* ConfigRepository.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConfigRepository.cpp; sourceTree = "<group>"; };
 		11B72BB52F426AA600FDA36A /* MonedasViewModel.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = MonedasViewModel.hpp; sourceTree = "<group>"; };
 		11B72BB72F426AAE00FDA36A /* MonedasViewModel.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonedasViewModel.cpp; sourceTree = "<group>"; };
 		11B72BB92F427BBA00FDA36A /* FinexaViewModels.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FinexaViewModels.h; sourceTree = "<group>"; };
@@ -83,6 +87,7 @@
 		11152E912F44FAFF00DF271E /* include */ = {
 			isa = PBXGroup;
 			children = (
+				11AE5DB92F495DC3007F4CF0 /* ConfigRepository.h */,
 				11152E8D2F44FAFF00DF271E /* DatabaseInitializer.h */,
 				11152E8E2F44FAFF00DF271E /* MonedaRepository.h */,
 				11152E8F2F44FAFF00DF271E /* OperacionRepository.h */,
@@ -94,6 +99,7 @@
 		11152E962F44FAFF00DF271E /* src */ = {
 			isa = PBXGroup;
 			children = (
+				11AE5DBB2F495DCC007F4CF0 /* ConfigRepository.cpp */,
 				11152E922F44FAFF00DF271E /* DatabaseInitializer.cpp */,
 				11152E932F44FAFF00DF271E /* MonedaRepository.cpp */,
 				11152E942F44FAFF00DF271E /* OperacionRepository.cpp */,
@@ -214,6 +220,7 @@
 			files = (
 				11152E992F44FAFF00DF271E /* MonedaRepository.h in Headers */,
 				11B72BDD2F42B5DC00FDA36A /* OperacionesViewModel.h in Headers */,
+				11AE5DBA2F495DC3007F4CF0 /* ConfigRepository.h in Headers */,
 				112A4EF02F3015C600A6CF06 /* Operacion.h in Headers */,
 				11152E9B2F44FAFF00DF271E /* TasaRepository.h in Headers */,
 				112A4EF12F3015C600A6CF06 /* TasaDeCambio.h in Headers */,
@@ -286,6 +293,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				11152E9F2F44FAFF00DF271E /* TasaRepository.cpp in Sources */,
+				11AE5DBC2F495DCC007F4CF0 /* ConfigRepository.cpp in Sources */,
 				112A4EF42F3015C600A6CF06 /* Operacion.cpp in Sources */,
 				11152E9C2F44FAFF00DF271E /* DatabaseInitializer.cpp in Sources */,
 				114254902F465FCC006A72C6 /* Helpers.cpp in Sources */,

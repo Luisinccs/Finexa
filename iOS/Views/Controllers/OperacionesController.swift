@@ -383,6 +383,7 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
 class OperacionCell: UITableViewCell {
     
     private let lblConcepto = UILabel()
+    private let lblMontoOriginal = UILabel()
     private let lblMonto = UILabel()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -395,44 +396,55 @@ class OperacionCell: UITableViewCell {
     }
     
     private func setup() {
-        lblConcepto.font = .systemFont(ofSize: 16, weight: .medium)
-        lblConcepto.numberOfLines = 2
+        // Top Left: Concepto
+        lblConcepto.font = .systemFont(ofSize: 15, weight: .regular)
+        lblConcepto.textColor = .secondaryLabel
+        lblConcepto.numberOfLines = 1
         
-        lblMonto.font = .boldSystemFont(ofSize: 16)
+        // Bottom Left: Moneda Original + Monto
+        lblMontoOriginal.font = .systemFont(ofSize: 18, weight: .medium)
+        lblMontoOriginal.textColor = .label
+        
+        // Right: Monto Base
+        lblMonto.font = .systemFont(ofSize: 22, weight: .medium)
+        lblMonto.textColor = .label
         lblMonto.textAlignment = .right
         
-        let stack = UIStackView(arrangedSubviews: [lblConcepto, lblMonto])
-        stack.axis = .horizontal
-        stack.distribution = .fill
-        stack.alignment = .center
-        stack.spacing = 10
+        // Left Column Stack
+        let leftStack = UIStackView(arrangedSubviews: [lblConcepto, lblMontoOriginal])
+        leftStack.axis = .vertical
+        leftStack.alignment = .leading
+        leftStack.spacing = 2
         
-        contentView.addSubview(stack)
-        stack.translatesAutoresizingMaskIntoConstraints = false
+        // Main Stack (Left Column + Right Label)
+        let mainStack = UIStackView(arrangedSubviews: [leftStack, lblMonto])
+        mainStack.axis = .horizontal
+        mainStack.distribution = .fill
+        mainStack.alignment = .center // Centers align Y to make the big number float in the middle
+        mainStack.spacing = 10
+        
+        contentView.addSubview(mainStack)
+        mainStack.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            stack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
-            stack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -5),
-            stack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 15),
-            stack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -15)
+            mainStack.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 10),
+            mainStack.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -10),
+            mainStack.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            mainStack.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
         ])
         
         // Compression
         lblMonto.setContentCompressionResistancePriority(.required, for: .horizontal)
+        leftStack.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
     }
     
     func configure(concepto: String, monto: String, moneda: String, montoXds: String) {
         lblConcepto.text = concepto
-        // Format: $100.00 USD
-        // Or if we want to show conversion: $100.00 USD\n($50.00 REF)
-        // Let's use attributed text or simple format
         
-        let montoStr = "\(monto) \(moneda)"
-        lblMonto.text = montoStr
+        // Bottom Left: e.g "REF  150" or "VES  10.000,00"
+        lblMontoOriginal.text = "\(moneda)  \(monto)"
         
-        // Maybe detail text for XDS?
-        // For simplicity, just original amount. The prompt mentioned "Monto" and "MontoEnMonedaRef" in editor,
-        // but for grid row usually one line.
-        // The prompt says "parte de abajo se refleja el monto total".
+        // Right: e.g "USD 120,00" (comes fully formatted from C++)
+        lblMonto.text = montoXds
     }
 }

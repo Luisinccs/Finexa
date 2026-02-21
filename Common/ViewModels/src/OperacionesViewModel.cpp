@@ -1,5 +1,6 @@
 #include "../include/OperacionesViewModel.h"
 #include "../../Core/include/Helpers.hpp"
+#include "../../Data/include/ConfigRepository.h"
 #include <cmath>
 #include <iomanip>
 #include <sstream>
@@ -133,6 +134,11 @@ void OperacionesViewModel::inicializar() {
 
   // Preservar la moneda referencial actual si existe y sigue siendo válida
   if (!items.empty()) {
+    if (_monedaRef.empty()) {
+      _monedaRef =
+          Finexa::Data::ConfigRepository::get("moneda_base_operaciones", "");
+    }
+
     bool found = false;
     for (const auto &item : items) {
       if (item.key == _monedaRef) {
@@ -150,9 +156,10 @@ void OperacionesViewModel::inicializar() {
     _monedaRef = "";
   }
 
-  // Cuando cambia la moneda referencial, recalcular todo
+  // Cuando cambia la moneda referencial, recalcular todo y guardar
   _selectorMonedaRef->setOnSelectionChanged([this](std::string key) {
     _monedaRef = key;
+    Finexa::Data::ConfigRepository::set("moneda_base_operaciones", _monedaRef);
     refrescarGrilla();
     recalcularXds();
   });
@@ -303,7 +310,8 @@ void OperacionesViewModel::refrescarGrilla() {
     op->setMontoXds(montoRef);
 
     row.cells = {op->getConcepto(), ssMonto.str(),
-                 op->getMonedaOriginal()->getSiglas(), ssRef.str()};
+                 op->getMonedaOriginal()->getSiglas(),
+                 _monedaRef + " " + ssRef.str()};
     rows.push_back(row);
   }
   _gridOperaciones->setRows(rows);

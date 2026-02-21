@@ -180,3 +180,19 @@ Tengo este crahs cuando inicio una nueva operación y el doy cancelar (comenzand
 --- Perfecto. Ahora bien, estoy intentando eliminar un registro de la lista de tasas, hace el swipe y muestra el botón de eliminar, pero no termina de concretar la eliminación (En el TasasController.swift).
 
 --- Bien, ahora plantea el refactor para el EditorOperacionesAppBinder.swift, para que siga los mismos patrones que el EditorMonedaBinder.swift
+
+--- Hay que modificar la lista de operaciones, de modo que en cada fila, se vea el concepto, el monto expresado en la moneda de la operación, y el monto expresado en la moneda base. En la ilustración que te paso, el dolar $ es la moneda base, y el bolivar y REF son monedas especificas de la operación.
+
+--- Perfecto, el único detalle es que el símbolo de la moneda base, se queda siempre como el $ y ha y que cambiarlo si cambia la moneda base (Fijate que en el total, las siglas si cambian);
+Otra cosa, ese color claro era de referencia, colocale a los textos el color correspondiente (que se vea negro en modo claro y blanco en modo oscuro)
+
+--- Bien, por alguna causa, la selección de la moneda base en la lista de operaciones, no se mantiene cuando sales de la aplicación y la vuelves a abrir. Comienza siempre con la primera moneda como moneda base. Debería quedar guardado cual fué la moneda base que se seleccionó. Supongo que el la base de datos no hay un campo para guardar esa selección; crees que habría que incorporarlo?
+
+--- Tengo estos errores de link:
+Undefined symbol: Finexa::Data::ConfigRepository::get(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)
+
+Undefined symbol: Finexa::Data::ConfigRepository::set(std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&, std::__1::basic_string<char, std::__1::char_traits<char>, std::__1::allocator<char>> const&)
+
+Linker command failed with exit code 1 (use -v to see invocation)
+
+Compilé primero el proyecto common; me faltó algo
