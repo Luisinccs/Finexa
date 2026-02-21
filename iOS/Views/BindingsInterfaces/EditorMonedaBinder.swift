@@ -11,24 +11,12 @@ import UIKit
 
 /// Protocol for binding EditorMoneda UI elements to data logic.
 /// This allows the Controller to be independent of specific ViewModel types.
-public protocol EditorMonedaBinder: FormBindingProtocol {
+public protocol EditorMonedaBinder {
     
-    /// Binds the text fields to their respective data sources.
-    /// - Parameters:
-    ///   - nombre: Etiqueta para el nombre.
-    ///   - simbolo: Etiqueta para el nombre.
-    ///   - siglas: Etiqueta para el nombre.
-    func bindFields(nombre: UITextField, simbolo: UITextField, siglas: UITextField)
+    /// Binds the UI elements of the given controller to their respective data sources.
+    /// - Parameter controller: The controller containing the UI elements to bind.
+    func bind(controller: EditorMonedaController)
     
-    /// Vincula las etiquetas de los campos del editor con el ViewModel.
-    /// - Parameters:
-    ///   - lblNombre: Etiqueta para el nombre.
-    ///   - lblSimbolo: Etiqueta para el nombre.
-    ///   - lblSiglas: Etiqueta para el nombre.
-    func bindLabels(lblNombre: UILabel, lblSimbolo: UILabel, lblSiglas: UILabel)
-    
-    
-    func bindDialog(to viewController: UIViewController)
     func unbind()
 }
 

@@ -6,18 +6,18 @@ public class EditorOperacionController: UIViewController {
     // MARK: - Properties
     private var binder: EditorOperacionBinder?
     
-    private let lblConcepto = UILabel()
-    private let lblMonto = UILabel()
-    private let lblMoneda = UILabel()
-    private let lblMontoBase = UILabel()
+    public let lblConcepto = UILabel()
+    public let lblMonto = UILabel()
+    public let lblMoneda = UILabel()
+    public let lblMontoBase = UILabel()
     
-    private let txtConcepto = UITextField()
-    private let txtMonto = DcNumberTextField()
-    private let cmbMoneda = DcComboBox()
-    private let txtMontoBase = UITextField()
+    public let txtConcepto = UITextField()
+    public let txtMonto = DcNumberTextField()
+    public let cmbMoneda = DcComboBox()
+    public let txtMontoBase = UITextField()
     
-    private let cmdAceptar = UIButton()
-    private let cmdCancelar = UIButton()
+    public let cmdAceptar = UIButton()
+    public let cmdCancelar = UIButton()
     
     public func configure(with binder: EditorOperacionBinder) {
         self.binder = binder
@@ -106,15 +106,6 @@ public class EditorOperacionController: UIViewController {
     
     private func setupBindings() {
         guard let binder = binder else { return }
-        
-        // Bind UI to ViewModel via Binder
-        binder.bindFields(concepto: txtConcepto, monto: txtMonto, moneda: cmbMoneda, montoRef: txtMontoBase)
-        binder.bindLabels(lblConcepto: lblConcepto, lblMonto: lblMonto, lblMoneda: lblMoneda, lblMontoBase: lblMontoBase)
-        binder.bindCommands(cmdAceptar: cmdAceptar, cmdCancelar: cmdCancelar)
-        
-        // Handle Close Request from ViewModel (e.g. after save)
-        binder.bindCloseRequest { [weak self] in
-            self?.dismiss(animated: true)
-        }
+        binder.bind(controller: self)
     }
 }

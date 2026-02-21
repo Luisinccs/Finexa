@@ -13,74 +13,49 @@ public class EditorOperacionesAppBinder: EditorOperacionBinder {
         self.viewModel = viewModel
     }
     
-    public func bindFields(concepto: UITextField, monto: DcNumberTextField, moneda: DcComboBox, montoRef: UITextField) {
+    public func bind(controller: EditorOperacionController) {
         withUnsafePointer(to: viewModel) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
             
             // Bind Concepto
             if let inputPtr = OperacionesViewModel_inputConcepto(rawPtr) {
-                concepto.setViewModel(inputPtr)
+                controller.txtConcepto.setViewModel(inputPtr)
+                controller.lblConcepto.setViewModel(inputPtr)
             }
             
             // Bind Monto
             if let numberPtr = OperacionesViewModel_inputMonto(rawPtr) {
-                monto.setNumberFieldViewModel(numberPtr)
+                controller.txtMonto.setNumberFieldViewModel(numberPtr)
+                controller.lblMonto.setViewModel(numberPtr)
             }
             
             // Bind Moneda
             if let comboPtr = OperacionesViewModel_selectorMoneda(rawPtr) {
-                moneda.setComboBoxViewModel(comboPtr)
+                controller.cmbMoneda.setComboBoxViewModel(comboPtr)
+                controller.lblMoneda.setViewModel(comboPtr)
             }
             
             // Bind Monto Ref (UITextField read-only)
             if let labelPtr = OperacionesViewModel_labelMontoXds(rawPtr) {
-                montoRef.setViewModel(labelPtr)
+                controller.txtMontoBase.setViewModel(labelPtr)
                 // Make it read-only for user input but allow programmed updates
-                montoRef.inputView = UIView() 
+                controller.txtMontoBase.inputView = UIView() 
+                controller.lblMontoBase.setViewModel(labelPtr)
             }
-        }
-    }
-    
-    public func bindLabels(lblConcepto: UILabel, lblMonto: UILabel, lblMoneda: UILabel, lblMontoBase: UILabel) {
-        withUnsafePointer(to: viewModel) { vmPtr in
-            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
             
-            if let ptr = OperacionesViewModel_inputConcepto(rawPtr) {
-                lblConcepto.setViewModel(ptr)
-            }
-            if let ptr = OperacionesViewModel_inputMonto(rawPtr) {
-                lblMonto.setViewModel(ptr)
-            }
-            if let ptr = OperacionesViewModel_selectorMoneda(rawPtr) {
-                lblMoneda.setViewModel(ptr)
-            }
-            if let ptr = OperacionesViewModel_labelMontoXds(rawPtr) {
-                lblMontoBase.setViewModel(ptr)
-            }
-        }
-    }
-    
-    public func bindCommands(cmdAceptar: UIButton, cmdCancelar: UIButton) {
-        withUnsafePointer(to: viewModel) { vmPtr in
-            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
-            
+            // Bind Commands
             if let ptr = OperacionesViewModel_cmdAgregar(rawPtr) {
-                cmdAceptar.setViewModel(ptr)
+                controller.cmdAceptar.setViewModel(ptr)
             }
-            
             if let ptr = OperacionesViewModel_cmdCancelar(rawPtr) {
-                cmdCancelar.setViewModel(ptr)
+                controller.cmdCancelar.setViewModel(ptr)
             }
-        }
-    }
-    
-    public func bindCloseRequest(onClose: @escaping () -> Void) {
-        withUnsafePointer(to: viewModel) { vmPtr in
-            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
             
+            // Bind Close Request
             // Convertir el closure de Swift a un puntero opaco para C++
-            // Necesitamos mantener una referencia al closure para que no se libere
-            let closureWrapper = Unmanaged.passRetained(ClosureWrapper(closure: onClose)).toOpaque()
+            let closureWrapper = Unmanaged.passRetained(ClosureWrapper(closure: { [weak controller] in
+                controller?.dismiss(animated: true)
+            })).toOpaque()
             
             OperacionesViewModel_setOnRequestClose(rawPtr, closureWrapper) { ctx in
                 guard let ctx = ctx else { return }

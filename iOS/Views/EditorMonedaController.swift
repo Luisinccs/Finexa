@@ -4,18 +4,18 @@ import DcViewsIos
 public class EditorMonedaController: UIViewController {
     
     // MARK: - UI Controls
-    private let stackView = UIStackView()
-    private let commandBar = DcCommandBar()
+    public let stackView = UIStackView()
+    public let commandBar = DcCommandBar()
     
     // Campos
-    private let lblNombre = UILabel()
-    private let txtNombre = DcTextField()
+    public let lblNombre = UILabel()
+    public let txtNombre = DcTextField()
     
-    private let lblSimbolo = UILabel()
-    private let txtSimbolo = DcTextField()
+    public let lblSimbolo = UILabel()
+    public let txtSimbolo = DcTextField()
     
-    private let lblSiglas = UILabel()
-    private let txtSiglas = DcTextField()
+    public let lblSiglas = UILabel()
+    public let txtSiglas = DcTextField()
     
     // MARK: - Dependencies
     
@@ -80,19 +80,9 @@ public class EditorMonedaController: UIViewController {
     
     // MARK: - UI Setup
     
-    private func setupBindings(){
+    private func setupBindings() {
         guard let binder = binder else { return }
-        binder.bindFields(nombre: txtNombre, simbolo: txtSimbolo, siglas: txtSiglas)
-        binder.bindLabels(lblNombre: lblNombre, lblSimbolo: lblSimbolo, lblSiglas: lblSiglas)
-        
-        binder.bindCommands(bar: commandBar) // Updated to new signature
-        
-        // Handle Close Request from ViewModel (e.g. after save)
-        binder.bindCloseRequest { [weak self] in
-            self?.dismiss(animated: true)
-        }
-        
-        binder.bindDialog(to: self)
+        binder.bind(controller: self)
     }
     
     private func setupUI() {

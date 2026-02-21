@@ -7,17 +7,17 @@ public class EditorTasaController: UIViewController, EditorViewHelper {
     private var binder: EditorTasaBinder?
     
     // MARK: - UI Controls
-    private let stackView = UIStackView()
-    private let commandBar = DcCommandBar()
+    public let stackView = UIStackView()
+    public let commandBar = DcCommandBar()
     
-    private let lblBase = UILabel()
-    private let cmbBase = DcComboBox() // Selector
+    public let lblBase = UILabel()
+    public let cmbBase = DcComboBox() // Selector
     
-    private let lblDestino = UILabel()
-    private let cmbDestino = DcComboBox() // Selector
+    public let lblDestino = UILabel()
+    public let cmbDestino = DcComboBox() // Selector
     
-    private let lblValor = UILabel()
-    private let txtValor = DcNumberTextField() // Numérico
+    public let lblValor = UILabel()
+    public let txtValor = DcNumberTextField() // Numérico
     
     // MARK: - Init
     
@@ -50,17 +50,7 @@ public class EditorTasaController: UIViewController, EditorViewHelper {
     
     private func setupBindings() {
         guard let binder = binder else { return }
-        
-        binder.bindFields(base: cmbBase, destino: cmbDestino, valor: txtValor)
-        binder.bindLabels(lblBase: lblBase, lblDestino: lblDestino, lblValor: lblValor)
-        
-        binder.bindCommands(bar: commandBar)
-        
-        binder.bindCloseRequest { [weak self] in
-            self?.dismiss(animated: true)
-        }
-        
-        binder.bindDialog(to: self)
+        binder.bind(controller: self)
     }
     
     // MARK: - Actions

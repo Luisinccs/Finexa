@@ -92,15 +92,20 @@ public class TasasAppBinder: TasasBinder {
     }
     
     public func deleteRow(at row: Int) {
-        // No delete command exposed in TasasViewModel yet?
-        // Revisando TasasViewModel.h... No hay un 'eliminarViewModel'.
-        // Solo 'guardarTasa'.
-        // TODO: Implement delete in C++ ViewModel if needed based on requirements.
-        // For now, no-op or log error.
-        print("Delete not implemented in TasasViewModel C++")
+        let vm = viewModelPtr
+        withUnsafePointer(to: vm) { vmPtr in
+            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            if let cmdPtr = TasasViewModel_cmdEliminar(rawPtr) {
+                DcCommand_Execute(cmdPtr)
+            }
+        }
     }
     
     public func getEditorBinder() -> EditorTasaBinder? {
         return EditorTasasAppBinder(viewModel: viewModelPtr)
     }
 }
+
+// C-Bridge imports
+@_silgen_name("TasasViewModel_cmdEliminar")
+func TasasViewModel_cmdEliminar(_ vmPtr: UnsafeMutableRawPointer) -> UnsafeMutableRawPointer?

@@ -6,6 +6,7 @@
 #define VM_INPUT_VALOR inputValor
 #define VM_CMD_GUARDAR_TASA cmdGuardarTasa
 #define VM_CMD_CANCELAR cmdCancelar
+#define VM_CMD_ELIMINAR cmdEliminar
 #define VM_DIALOG dialog
 
 #include "DcComboBoxViewModel.hpp"
@@ -35,8 +36,9 @@ class TasasViewModel {
   DECLARE_CONTROL_BINDING(VM_SELECTOR_DESTINO, ComboBox)
   DECLARE_CONTROL_BINDING(VM_INPUT_VALOR, NumberField)
   DECLARE_CONTROL_BINDING(VM_CMD_GUARDAR_TASA, Command)
-  DECLARE_CONTROL_BINDING(VM_CMD_CANCELAR, Command) // Added
-  DECLARE_CONTROL_BINDING(VM_DIALOG, Dialog)        // Added
+  DECLARE_CONTROL_BINDING(VM_CMD_CANCELAR, Command)
+  DECLARE_CONTROL_BINDING(VM_CMD_ELIMINAR, Command)
+  DECLARE_CONTROL_BINDING(VM_DIALOG, Dialog)
 
 public: // Moved setOnRequestClose to public as per instruction
   void setOnRequestClose(std::function<void()> callback) {
@@ -45,7 +47,8 @@ public: // Moved setOnRequestClose to public as per instruction
 
 private:
   std::shared_ptr<Finexa::CalculadoraCore> _core;
-  std::function<void()> _onRequestClose; // Added
+  std::function<void()> _onRequestClose;
+  int _selectedIndex = -1;
 
 public:
   TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core);
@@ -57,6 +60,7 @@ public:
 
   void inicializar();
   bool guardarTasa();
+  void eliminarTasa();
   void refrescarGrilla();
 
 private:
@@ -78,6 +82,7 @@ DECLARE_CONTROL_BRIDGE(VM_SELECTOR_DESTINO, TasasViewModel)
 DECLARE_CONTROL_BRIDGE(VM_INPUT_VALOR, TasasViewModel)
 DECLARE_CONTROL_BRIDGE(VM_CMD_GUARDAR_TASA, TasasViewModel)
 DECLARE_CONTROL_BRIDGE(VM_CMD_CANCELAR, TasasViewModel)
+DECLARE_CONTROL_BRIDGE(VM_CMD_ELIMINAR, TasasViewModel)
 DECLARE_CONTROL_BRIDGE(VM_DIALOG, TasasViewModel)
 
 extern "C" {

@@ -169,3 +169,14 @@ Bien, ya por lo menos se mantiene la moneda base cuando la cambio; pero sigo con
 ---
 
 Tengo este crahs cuando inicio una nueva operación y el doy cancelar (comenzando la aplicación, al crear una moneda y luego intentar crear una operación)
+
+--- Plantea el siguiente refactor en el Finexa/iOS/App/Source/EditorMonedaBinder.swift; De modo que en lugar de llamar varios metodos con argumentos, se llame solo a un metodo bind, al igual que el unbind; y para tener acceso a los argumentos, pienso que podríamos hacer las variables públicas en el EditorMonedaController, así solo haría falta pasar como argumento el controller. Analiza la viabilidad y planteame el plan de refactor.
+
+--- Funciona bien. Ayudame a quitar estas advertencias:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/App/Source/EditorMonedaBinder.swift:25:39 Conditional cast from 'DcTextField' to 'DcTextField' always succeeds
+
+--- Bien, ahora plantea el refactor para el EditorTasasAppBinder.swift, para que siga los mismos patrones que el EditorMonedaBinder.swift
+
+--- Perfecto. Ahora bien, estoy intentando eliminar un registro de la lista de tasas, hace el swipe y muestra el botón de eliminar, pero no termina de concretar la eliminación (En el TasasController.swift).
+
+--- Bien, ahora plantea el refactor para el EditorOperacionesAppBinder.swift, para que siga los mismos patrones que el EditorMonedaBinder.swift

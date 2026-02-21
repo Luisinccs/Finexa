@@ -12,60 +12,37 @@ public class EditorTasasAppBinder: EditorTasaBinder {
         self.viewModel = viewModel
     }
     
-    public func bindFields(base: DcComboBox, destino: DcComboBox, valor: DcNumberTextField) {
+    public func bind(controller: EditorTasaController) {
         var vm = viewModel
         withUnsafeMutablePointer(to: &vm) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
             
+            // Bind Fields & Labels
             if let ptr = TasasViewModel_selectorBase(rawPtr) {
-                base.setComboBoxViewModel(ptr)
+                controller.cmbBase.setComboBoxViewModel(ptr)
+                controller.lblBase.setViewModel(ptr)
             }
             if let ptr = TasasViewModel_selectorDestino(rawPtr) {
-                destino.setComboBoxViewModel(ptr)
+                controller.cmbDestino.setComboBoxViewModel(ptr)
+                controller.lblDestino.setViewModel(ptr)
             }
             if let ptr = TasasViewModel_inputValor(rawPtr) {
-                valor.setNumberFieldViewModel(ptr)
+                controller.txtValor.setNumberFieldViewModel(ptr)
+                controller.lblValor.setViewModel(ptr)
             }
-        }
-    }
-    
-    public func bindLabels(lblBase: UILabel, lblDestino: UILabel, lblValor: UILabel) {
-        var vm = viewModel
-        withUnsafeMutablePointer(to: &vm) { vmPtr in
-            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
             
-            if let ptr = TasasViewModel_selectorBase(rawPtr) {
-                lblBase.setViewModel(ptr)
-            }
-            if let ptr = TasasViewModel_selectorDestino(rawPtr) {
-                lblDestino.setViewModel(ptr)
-            }
-            if let ptr = TasasViewModel_inputValor(rawPtr) {
-                lblValor.setViewModel(ptr)
-            }
-        }
-    }
-    
-    public func bindCommands(bar: DcCommandBar) {
-        var vm = viewModel
-        withUnsafeMutablePointer(to: &vm) { vmPtr in
-            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
-            
+            // Bind Commands
             if let acceptPtr = TasasViewModel_cmdGuardarTasa(rawPtr) {
-                bar.btnAccept.setViewModel(acceptPtr)
+                controller.commandBar.btnAccept.setViewModel(acceptPtr)
             }
             if let cancelPtr = TasasViewModel_cmdCancelar(rawPtr) {
-                bar.btnCancel.setViewModel(cancelPtr)
+                controller.commandBar.btnCancel.setViewModel(cancelPtr)
             }
-        }
-    }
-    
-    public func bindCloseRequest(handler: @escaping () -> Void) {
-        var vm = viewModel
-        withUnsafeMutablePointer(to: &vm) { vmPtr in
-            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
             
-            let closureWrapper = Unmanaged.passRetained(ClosureWrapper(closure: handler)).toOpaque()
+            // Bind Close Request
+            let closureWrapper = Unmanaged.passRetained(ClosureWrapper(closure: { [weak controller] in
+                controller?.dismiss(animated: true)
+            })).toOpaque()
             
             TasasViewModel_setOnRequestClose(rawPtr, closureWrapper) { ctx in
                 guard let ctx = ctx else { return }
@@ -74,15 +51,10 @@ public class EditorTasasAppBinder: EditorTasaBinder {
                     wrapper.closure()
                 }
             }
-        }
-    }
-    
-    public func bindDialog(to viewController: UIViewController) {
-        var vm = viewModel
-        withUnsafeMutablePointer(to: &vm) { vmPtr in
-            let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
+            
+            // Bind Dialog
             if let dialogPtr = TasasViewModel_dialog(rawPtr) {
-                DcDialogBinder.setViewModel(dialogPtr, to: viewController)
+                DcDialogBinder.setViewModel(dialogPtr, to: controller)
             }
         }
     }

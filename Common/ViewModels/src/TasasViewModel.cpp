@@ -30,6 +30,7 @@ TasasViewModel::TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core)
   _inputValor = std::make_shared<DcNumberFieldViewModel>();
   _cmdGuardarTasa = std::make_shared<DcCommandViewModel>();
   _cmdCancelar = std::make_shared<DcCommandViewModel>();
+  _cmdEliminar = std::make_shared<DcCommandViewModel>();
   _dialog = std::make_shared<DcDialogViewModel>();
 
   configurarColumnas();
@@ -47,10 +48,14 @@ TasasViewModel::TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core)
     }
   });
 
+  _cmdEliminar->setLabelText("Eliminar");
+  _cmdEliminar->setOnExecuted([this]() { this->eliminarTasa(); });
+
   // Logic for editing
   auto loadForEdit = [this](int index) {
     const auto &tasas = _core->getTasas();
     if (index >= 0 && index < static_cast<int>(tasas.size())) {
+      _selectedIndex = index;
       auto tasa = tasas[index];
       // Populate form
       _selectorBase->selectItemByKey(tasa->getBase()->getUuid());
@@ -64,6 +69,7 @@ TasasViewModel::TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core)
       _selectorDestino->setEnabled(false);
 
       _cmdGuardarTasa->setLabelText("Actualizar");
+      _cmdEliminar->setVisible(true);
     }
   };
 
@@ -71,10 +77,12 @@ TasasViewModel::TasasViewModel(std::shared_ptr<Finexa::CalculadoraCore> core)
 
   // Logic for new/reset
   auto resetForm = [this]() {
+    _selectedIndex = -1;
     _selectorBase->setEnabled(true);
     _selectorDestino->setEnabled(true);
     _inputValor->setValue(0.0);
     _cmdGuardarTasa->setLabelText("Establecer Tasa");
+    _cmdEliminar->setVisible(false);
 
     // Select defaults
     auto p = _core->buscarMoneda(_core->getSiglasPivote());
@@ -104,6 +112,7 @@ IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_SELECTOR_DESTINO, ComboBox)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_INPUT_VALOR, NumberField)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_CMD_GUARDAR_TASA, Command)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_CMD_CANCELAR, Command)
+IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_CMD_ELIMINAR, Command)
 IMPLEMENT_CONTROL_INTERNAL(NAMESPACE, MY_VM_NAME, VM_DIALOG, Dialog)
 
 void TasasViewModel::configurarColumnas() {
@@ -174,6 +183,24 @@ bool TasasViewModel::guardarTasa() {
     }
   }
   return false;
+}
+
+void TasasViewModel::eliminarTasa() {
+  const auto &tasas = _core->getTasas();
+  if (_selectedIndex >= 0 && _selectedIndex < static_cast<int>(tasas.size())) {
+    auto tasa = tasas[_selectedIndex];
+    _core->eliminarTasa(tasa->getUuid());
+
+    // Reset form states manually similar to resetForm
+    _selectedIndex = -1;
+    _selectorBase->setEnabled(true);
+    _selectorDestino->setEnabled(true);
+    _inputValor->setValue(0.0);
+    _cmdGuardarTasa->setLabelText("Establecer Tasa");
+    _cmdEliminar->setVisible(false);
+
+    refrescarGrilla();
+  }
 }
 
 void TasasViewModel::refrescarGrilla() {
@@ -255,6 +282,7 @@ IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_SELECTOR_DESTINO)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_INPUT_VALOR)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_CMD_GUARDAR_TASA)
 IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_CMD_CANCELAR)
+IMPLEMENT_CONTROL_BRIDGE(NAMESPACE, MY_VM_NAME, VM_CMD_ELIMINAR)
 
 extern "C" {
 DC_BRIDGE_EXPORT void TasasViewModel_setOnRequestClose(void *vmPtr, void *ctx,
