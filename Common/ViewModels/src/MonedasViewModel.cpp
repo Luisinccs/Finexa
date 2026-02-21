@@ -101,6 +101,11 @@ void MonedasViewModel::setupEditingLogic() {
       simboloViewModel()->setText("");
       siglasViewModel()->setText("");
     }
+
+    // Clear any previous errors
+    nombreViewModel()->setErrorText("");
+    simboloViewModel()->setErrorText("");
+    siglasViewModel()->setErrorText("");
   };
 
   monedasGridViewModel()->setOnRowActivated(
@@ -108,13 +113,58 @@ void MonedasViewModel::setupEditingLogic() {
   monedasGridViewModel()->setOnAddRequested(
       [this, startEdit]() { startEdit(-1); });
 
+  // Clear errors when user types
+  nombreViewModel()->setOnTextChanged(
+      [this](std::string text) { nombreViewModel()->setErrorText(""); });
+  simboloViewModel()->setOnTextChanged(
+      [this](std::string text) { simboloViewModel()->setErrorText(""); });
+  siglasViewModel()->setOnTextChanged(
+      [this](std::string text) { siglasViewModel()->setErrorText(""); });
+
   // 2. Save (Aceptar)
   aceptarViewModel()->setOnExecuted([this]() {
     std::string nombre = nombreViewModel()->getText();
     std::string simbolo = simboloViewModel()->getText();
     std::string siglas = siglasViewModel()->getText();
 
-    if (nombre.empty() || siglas.empty()) {
+    bool hasErrors = false;
+
+    if (nombre.empty()) {
+      nombreViewModel()->setErrorText("Campo Requerido");
+      hasErrors = true;
+    }
+    if (simbolo.empty()) {
+      simboloViewModel()->setErrorText("Campo Requerido");
+      hasErrors = true;
+    }
+    if (siglas.empty()) {
+      siglasViewModel()->setErrorText("Campo Requerido");
+      hasErrors = true;
+    }
+
+    // Check for duplicates
+    const auto &monedasList = _core->getMonedas();
+    for (const auto &m : monedasList) {
+      // Don't compare against itself when editing
+      if (!isNewItem && currentEditingItem &&
+          m->getUuid() == currentEditingItem->getUuid()) {
+        continue;
+      }
+      if (m->getNombre() == nombre) {
+        nombreViewModel()->setErrorText("El nombre ya existe");
+        hasErrors = true;
+      }
+      if (m->getSiglas() == siglas) {
+        siglasViewModel()->setErrorText("Las siglas ya existen");
+        hasErrors = true;
+      }
+      if (m->getSimbolo() == simbolo) {
+        simboloViewModel()->setErrorText("El símbolo ya existe");
+        hasErrors = true;
+      }
+    }
+
+    if (hasErrors) {
       return; // Validation failed
     }
 

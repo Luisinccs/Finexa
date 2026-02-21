@@ -20,20 +20,40 @@ class EditorMonedaAppBinder: EditorMonedaBinder {
         withUnsafeMutablePointer(to: &vm) { vmPtr in
             let rawPtr = UnsafeMutableRawPointer(mutating: vmPtr)
 
+            let context = Unmanaged.passUnretained(controller).toOpaque()
+
             // Bind Fields & Labels
             if let ptr = MonedasViewModel_nombreViewModel(rawPtr) {
                 controller.txtNombre.setViewModel(ptr)
                 controller.lblNombre.setViewModel(ptr)
+                DcInput_BindErrorTextChange(ptr, context) { ctx, str in
+                    guard let ctx = ctx else { return }
+                    let ctrl = Unmanaged<EditorMonedaController>.fromOpaque(ctx).takeUnretainedValue()
+                    let text = str != nil ? String(cString: str!) : nil
+                    DispatchQueue.main.async { ctrl.txtNombre.errorText = text?.isEmpty == true ? nil : text }
+                }
             }
             
             if let ptr = MonedasViewModel_simboloViewModel(rawPtr) {
                 controller.txtSimbolo.setViewModel(ptr)
                 controller.lblSimbolo.setViewModel(ptr)
+                DcInput_BindErrorTextChange(ptr, context) { ctx, str in
+                    guard let ctx = ctx else { return }
+                    let ctrl = Unmanaged<EditorMonedaController>.fromOpaque(ctx).takeUnretainedValue()
+                    let text = str != nil ? String(cString: str!) : nil
+                    DispatchQueue.main.async { ctrl.txtSimbolo.errorText = text?.isEmpty == true ? nil : text }
+                }
             }
             
             if let ptr = MonedasViewModel_siglasViewModel(rawPtr) {
                 controller.txtSiglas.setViewModel(ptr)
                 controller.lblSiglas.setViewModel(ptr)
+                DcInput_BindErrorTextChange(ptr, context) { ctx, str in
+                    guard let ctx = ctx else { return }
+                    let ctrl = Unmanaged<EditorMonedaController>.fromOpaque(ctx).takeUnretainedValue()
+                    let text = str != nil ? String(cString: str!) : nil
+                    DispatchQueue.main.async { ctrl.txtSiglas.errorText = text?.isEmpty == true ? nil : text }
+                }
             }
             
             // Bind Commands
@@ -82,6 +102,7 @@ class EditorMonedaAppBinder: EditorMonedaBinder {
                 unbindControl(ptr)
                 DcInput_BindTextChange(ptr, nil, nil)
                 DcInput_BindPlaceholderChange(ptr, nil, nil)
+                DcInput_BindErrorTextChange(ptr, nil, nil)
             }
             
             if let ptr = MonedasViewModel_nombreViewModel(rawPtr) { unbindInput(ptr) }
@@ -109,4 +130,7 @@ func MonedasViewModel_setOnRequestClose(_ vmPtr: UnsafeMutableRawPointer, _ clos
 
 @_silgen_name("MonedasViewModel_dialogViewModel")
 func MonedasViewModel_dialogViewModel(_ vmPtr: UnsafeMutableRawPointer) -> UnsafeMutableRawPointer?
+
+@_silgen_name("DcInput_BindErrorTextChange")
+func DcInput_BindErrorTextChange(_ ptr: UnsafeMutableRawPointer, _ ctx: UnsafeMutableRawPointer?, _ cb: (@convention(c) (UnsafeMutableRawPointer?, UnsafePointer<CChar>?) -> Void)?)
 
