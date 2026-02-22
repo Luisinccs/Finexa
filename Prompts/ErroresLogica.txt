@@ -1,0 +1,4 @@
+Hay un error ahora de lógica en los cálculos; tiene que ver con las triangulaciones.
+Observa el capture, y verás que en el monto de la operación, el monto en USD debería ser menor al monto en REF.
+
+Ambas tasas están basadas en el bolivar.

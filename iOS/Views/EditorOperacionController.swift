@@ -1,10 +1,16 @@
 import UIKit
 import DcViewsIos
 
-public class EditorOperacionController: UIViewController {
+public class EditorOperacionController: UIViewController, EditorFormCommands {
     
     // MARK: - Properties
     private var binder: EditorOperacionBinder?
+    
+    // MARK: - EditorFormCommands Protocol
+    public let commandBar = DcCommandBar()
+    
+    public let bottomActionsView = UIView()
+    public var inputFields: [UIView] { return [txtConcepto, txtMonto, cmbMoneda] }
     
     public let lblConcepto = UILabel()
     public let lblMonto = UILabel()
@@ -34,6 +40,17 @@ public class EditorOperacionController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupKeyboardCommands() // Integración con EditorFormCommands
+    }
+    
+    // MARK: - EditorFormCommands Actions
+    
+    public func onAcceptTapped() {
+        cmdAceptar.sendActions(for: .touchUpInside)
+    }
+    
+    public func onCancelTapped() {
+        cmdCancelar.sendActions(for: .touchUpInside)
     }
     
     // MARK: - UI Setup
@@ -72,14 +89,28 @@ public class EditorOperacionController: UIViewController {
         stackFields.axis = .vertical
         stackFields.spacing = 15
         
-        // Buttons Stack
+        // Buttons Stack (Bottom Actions)
         let stackButtons = UIStackView(arrangedSubviews: [cmdAceptar, cmdCancelar])
         stackButtons.axis = .vertical
         stackButtons.spacing = 10
         stackButtons.distribution = .fillEqually
         
+        bottomActionsView.addSubview(stackButtons)
+        stackButtons.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            stackButtons.topAnchor.constraint(equalTo: bottomActionsView.topAnchor),
+            stackButtons.bottomAnchor.constraint(equalTo: bottomActionsView.bottomAnchor),
+            stackButtons.leadingAnchor.constraint(equalTo: bottomActionsView.leadingAnchor),
+            stackButtons.trailingAnchor.constraint(equalTo: bottomActionsView.trailingAnchor)
+        ])
+        
         stackMain.addArrangedSubview(stackFields)
-        stackMain.addArrangedSubview(stackButtons)
+        stackMain.addArrangedSubview(bottomActionsView)
+        
+        // Sincronizar commandBar con los botones estáticos a los cuales el Binder está conectado
+        commandBar.btnAccept.addAction(UIAction { [weak self] _ in self?.onAcceptTapped() }, for: .touchUpInside)
+        commandBar.btnCancel.addAction(UIAction { [weak self] _ in self?.onCancelTapped() }, for: .touchUpInside)
         
         view.addSubview(stackMain)
         

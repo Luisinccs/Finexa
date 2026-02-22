@@ -1,0 +1,45 @@
+El combobox que se usa para seleccionar la moneda base en la grillar de operaciones (Finexa/iOS/Views/Controllers/OperacionesViewController.swift) se ve muy pequeño. 
+Revisa el resto de los combobox de los otros formularios, como el Editor Tasa por ejemplo (Finexa/iOS/Views/EditorTasaController.swift). Supongo que es un tema del alto del control
+
+---
+
+Bien, el concepto de la barra de botones que tiene los comandos Aceptar y cancelar, y los otros dos botones de tab next y tab prev (DcCommandBar en DualComponents/DcViews/iOS/Production/Source/DcCommandBar.swift),  es para que aparezca encima del teclado del telefono (solo cuando este aparece). Sin embargo, cuando el teclado desaparece, los botones deberían mantenerse para poder continuar con la terminación (aceptada o cancelada).
+
+Propongo que esa barra de botones tenga dos estados, uno como adjunta al teclado (con los botones tab) y siempre estará encima del teclado, sin importar la posición del scroll del formulario. El otro estado es cuando el teclado no está visible. En ese caso, la barra debe verse sin los botones de tab, solo Aceptar y cancelar; Al final del formulario. 
+
+El Desafío es es que los formularios debe implementar alguna interface o protocolo para que mantengan ese comportamiento común.
+
+Espero tu planteamiento para darle una solución robusta al problema y mantener la experiencia de usuario 
+con una idea de tener los botones cerca del teclado.
+
+---
+
+Funciona parcialmente.
+Se muestra la barra de botones encima del teclado, pero con algunos bugs.
+primero, en el caso del formulairo editor de opearcion y el editor de tasas, Los botones propios del formulario, no se desaparecen cuando se muestran los botones de la barra de comandos.
+En el formulario de monedas no se ven esos comandos, creo que es porque no estan programados.
+
+Hay que unificar todo.
+
+Que el estilo visual de los comandos de formulario (los que no son de la barra de comandos provisional del teclado) sean iguales los tres (utiiza como base el del formulario editor de operacion.),corrige el formulario de tasa e incluye en el formulario de monedas.
+
+Tambien hay que hacer que los botones desaparezcan cuando aparece el telado.
+
+Nota algo interesante. en el simulador, la barra de comandos se mantiene cuando estoy en modo Teclado del computador (es decir, utiliza el teclado de la mac en lugar del que apracece en la app del simulador). no tengo problemas en principio; pero si alguen conecta alguń teclado externo de alguna manera, esa barra se vería y no sería apropiado.
+
+---
+
+Corrige este error de compilación en FinexaViewsIos:
+/Users/luis_sonoma/Desarrollo/Finexa/iOS/Views/EditorMonedaController.swift:90:9 Cannot find 'stackView' in scope
+
+creo que olvidaste agregar ese stack view como en los otros controllers
+
+---
+Quita esta advertencia:
+/Users/luis_sonoma/Desarrollo/DualComponents/DcViews/iOS/Production/Source/DcCommandBar.swift:29:13 'contentEdgeInsets' was deprecated in iOS 15.0: This property is ignored when using UIButtonConfiguration
+
+---
+perfecto. Pero fíjate que en el editor de operaciones, la barra no se muestra para el campo de la descripción, te paso el capture.
+En los demas formularios si se ve todo bien en todos los campos.
+
+---

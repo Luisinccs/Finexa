@@ -1,14 +1,21 @@
 import UIKit
 import DcViewsIos
 
-public class EditorTasaController: UIViewController, EditorViewHelper {
+public class EditorTasaController: UIViewController, EditorViewHelper, EditorFormCommands {
     
     // MARK: - Properties
     private var binder: EditorTasaBinder?
     
+    // MARK: - EditorFormCommands Protocol
+    public let commandBar = DcCommandBar()
+    public let bottomActionsView = UIView()
+    public var inputFields: [UIView] { return [cmbBase, cmbDestino, txtValor] }
+    
+    private let btnStaticAccept = UIButton(type: .system)
+    private let btnStaticCancel = UIButton(type: .system)
+    
     // MARK: - UI Controls
     public let stackView = UIStackView()
-    public let commandBar = DcCommandBar()
     
     public let lblBase = UILabel()
     public let cmbBase = DcComboBox() // Selector
@@ -34,6 +41,7 @@ public class EditorTasaController: UIViewController, EditorViewHelper {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupKeyboardCommands() // Integración con EditorFormCommands
     }
     
     // MARK: - Configuration
@@ -53,22 +61,14 @@ public class EditorTasaController: UIViewController, EditorViewHelper {
         binder.bind(controller: self)
     }
     
-    // MARK: - Actions
+    // MARK: - EditorFormCommands Actions
     
-    @objc private func onPrev() {
-        if txtValor.isFirstResponder {
-            _ = cmbDestino.becomeFirstResponder()
-        } else if cmbDestino.isFirstResponder {
-            _ = cmbBase.becomeFirstResponder()
-        }
+    public func onAcceptTapped() {
+        commandBar.btnAccept.sendActions(for: .touchUpInside)
     }
     
-    @objc private func onNext() {
-        if cmbBase.isFirstResponder {
-            _ = cmbDestino.becomeFirstResponder()
-        } else if cmbDestino.isFirstResponder {
-            _ = txtValor.becomeFirstResponder()
-        }
+    public func onCancelTapped() {
+        commandBar.btnCancel.sendActions(for: .touchUpInside)
     }
     
     // MARK: - UI Setup
@@ -104,13 +104,40 @@ public class EditorTasaController: UIViewController, EditorViewHelper {
         let spacer = UIView()
         stackView.addArrangedSubview(spacer)
         
-        stackView.addArrangedSubview(commandBar)
+        // Agregar botones estáticos del formulario en lugar de la commandBar
+        setupStaticButtons()
+        stackView.addArrangedSubview(bottomActionsView)
         
         // Auto focus
         _ = cmbBase.becomeFirstResponder()
+    }
+    
+    private func setupStaticButtons() {
+        btnStaticAccept.setTitle("Aceptar", for: .normal)
+        btnStaticAccept.backgroundColor = .systemBlue
+        btnStaticAccept.setTitleColor(.white, for: .normal)
+        btnStaticAccept.layer.cornerRadius = 8
+        btnStaticAccept.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        btnStaticAccept.addAction(UIAction { [weak self] _ in self?.onAcceptTapped() }, for: .touchUpInside)
         
-        // Wire Navigation Buttons
-        commandBar.btnPrev.addTarget(self, action: #selector(onPrev), for: .touchUpInside)
-        commandBar.btnNext.addTarget(self, action: #selector(onNext), for: .touchUpInside)
+        btnStaticCancel.setTitle("Cancelar", for: .normal)
+        btnStaticCancel.setTitleColor(.systemRed, for: .normal)
+        btnStaticCancel.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        btnStaticCancel.addAction(UIAction { [weak self] _ in self?.onCancelTapped() }, for: .touchUpInside)
+        
+        let actionsStack = UIStackView(arrangedSubviews: [btnStaticAccept, btnStaticCancel])
+        actionsStack.axis = .vertical
+        actionsStack.spacing = 10
+        actionsStack.distribution = .fillEqually
+        
+        bottomActionsView.addSubview(actionsStack)
+        actionsStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            actionsStack.topAnchor.constraint(equalTo: bottomActionsView.topAnchor),
+            actionsStack.bottomAnchor.constraint(equalTo: bottomActionsView.bottomAnchor),
+            actionsStack.leadingAnchor.constraint(equalTo: bottomActionsView.leadingAnchor),
+            actionsStack.trailingAnchor.constraint(equalTo: bottomActionsView.trailingAnchor)
+        ])
     }
 }

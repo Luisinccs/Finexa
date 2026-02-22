@@ -61,8 +61,8 @@ class EditorMonedaAppBinder: EditorMonedaBinder {
             let cancelPtr = MonedasViewModel_cancelarViewModel(rawPtr)
             
             if let accept = acceptPtr, let cancel = cancelPtr {
-                controller.commandBar.btnAccept.setViewModel(accept)
-                controller.commandBar.btnCancel.setViewModel(cancel)
+                controller.cmdAceptar.setViewModel(accept)
+                controller.cmdCancelar.setViewModel(cancel)
             }
             
             // Bind Close Request

@@ -126,6 +126,7 @@ public class OperacionesController: UIViewController, UITableViewDataSource, UIT
         lblTitle.setContentHuggingPriority(.required, for: .horizontal)
         
         cmbReference.font = .systemFont(ofSize: 16, weight: .bold)
+        cmbReference.heightAnchor.constraint(equalToConstant: 44).isActive = true
         
         let hStack = UIStackView(arrangedSubviews: [lblTitle, cmbReference])
         hStack.axis = .horizontal

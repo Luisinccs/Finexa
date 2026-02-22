@@ -1,11 +1,18 @@
 import UIKit
 import DcViewsIos
 
-public class EditorMonedaController: UIViewController {
+public class EditorMonedaController: UIViewController, EditorFormCommands {
     
     // MARK: - UI Controls
     public let stackView = UIStackView()
+    // MARK: - EditorFormCommands Protocol
     public let commandBar = DcCommandBar()
+    public let bottomActionsView = UIView()
+    public var inputFields: [UIView] { return [txtNombre, txtSimbolo, txtSiglas] }
+    
+    // Botones de acción estáticos
+    public let cmdAceptar = UIButton()
+    public let cmdCancelar = UIButton()
     
     // Campos
     public let lblNombre = UILabel()
@@ -38,6 +45,7 @@ public class EditorMonedaController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
+        setupKeyboardCommands() // Integración con EditorFormCommands
     }
     
     // MARK: - Configuration
@@ -52,23 +60,14 @@ public class EditorMonedaController: UIViewController {
         binder?.unbind()
     }
     
-    // MARK: - Actions
+    // MARK: - EditorFormCommands Actions
     
-    @objc private func onPrev() { // Keeping method name but target connects from viewDidLoad
-        // Simple focus logic
-        if txtSiglas.isFirstResponder {
-            _ = txtSimbolo.becomeFirstResponder()
-        } else if txtSimbolo.isFirstResponder {
-            _ = txtNombre.becomeFirstResponder()
-        }
+    public func onAcceptTapped() {
+        cmdAceptar.sendActions(for: .touchUpInside)
     }
     
-    @objc private func onNext() {
-        if txtNombre.isFirstResponder {
-            _ = txtSimbolo.becomeFirstResponder()
-        } else if txtSimbolo.isFirstResponder {
-            _ = txtSiglas.becomeFirstResponder()
-        }
+    public func onCancelTapped() {
+        cmdCancelar.sendActions(for: .touchUpInside)
     }
     
     // MARK: - Callbacks
@@ -107,19 +106,42 @@ public class EditorMonedaController: UIViewController {
         addField( lblSimbolo, txtSimbolo)
         addField(lblSiglas, txtSiglas)
         
-        // Spacer to push command bar to bottom (optional, but good for stack)
+        // Botones de Acción (Bottom Actions View)
+        cmdAceptar.backgroundColor = .systemBlue
+        cmdAceptar.setTitleColor(.white, for: .normal)
+        cmdAceptar.layer.cornerRadius = 8
+        cmdAceptar.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        // El viewModel se conectará vía el binder a estos botones.
+
+        cmdCancelar.setTitleColor(.systemRed, for: .normal)
+        cmdCancelar.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        
+        let actionsStack = UIStackView(arrangedSubviews: [cmdAceptar, cmdCancelar])
+        actionsStack.axis = .vertical
+        actionsStack.spacing = 10
+        actionsStack.distribution = .fillEqually
+        
+        bottomActionsView.addSubview(actionsStack)
+        actionsStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            actionsStack.topAnchor.constraint(equalTo: bottomActionsView.topAnchor),
+            actionsStack.bottomAnchor.constraint(equalTo: bottomActionsView.bottomAnchor),
+            actionsStack.leadingAnchor.constraint(equalTo: bottomActionsView.leadingAnchor),
+            actionsStack.trailingAnchor.constraint(equalTo: bottomActionsView.trailingAnchor)
+        ])
+        
+        // Agregar espaciador que expande y la barra de acciones
         let spacer = UIView()
         stackView.addArrangedSubview(spacer)
-        
-        // Add Command Bar
-        stackView.addArrangedSubview(commandBar)
+        stackView.addArrangedSubview(bottomActionsView)
         
         // Focus first field
         _ = txtNombre.becomeFirstResponder()
         
-        // Wire Navigation Buttons
-        commandBar.btnPrev.addTarget(self, action: #selector(onPrev), for: .touchUpInside)
-        commandBar.btnNext.addTarget(self, action: #selector(onNext), for: .touchUpInside)
+        // Conectar botones flotantes de commandBar a las acciones locales
+        commandBar.btnAccept.addAction(UIAction { [weak self] _ in self?.onAcceptTapped() }, for: .touchUpInside)
+        commandBar.btnCancel.addAction(UIAction { [weak self] _ in self?.onCancelTapped() }, for: .touchUpInside)
     }
     
     private func addField(_ label: UILabel, _ control: UIView) {

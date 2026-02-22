@@ -114,13 +114,17 @@ double CalculadoraCore::calcularValorImplicito(const std::string &base,
       double valorTasa = t->getValor();
 
       if (tBase == current) {
-        if (visited.find(tDestino) == visited.end()) {
-          visited[tDestino] = visited[current] * valorTasa;
+        // Para ir de Base (ej. VES) a Destino (ej. USD):
+        // Como 1 Destino = valorTasa * Base, entonces 1 Base = (1 / valorTasa) Destino
+        if (visited.find(tDestino) == visited.end() && valorTasa > 0) {
+          visited[tDestino] = visited[current] * (1.0 / valorTasa);
           q.push(tDestino);
         }
       } else if (tDestino == current) {
-        if (visited.find(tBase) == visited.end() && valorTasa > 0) {
-          visited[tBase] = visited[current] * (1.0 / valorTasa);
+        // Para ir de Destino (ej. USD) a Base (ej. VES):
+        // Como 1 Destino = valorTasa * Base, multiplicamos por la tasa.
+        if (visited.find(tBase) == visited.end()) {
+          visited[tBase] = visited[current] * valorTasa;
           q.push(tBase);
         }
       }
